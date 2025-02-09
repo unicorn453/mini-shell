@@ -6,13 +6,15 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:41:19 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/06 20:51:18 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/02/07 17:18:10 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-int main(void)
+int main(int argc, char **argv, char **envp)
 {
-	main_loop();
+	(void)argc;
+	(void)argv;
+	main_loop(envp);
 }
