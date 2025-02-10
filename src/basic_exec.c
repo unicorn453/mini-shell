@@ -6,33 +6,12 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/09 18:54:41 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/10 14:06:17 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "mini_shell.h"
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/wait.h>
-#include <unistd.h>
-
-typedef struct s_cmd
-{
-    char    *delimiter;
-    char    **cmd;
-    char    **envp;
-    bool    pipe;
-    bool    redir_in;
-    bool    redir_out;
-    bool    redir_append;
-    char    *file_in;
-    char    *file_out;
-    bool    end_of_cmd;
-}           t_cmd;
 void        exec_pipes(t_cmd *cmd, int *fd_in, bool last_child);
 void        exec_cmd(char *cmd_path, char **cmd, char **envp);
 void    init_cmd(t_cmd *cmd, char **envp)
@@ -261,24 +240,27 @@ void    exec_pipes(t_cmd *cmd, int *fd_in, bool last_child)
     }
 }
 
-int main(int argc, char **argv, char **envp)
-{
-    t_cmd   cmd;
-    int     command_done;
+// int main(int argc, char **argv, char **envp)
+// {
+//     t_cmd   cmd;
+//     int     command_done;
 
-    command_done = -1;
-    init_cmd(&cmd, envp);
-    command_done = find_right_exec(&cmd);
-    if (command_done == 0)
-    {
-        init_second_cmd(&cmd, envp);
-        find_right_exec(&cmd);
-		command_done = 1;
-    }
-	if (command_done == 1)
-	{
-		init_third_cmd(&cmd, envp);
-		find_right_exec(&cmd);
-	}
-    return (0);
-}
+
+//     (void)argc;
+//     (void)argv;
+//     command_done = -1;
+//     init_cmd(&cmd, envp);
+//     command_done = find_right_exec(&cmd);
+//     if (command_done == 0)
+//     {
+//         init_second_cmd(&cmd, envp);
+//         find_right_exec(&cmd);
+// 		command_done = 1;
+//     }
+// 	if (command_done == 1)
+// 	{
+// 		init_third_cmd(&cmd, envp);
+// 		find_right_exec(&cmd);
+// 	}
+//     return (0);
+// }
