@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/10 14:05:54 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/11 14:20:19 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ char							*add_permission_free_path(t_path *path,
 									char *cmd);
 char							*find_command_path(char *cmd, char **envp);
 //---------ft_init_cmd.c---------//
+int								find_right_exec(t_cmd *cmd);
+void							init_def_cmd(t_cmd *cmd, char **envp);
 void							init_cmd_stack(t_cmd *cmd, char **envp,
 									char **parsed_string);
 

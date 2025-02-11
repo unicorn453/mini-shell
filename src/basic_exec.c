@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   basic_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/10 14:06:17 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/11 14:42:37 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,54 +14,7 @@
 
 void        exec_pipes(t_cmd *cmd, int *fd_in, bool last_child);
 void        exec_cmd(char *cmd_path, char **cmd, char **envp);
-void    init_cmd(t_cmd *cmd, char **envp)
-{
-    cmd->delimiter = NULL;
-    cmd->cmd = malloc(sizeof(char *) * 2);
-    cmd->cmd[0] = "/bin/cat";
-    cmd->cmd[1] = NULL;
-    cmd->envp = envp;
-    cmd->pipe = true;
-    cmd->redir_in = true;
-    cmd->redir_out = false;
-    cmd->redir_append = false;
-    cmd->file_in = "input.txt";
-    cmd->file_out = NULL;
-    cmd->end_of_cmd = false;
-}
-void    init_second_cmd(t_cmd *cmd, char **envp)
-{
-    cmd->delimiter = NULL;
-    cmd->cmd = malloc(sizeof(char *) * 3);
-    cmd->cmd[0] = "/usr/bin/grep";
-    cmd->cmd[1] = "ammk";
-    cmd->cmd[2] = NULL;
-    cmd->envp = envp;
-    cmd->pipe = true;
-    cmd->redir_in = false;
-    cmd->redir_out = true;
-    cmd->redir_append = false;
-    cmd->file_in = NULL;
-    cmd->file_out = "output.txt";
-    cmd->end_of_cmd = false;
-}
 
-void    init_third_cmd(t_cmd *cmd, char **envp)
-{
-    cmd->delimiter = NULL;
-    cmd->cmd = malloc(sizeof(char *) * 3);
-    cmd->cmd[0] = "/usr/bin/wc";
-    cmd->cmd[1] = NULL;
-    // cmd->cmd[2] = NULL;
-    cmd->envp = envp;
-    cmd->pipe = true;
-    cmd->redir_in = true;
-    cmd->redir_out = false;
-    cmd->redir_append = true;
-    cmd->file_in = "output.txt";
-    cmd->file_out = "output.txt";
-    cmd->end_of_cmd = true;
-}
 
 int ft_in_out(char *file, int mode)
 {
