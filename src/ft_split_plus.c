@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:57:42 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/09 18:31:46 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/02/10 19:25:31 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ char	**ft_split_plus(char *str, char *charset)
 // 	char	**result;
 // 	int		i;
 
-// 	separeter = ", ";
+// 	separeter = "\t ";
 // 	result = ft_split_plus(string, separeter);
 // 	i = 0;
 // 	while (result[i] != NULL)
