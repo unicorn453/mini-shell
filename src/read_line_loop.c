@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/11 14:30:47 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/02/12 14:32:08 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int main_loop(char **envp)
 	while (1)
 	{
 		line = readline("minishell> ");
-		// line = "ls -l | wc";
+		// line = "yes \"no\" | head -n 10";
 		gc_track(line);
 		if (line == NULL)
 		{

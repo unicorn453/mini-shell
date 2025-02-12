@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/11 14:20:19 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/02/12 16:03:09 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct s_cmd
 	char						*file_in;
 	char						*file_out;
 	bool						end_of_cmd;
+	bool 					  heredoc;
 }								t_cmd;
 
 typedef struct s_path
@@ -72,6 +73,11 @@ char							**ft_split_plus(char *str, char *charset);
 ** basic_exec.c
 ** This file contains the functions for executing the commands
 */
+void    handle_input_redirection(t_cmd *cmd, int *fd_in);
+
+void    handle_output_redirection(t_cmd *cmd, bool last_child, int *fd_out,
+        int fd_pipe[2]);
+		void    execute_command(t_cmd *cmd);
 //---------ft_find_cmd_path.c---------//
 t_path							*initialize_path(void);
 void							free_paths(t_path *path, int error_bool);
@@ -83,5 +89,8 @@ int								find_right_exec(t_cmd *cmd);
 void							init_def_cmd(t_cmd *cmd, char **envp);
 void							init_cmd_stack(t_cmd *cmd, char **envp,
 									char **parsed_string);
+
+//---------ft_heredoc.c---------//
+void handle_heredoc(t_cmd *cmd, int *fd_out);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_init_cmd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/11 14:40:31 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/02/12 16:06:28 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,39 +51,38 @@ void init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
     int i = 0, arg_index = 0;
     int command_done = -1;
     
-    // Allocate space for command and arguments
-    cmd->cmd = malloc(sizeof(char *) * 100); // Allocate for 10 arguments initially
+    cmd->cmd = malloc(sizeof(char *) * 100);
     if (!cmd->cmd)
         return;
-
     while (parsed_string[i] != NULL)
     {
-      
-        if (strcmp(parsed_string[i], "|") == 0) // Pipe found, execute and continue parsing
+        if (strcmp(parsed_string[i], "|") == 0)
         {
-            cmd->pipe = true;  // Mark current command as piped
+            cmd->pipe = true;
             cmd->end_of_cmd = false;
             i++; 
 
-            cmd->cmd[arg_index] = NULL; // Null-terminate command list before execution
-            // print_stack(*cmd);
+            cmd->cmd[arg_index] = NULL;
             
-            command_done = find_right_exec(cmd); // Execute current command
-            // command_done = 0; // Simulated success
+            command_done = find_right_exec(cmd);
 
-            if (command_done == 0) // If executed successfully, continue parsing
+            if (command_done == 0)
             {
 				init_def_cmd(cmd, envp);
-                cmd->pipe = true; // Set the new command as piped (receiving from previous)
-				  print_stack(*cmd);
+                cmd->pipe = true;
                 init_cmd_stack(cmd, envp, parsed_string + i);
             }
-            return; // Stop parsing in this function call
+            return;
         }
-
-        // Handle input redirection
+        
         if (strcmp(parsed_string[i], "<") == 0)
         {
+          if (parsed_string[i + 1] == NULL)  
+    {
+        const char *error_msg = "syntax error near unexpected token 'newline'\n";
+        write(STDERR_FILENO, error_msg, strlen(error_msg));
+        exit(2);
+    }
             if (parsed_string[i + 1])
             {
                 cmd->redir_in = true;
@@ -92,9 +91,14 @@ void init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
                 continue;
             }
         }
-        // Handle output redirection
         else if (strcmp(parsed_string[i], ">") == 0)
         {
+            if (parsed_string[i + 1] == NULL)  
+    {
+        const char *error_msg = "syntax error near unexpected token 'newline'\n";
+        write(STDERR_FILENO, error_msg, strlen(error_msg));
+        exit(2);
+    }
             if (parsed_string[i + 1])
             {
                 cmd->redir_out = true;
@@ -103,9 +107,14 @@ void init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
                 continue;
             }
         }
-        // Handle append redirection
         else if (strcmp(parsed_string[i], ">>") == 0)
         {
+            if (parsed_string[i + 1] == NULL)  
+    {
+        const char *error_msg = "syntax error near unexpected token 'newline'\n";
+        write(STDERR_FILENO, error_msg, strlen(error_msg));
+        exit(2);
+    }
             if (parsed_string[i + 1])
             {
                 cmd->redir_append = true;
@@ -114,9 +123,25 @@ void init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
                 continue;
             }
         }
-        else // It's a command or an argument
+        else if (strcmp(parsed_string[i], "<<") == 0)
         {
-            if (arg_index == 0) // First argument is the command itself
+           if (parsed_string[i + 1] == NULL)  
+    {
+        const char *error_msg = "syntax error near unexpected token 'newline'\n";
+        write(STDERR_FILENO, error_msg, strlen(error_msg));
+        exit(2);
+    }
+            if (parsed_string[i + 1])
+            {
+                cmd->heredoc = true;
+                cmd->delimiter = parsed_string[i + 1];
+                i += 2;
+                continue;
+            }
+        }
+        else
+        {
+            if (arg_index == 0)
                 cmd->cmd[0] = find_command_path(parsed_string[i], envp);
             else
                 cmd->cmd[arg_index] = parsed_string[i];
@@ -127,13 +152,13 @@ void init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
         }
     }
 
-    cmd->cmd[arg_index] = NULL; // Ensure null termination
-
-    if (parsed_string[i] == NULL) // End of input
+    cmd->cmd[arg_index] = NULL;
+fprintf(stderr, "cmd[0]: %s\n", cmd->cmd[0]);
+    if (parsed_string[i] == NULL)
     {
-        if (cmd->pipe == false) // If no pipe, execute last command
+        if (cmd->pipe == false)
             cmd->end_of_cmd = true;
 
-        find_right_exec(cmd); // Execute last command
+        find_right_exec(cmd);
     }
 }
