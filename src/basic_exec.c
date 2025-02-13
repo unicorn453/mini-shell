@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/12 16:07:10 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/13 17:50:17 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,6 @@ void    handle_input_redirection(t_cmd *cmd, int *fd_in)
     {
 		if(*fd_in != -1)
 			close(*fd_in);
-		fprintf(stderr, "file_in: %s\n", cmd->file_in);
         *fd_in = open(cmd->file_in, O_RDONLY);
         if (*fd_in < 0)
         {
@@ -146,34 +145,29 @@ void    handle_input_redirection(t_cmd *cmd, int *fd_in)
     }
 }
 
-void    handle_output_redirection(t_cmd *cmd, bool last_child, int *fd_out,
-        int fd_pipe[2])
+void handle_output_redirection(t_cmd *cmd, bool last_child, int *fd_out, int fd_pipe[2])
 {
-    if (cmd->redir_out)
-    {
+    if (cmd->redir_append)
+        *fd_out = open(cmd->file_out, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    else if (cmd->redir_out) 
         *fd_out = open(cmd->file_out, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        
+    if (cmd->redir_append || cmd->redir_out)
+    {
         if (*fd_out != -1)
         {
-            dup2(*fd_out, 1);
+            dup2(*fd_out, STDOUT_FILENO);
             close(*fd_out);
         }
     }
     else if (!last_child)
     {
-        dup2(fd_pipe[1], 1);
-        close(fd_pipe[1]);
+        dup2(fd_pipe[1], STDOUT_FILENO);
     }
-    else if (last_child && cmd->redir_append)
-    {
-        *fd_out = open(cmd->file_out, O_WRONLY | O_CREAT | O_APPEND, 0644);
-        if (*fd_out != -1)
-        {
-            dup2(*fd_out, 1);
-            close(*fd_out);
-        }
-    }
-    if (!last_child)
+
+    if (!cmd->redir_append && !cmd->redir_out && !last_child)
         close(fd_pipe[0]);
+    close(fd_pipe[1]);
 }
 
 void    execute_command(t_cmd *cmd)
@@ -187,7 +181,7 @@ void    execute_command(t_cmd *cmd)
 
 void    exec_pipes(t_cmd *cmd, int *fd_in, bool last_child)
 {
-    int     fd_out;
+    // int     fd_out;
     int     fd_pipe[2];
     pid_t   pid;
     int     status;
@@ -206,9 +200,9 @@ void    exec_pipes(t_cmd *cmd, int *fd_in, bool last_child)
     if (pid == 0)
     {
         handle_input_redirection(cmd, fd_in);
-        handle_output_redirection(cmd, last_child, &fd_out, fd_pipe);
+        handle_output_redirection(cmd, last_child, fd_in, fd_pipe);
         execute_command(cmd);
-        handle_heredoc(cmd, &fd_out);
+        // handle_heredoc(cmd, &fd_out);
         exit(EXIT_SUCCESS);
     }
     else
@@ -221,28 +215,3 @@ void    exec_pipes(t_cmd *cmd, int *fd_in, bool last_child)
         waitpid(pid, &status, 0);
     }
 }
-
-// int main(int argc, char **argv, char **envp)
-// {
-//     t_cmd   cmd;
-//     int     command_done;
-
-
-//     (void)argc;
-//     (void)argv;
-//     command_done = -1;
-//     init_cmd(&cmd, envp);
-//     command_done = find_right_exec(&cmd);
-//     if (command_done == 0)
-//     {
-//         init_second_cmd(&cmd, envp);
-//         find_right_exec(&cmd);
-// 		command_done = 1;
-//     }
-// 	if (command_done == 1)
-// 	{
-// 		init_third_cmd(&cmd, envp);
-// 		find_right_exec(&cmd);
-// 	}
-//     return (0);
-// }
