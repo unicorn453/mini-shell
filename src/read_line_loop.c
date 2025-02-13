@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/12 14:32:08 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/13 17:36:12 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	main_parsing(char *line, char **envp)
 	tokens = ft_split_plus(line," \t\n"); // the delimitors are space, tab and newline it aint random input.
 	if (tokens == NULL)
 		return(perror("Minishell: memory allocation error"), -1);
-	// init_def_cmd(current_cmd, envp);
+	init_def_cmd(current_cmd, envp);
 	init_cmd_stack(current_cmd, envp, tokens);
 	return 0;
 }
@@ -36,7 +36,7 @@ int	main_parsing(char *line, char **envp)
 int main_loop(char **envp)
 {
 	char	*line;
-	(void)envp;
+	// (void)envp;
 	while (1)
 	{
 		line = readline("minishell> ");

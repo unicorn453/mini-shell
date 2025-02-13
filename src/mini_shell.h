@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/12 16:03:09 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/13 13:45:27 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,5 +92,9 @@ void							init_cmd_stack(t_cmd *cmd, char **envp,
 
 //---------ft_heredoc.c---------//
 void handle_heredoc(t_cmd *cmd, int *fd_out);
+
+//---------ft_error.c---------//
+void check_error_status(char **parsed_string, int i);
+char *handle_token_search(int i, char **parsed_string, t_cmd *cmd);
 
 #endif

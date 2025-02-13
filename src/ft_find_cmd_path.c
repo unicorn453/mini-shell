@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:49:03 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/10 13:54:36 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/13 17:12:17 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ t_path	*initialize_path(void)
 {
 	t_path	*path;
 
-	path = malloc(sizeof(t_path));
+	path = gc_malloc(sizeof(t_path));
 	if (!path)
 	{
 		path = NULL;
@@ -100,12 +100,12 @@ char	*find_command_path(char *cmd, char **envp)
 		path->i++;
 	}
 	if (!path->path_env)
-		return (free(path), ret_str = NULL, ret_str);
+		return (ret_str = NULL, ret_str);
 	path->paths = ft_split(path->path_env, ':');
 	if (!path->paths)
-		return (free(path), ret_str = NULL, ret_str);
+		return (ret_str = NULL, ret_str);
 	path->full_path = add_permission_free_path(path, cmd);
 	if (path->full_path)
 		return (path->full_path);
-	return (free_paths(path, 0), free(path), ret_str = NULL, ret_str);
+	return (free_paths(path, 0), ret_str = NULL, ret_str);
 }
