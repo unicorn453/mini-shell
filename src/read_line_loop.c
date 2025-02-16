@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/13 17:36:12 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/14 14:04:15 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,12 @@ int	main_parsing(char *line, char **envp)
 	tokens = ft_split_plus(line," \t\n"); // the delimitors are space, tab and newline it aint random input.
 	if (tokens == NULL)
 		return(perror("Minishell: memory allocation error"), -1);
+	quote_parsing(tokens);
+	// int i = -1;
+	// while(tokens[++i] != NULL)
+	// {
+	// 	printf("%s\n", tokens[i]);
+	// }
 	init_def_cmd(current_cmd, envp);
 	init_cmd_stack(current_cmd, envp, tokens);
 	return 0;

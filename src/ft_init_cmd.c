@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_init_cmd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/13 17:29:55 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/15 16:33:48 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
     while (parsed_string[parsed_size] != NULL) 
         parsed_size++;
 
-    cmd->cmd = gc_malloc(sizeof(char *) * 100);
+    cmd->cmd = gc_malloc(sizeof(char *) * parsed_size);
     if (!cmd->cmd)
         return;
 
@@ -66,16 +66,11 @@ void init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
             // cmd->end_of_cmd = false;
             i++;
 
-            cmd->cmd[arg_index] = NULL;
-
-            command_done = find_right_exec(cmd);
-
-            if (command_done == 0)
-            {
+                cmd->cmd[arg_index] = NULL;
+                command_done = find_right_exec(cmd);
                 init_def_cmd(cmd, envp);
                 cmd->pipe = true;
                 init_cmd_stack(cmd, envp, parsed_string + i);
-            }
             return;
         }
 

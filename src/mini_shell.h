@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/13 13:45:27 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/14 14:55:17 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,12 @@ typedef struct s_path
 	char						*temp;
 }								t_path;
 
+typedef struct s_env
+{
+    char            *key;
+    char            *value;
+    struct s_env    *next;
+} t_env;
 //------------------------------//
 
 //---------GC_functions---------//
@@ -78,6 +84,7 @@ void    handle_input_redirection(t_cmd *cmd, int *fd_in);
 void    handle_output_redirection(t_cmd *cmd, bool last_child, int *fd_out,
         int fd_pipe[2]);
 		void    execute_command(t_cmd *cmd);
+		
 //---------ft_find_cmd_path.c---------//
 t_path							*initialize_path(void);
 void							free_paths(t_path *path, int error_bool);
@@ -90,6 +97,9 @@ void							init_def_cmd(t_cmd *cmd, char **envp);
 void							init_cmd_stack(t_cmd *cmd, char **envp,
 									char **parsed_string);
 
+void	quote_parsing(char **tokens);
+
+char	*single_quote_handler(char *token);
 //---------ft_heredoc.c---------//
 void handle_heredoc(t_cmd *cmd, int *fd_out);
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   basic_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/13 17:50:17 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/15 15:09:29 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,3 +215,13 @@ void    exec_pipes(t_cmd *cmd, int *fd_in, bool last_child)
         waitpid(pid, &status, 0);
     }
 }
+
+	// i = 0;
+	// while (token++)
+	// {
+	// 	if (*token == '\'')
+	// 		i++;
+	// }
+	// if ((i & 1) != 1)
+	// 	return(perror("Minishell: Error: unclosed, single qoute"), NULL);
+	// new_token = gc_malloc(ft_strlen(token) - i + 1);

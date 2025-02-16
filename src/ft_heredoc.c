@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_heredoc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/13 17:38:22 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/15 16:41:01 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ void handle_heredoc(t_cmd *cmd, int *fd_out)
                 free(line);
                 break;
             }
-            
             if (write(*fd_out, line, strlen(line)) == -1 || write(*fd_out, "\n", 1) == -1)
             {
                 perror("write failed");
