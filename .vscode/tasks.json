@@ -17,6 +17,7 @@
                 "${fileDirname}/ft_init_cmd.c",
                 "${fileDirname}/garbage_collector.c",
                 "${fileDirname}/ft_heredoc.c",
+                "${fileDirname}/ft_error.c",
                 // "${fileDirname}/libft/ft_split.c",
                 // "${fileDirname}/libft/ft_strjoin.c",
                 // "${fileDirname}/libft/ft_strncmp.c",
@@ -24,7 +25,7 @@
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
                 "-lreadline",
-                "-L/Users/kruseva/Desktop/AllProjects/mini-hell/libft", // Update this path
+                "-L/Users/Home/Downloads/mini-hell/libft", // Update this path
                 "-lft"
             ],
             "options": {

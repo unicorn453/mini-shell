@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/13 17:36:12 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/15 16:43:32 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,37 +14,37 @@
 
 int	main_parsing(char *line, char **envp)
 {
-	t_cmd	*current_cmd;
+	t_cmd		*current_cmd;
 	static char	**tokens;
+
 	(void)envp;
-	// int		i;
-	
 	current_cmd = gc_malloc(sizeof(t_cmd));
 	if (current_cmd == NULL)
 	{
 		perror("Minishell: memory allocation error\n");
 		exit(1);
 	}
-	tokens = ft_split_plus(line," \t\n"); // the delimitors are space, tab and newline it aint random input.
+	tokens = ft_split_plus(line, " \t\n");
 	if (tokens == NULL)
-		return(perror("Minishell: memory allocation error"), -1);
+		return (perror("Minishell: memory allocation error"), -1);
 	init_def_cmd(current_cmd, envp);
 	init_cmd_stack(current_cmd, envp, tokens);
-	return 0;
+	wait_for_all_children(current_cmd);
+	return (0);
 }
 
-int main_loop(char **envp)
+int	main_loop(char **envp)
 {
 	char	*line;
-	// (void)envp;
+
 	while (1)
 	{
 		line = readline("minishell> ");
-		// line = "yes \"no\" | head -n 10";
+		// line = "ls | wc";
 		gc_track(line);
 		if (line == NULL)
 		{
-			write(1,"\nExiting minishell...\n",22);
+			write(1, "\nExiting minishell...\n", 22);
 			break ;
 		}
 		if (*line != '\0')
@@ -59,5 +59,4 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	main_loop(envp);
-	
 }
