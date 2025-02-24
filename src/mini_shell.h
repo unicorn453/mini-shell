@@ -6,13 +6,13 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/15 16:43:18 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/24 18:01:17 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINI_SHELL_H
 # define MINI_SHELL_H
-#define MAX_PIPES 100
+# define MAX_PIPES 100
 //-----------includes-----------//
 
 # include "../libft/libft.h"
@@ -101,6 +101,8 @@ void							init_cmd_stack(t_cmd *cmd, char **envp,
 
 //---------ft_heredoc.c---------//
 void							handle_heredoc(t_cmd *cmd, int *fd_out);
+void							ft_heredoc_check(t_cmd *cmd, int pipefd[2],
+									int *fd_in, bool last_child);
 
 //---------ft_error.c---------//
 void							check_error_status(char **parsed_string, int i);

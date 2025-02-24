@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/15 16:40:51 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/24 18:00:22 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,32 +42,6 @@ int	ft_in_out(char *file, int mode)
 		fd = -1;
 	}
 	return (fd);
-}
-
-void	ft_heredoc_check(t_cmd *cmd, int pipefd[2], int *fd_in, bool last_child)
-{
-	(void)last_child;
-	if (cmd->heredoc)
-	{
-		if (pipe(pipefd) == -1)
-		{
-			perror("pipe");
-			exit(EXIT_FAILURE);
-		}
-		handle_heredoc(cmd, &pipefd[1]);
-		close(pipefd[1]);
-		if (cmd->redir_in)
-			handle_input_redirection(cmd, fd_in);
-		else
-		{
-			dup2(pipefd[0], STDIN_FILENO);
-			close(pipefd[0]);
-		}
-		if (cmd->redir_out)
-			handle_output_redirection(cmd, last_child, fd_in, pipefd);
-		if (cmd->cmd[0] != NULL)
-			execute_command(cmd);
-	}
 }
 
 void	exec_cmd(t_cmd *cmd, int *fd_in, bool last_child)
@@ -190,7 +164,6 @@ void	handle_output_redirection(t_cmd *cmd, bool last_child, int *fd_out,
 
 void	execute_command(t_cmd *cmd)
 {
-
 	if (execve(cmd->cmd[0], cmd->cmd, cmd->envp) == -1)
 	{
 		perror("execve");
