@@ -9,19 +9,21 @@ SRC = ft_isalpha.o ft_isdigit.o ft_isalnum.o ft_isascii.o ft_isprint.o \
 	  ft_calloc.o ft_split.o ft_itoa.o ft_strdup.o \
 	  ft_strmapi.o ft_striteri.o ft_putstr_fd.o ft_putendl_fd.o \
 	  ft_putchar_fd.o ft_putnbr_fd.o ft_printf/ft_print_hex.o\
-	  ft_printf/ft_print_num.o ft_printf/ft_printf.o
+	  ft_printf/ft_print_num.o ft_printf/ft_printf.o \
+	  ft_gnl/get_next_line.o ft_gnl/get_next_line_utils.o
 
 OBJ = $(SRC:.o=.o)
 NAME = libft.a
 HEADER = libft.h
 PRINTF_HEADER = ft_printf/ft_printf.h
+GNL_HEADER = ft_gnl/get_next_line.h
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	@ar rcs $@ $^  # Archive command to create the static library
 
-%.o: %.c $(HEADER) $(PRINTF_HEADER)
+%.o: %.c $(HEADER) $(PRINTF_HEADER) $(GNL_HEADER)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
