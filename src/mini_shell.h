@@ -6,13 +6,13 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/14 14:55:17 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/02/25 09:56:04 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINI_SHELL_H
 # define MINI_SHELL_H
-
+# define MAX_PIPES 100
 //-----------includes-----------//
 
 # include "../libft/libft.h"
@@ -48,7 +48,9 @@ typedef struct s_cmd
 	char						*file_in;
 	char						*file_out;
 	bool						end_of_cmd;
-	bool 					  heredoc;
+	bool						heredoc;
+	int							pid[MAX_PIPES];
+	int							index;
 }								t_cmd;
 
 typedef struct s_path
@@ -79,12 +81,12 @@ char							**ft_split_plus(char *str, char *charset);
 ** basic_exec.c
 ** This file contains the functions for executing the commands
 */
-void    handle_input_redirection(t_cmd *cmd, int *fd_in);
+void							handle_input_redirection(t_cmd *cmd,
+									int *fd_in);
 
 void    handle_output_redirection(t_cmd *cmd, bool last_child, int *fd_out,
         int fd_pipe[2]);
 		void    execute_command(t_cmd *cmd);
-		
 //---------ft_find_cmd_path.c---------//
 t_path							*initialize_path(void);
 void							free_paths(t_path *path, int error_bool);
@@ -101,10 +103,13 @@ void	quote_parsing(char **tokens);
 
 char	*single_quote_handler(char *token);
 //---------ft_heredoc.c---------//
-void handle_heredoc(t_cmd *cmd, int *fd_out);
+void							handle_heredoc(t_cmd *cmd, int *fd_out);
+void							ft_heredoc_check(t_cmd *cmd, int pipefd[2],
+									int *fd_in, bool last_child);
 
 //---------ft_error.c---------//
-void check_error_status(char **parsed_string, int i);
-char *handle_token_search(int i, char **parsed_string, t_cmd *cmd);
+void							check_error_status(char **parsed_string, int i);
+char							*handle_token_search(int i,
+									char **parsed_string, t_cmd *cmd);
 
 #endif
