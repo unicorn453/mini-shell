@@ -6,72 +6,84 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/24 18:01:45 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/28 19:45:36 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-void handle_heredoc(t_cmd *cmd, int *fd_out)
+int handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
 {
-    int file_fd;
     char *line;
-    char *g_line;
+    int my_out = -1;
 
-    if (cmd->heredoc)
+    if (cmd->delimiter == NULL)
     {
-        if (cmd->delimiter == NULL)
+        perror("No delimiter found");
+        exit(EXIT_FAILURE);
+    }
+
+    // Open temporary file for heredoc content (unique file)
+    my_out = open("file", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (my_out < 0)
+    {
+        perror("Error opening output file for heredoc");
+        exit(EXIT_FAILURE);
+    }
+
+    // Read lines and write them to the file until delimiter is encountered
+    while (1)
+    {
+        line = readline("> ");
+        if (!line || strcmp(line, cmd->delimiter) == 0)
         {
-            perror("No delimiter found");
-            exit(EXIT_FAILURE);
+            free(line);
+            break;  // Exit when delimiter is found
         }
-        if (cmd->redir_in && cmd->file_in)
+
+        if (!cmd->end_of_cmd)  // If no file descriptor passed, write to my_out
         {
-            file_fd = open(cmd->file_in, O_RDONLY);
-            if (file_fd < 0)
+            if (write(my_out, line, strlen(line)) == -1 || write(my_out, "\n", 1) == -1)
             {
-                perror("Error opening input file");
-                exit(EXIT_FAILURE);
-            }
-            while ((g_line = get_next_line(file_fd)) != NULL)
-            {
-                write(*fd_out, g_line, strlen(g_line));
-                free(g_line);
-            }
-            close(file_fd);
-        }
-        while (1)
-        {
-            line = readline("heredoc> ");
-            if (line == NULL || strcmp(line, cmd->delimiter) == 0)
-            {
+                perror("write failed");
                 free(line);
                 break;
             }
-
+        }
+        else  // If file descriptor is passed, write to it
+        {
             if (write(*fd_out, line, strlen(line)) == -1 || write(*fd_out, "\n", 1) == -1)
             {
                 perror("write failed");
                 free(line);
                 break;
             }
-            free(line);
         }
 
-        close(*fd_out);
+        free(line);
     }
+
+    if (cmd->end_of_cmd || last_heredoc)
+        close(my_out);
+        
+        close(my_out);
+
+
+    return my_out;
 }
 
-void ft_heredoc_check(t_cmd *cmd, int pipefd[2], int *fd_in, bool last_child)
+
+
+int ft_heredoc_check(t_cmd *cmd, int pipefd[2], bool last_child, bool last_heredoc)
 {
     (void)last_child;
-    (void)fd_in;
-    int file_fd;
-	char *line;
+    int file_fd = -1;
 
-    if (cmd->redir_out && cmd->file_out)
+    if ((cmd->redir_out || cmd->redir_append) && cmd->file_out)
     {
-        file_fd = open(cmd->file_out, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        file_fd = open(cmd->file_out,
+                       O_WRONLY | O_CREAT | (cmd->redir_append ? O_APPEND : O_TRUNC),
+                       0644);
         if (file_fd < 0)
         {
             perror("Error opening output file");
@@ -79,33 +91,26 @@ void ft_heredoc_check(t_cmd *cmd, int pipefd[2], int *fd_in, bool last_child)
         }
     }
 
-    if (cmd->heredoc)
+    if (pipe(pipefd) == -1)
     {
-        if (pipe(pipefd) == -1)
-        {
-            perror("pipe");
-            exit(EXIT_FAILURE);
-        }
-
-        handle_heredoc(cmd, &pipefd[1]);
-        close(pipefd[1]);
-			
-		if(cmd->redir_in || cmd->redir_out)
-		{
-		while((line = get_next_line(pipefd[0])) != NULL)
-		{
-			if(!cmd->redir_out)
-			write(STDOUT_FILENO, line, strlen(line));
-			else
-			write(file_fd, line, strlen(line));
-			free(line);
-		}
-		close(file_fd);
-		}
-		dup2(pipefd[0], STDIN_FILENO);
-			close(pipefd[0]);
-
-        if (cmd->cmd[0] != NULL)
-            execute_command(cmd);
+        perror("pipe");
+        exit(EXIT_FAILURE);
     }
+
+    if (file_fd != -1)
+        handle_heredoc(cmd, &file_fd, last_heredoc);
+    else
+       file_fd = handle_heredoc(cmd, &pipefd[1], last_heredoc);
+
+    close(pipefd[1]);
+
+    if (last_child && dup2(pipefd[0], STDIN_FILENO) == -1)
+    {
+        perror("dup2 failed for heredoc");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("file_fd: %d\n", file_fd); 
+
+    return file_fd;  
 }
