@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/24 18:01:17 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/01 13:55:01 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct s_cmd
 	bool						heredoc;
 	int							pid[MAX_PIPES];
 	int							index;
+	bool						last_heredoc;
 }								t_cmd;
 
 typedef struct s_path
@@ -84,7 +85,7 @@ void							handle_output_redirection(t_cmd *cmd,
 void							execute_command(t_cmd *cmd);
 void							wait_for_all_children(t_cmd *cmd);
 void							exec_pipes(t_cmd *cmd, int *fd_in,
-									bool last_child);
+									int *fd_index, bool last_child);
 void							exec_cmd(t_cmd *cmd, int *fd_in,
 									bool last_child);
 //---------ft_find_cmd_path.c---------//
@@ -100,10 +101,8 @@ void							init_cmd_stack(t_cmd *cmd, char **envp,
 									char **parsed_string);
 
 //---------ft_heredoc.c---------//
-void							handle_heredoc(t_cmd *cmd, int *fd_out);
-void							ft_heredoc_check(t_cmd *cmd, int pipefd[2],
-									int *fd_in, bool last_child);
-
+int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
+									bool last_child, bool last_heredoc);
 //---------ft_error.c---------//
 void							check_error_status(char **parsed_string, int i);
 char							*handle_token_search(int i,

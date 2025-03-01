@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/15 16:43:32 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/27 16:01:40 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,7 @@ int	main_loop(char **envp)
 		line = readline("minishell> ");
 		// line = "ls | wc";
 		gc_track(line);
-		if (line == NULL)
-		{
-			write(1, "\nExiting minishell...\n", 22);
-			break ;
-		}
+
 		if (*line != '\0')
 			add_history(line);
 		main_parsing(line, envp);
