@@ -42,11 +42,7 @@ int	main_loop(char **envp)
 		line = readline("minishell> ");
 		// line = "ls | wc";
 		gc_track(line);
-		// if (line == NULL)
-		// {
-		// 	write(1, "\nExiting minishell...\n", 22);
-		// 	break ;
-		// }
+
 		if (*line != '\0')
 			add_history(line);
 		main_parsing(line, envp);
