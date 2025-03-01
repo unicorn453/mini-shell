@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/28 19:45:36 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/01 13:54:21 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,26 +22,22 @@ int handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
         perror("No delimiter found");
         exit(EXIT_FAILURE);
     }
-
-    // Open temporary file for heredoc content (unique file)
     my_out = open("file", O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (my_out < 0)
     {
         perror("Error opening output file for heredoc");
         exit(EXIT_FAILURE);
     }
-
-    // Read lines and write them to the file until delimiter is encountered
     while (1)
     {
         line = readline("> ");
         if (!line || strcmp(line, cmd->delimiter) == 0)
         {
             free(line);
-            break;  // Exit when delimiter is found
+            break;
         }
 
-        if (!cmd->end_of_cmd)  // If no file descriptor passed, write to my_out
+        if (!cmd->end_of_cmd)
         {
             if (write(my_out, line, strlen(line)) == -1 || write(my_out, "\n", 1) == -1)
             {
@@ -50,7 +46,7 @@ int handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
                 break;
             }
         }
-        else  // If file descriptor is passed, write to it
+        else
         {
             if (write(*fd_out, line, strlen(line)) == -1 || write(*fd_out, "\n", 1) == -1)
             {
@@ -66,9 +62,6 @@ int handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
     if (cmd->end_of_cmd || last_heredoc)
         close(my_out);
         
-        close(my_out);
-
-
     return my_out;
 }
 
@@ -104,13 +97,12 @@ int ft_heredoc_check(t_cmd *cmd, int pipefd[2], bool last_child, bool last_hered
 
     close(pipefd[1]);
 
-    if (last_child && dup2(pipefd[0], STDIN_FILENO) == -1)
+    if ((last_child || last_heredoc) && dup2(pipefd[0], STDIN_FILENO) == -1)
     {
         perror("dup2 failed for heredoc");
         exit(EXIT_FAILURE);
     }
-
-    printf("file_fd: %d\n", file_fd); 
-
+    if (last_child || last_heredoc)
+        close(pipefd[0]);
     return file_fd;  
 }
