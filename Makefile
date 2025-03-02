@@ -6,7 +6,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 MINI_SHELL_SRC = src/main.c src/basic_exec.c src/parsing/input_parsing.c src/read_line_loop.c src/ft_split_plus.c \
                  src/ft_find_cmd_path.c src/ft_init_cmd.c src/garbage_collector.c src/env_variables.c \
-				 src/ft_heredoc.c src/ft_error.c src/builtins/export.c
+				 src/ft_heredoc.c src/ft_error.c src/builtins/export.c src/check.c
 
 MINI_SHELL_EXE = minishell
 

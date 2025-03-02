@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/02 16:27:07 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/02 17:43:06 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,21 @@ int ft_in_out(char *file, int mode)
     if (mode == 0)
     {
         fd = open(file, O_RDONLY);
-        if (fd < 0)
+        // CHECK(fd < 0, 1);
+        if(fd < 0)
         {
-            perror("Error opening input file");
-            return (-1);
+            perror("open failed");
+            exit(EXIT_FAILURE);
         }
     }
     else if (mode == 1)
     {
         fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (fd < 0)
+        // CHECK(fd < 0, 1, file);
+        if(fd < 0)
         {
-            perror("Error opening output file");
-            return (-1);
+            perror("open failed");
+            exit(EXIT_FAILURE);
         }
     }
     else
@@ -44,13 +46,9 @@ void exec_cmd(t_cmd *cmd, int fd_in[1024], bool last_child)
     int pipefd[2];
     pid_t pid;
 
-    (void)last_child;
-    if (pipe(pipefd) == -1)
-    {
-        perror("pipe");
-        exit(EXIT_FAILURE);
-    }
+    CHECK(pipe(pipefd) == -1, 1);
     pid = fork();
+    CHECK(pid < 0, 1);
     if (pid == 0)
     {
         if (cmd->heredoc)
@@ -79,11 +77,7 @@ void exec_cmd(t_cmd *cmd, int fd_in[1024], bool last_child)
             }
             else if (!last_child)
             {
-                if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-                {
-                    perror("dup2 pipe output");
-                    exit(EXIT_FAILURE);
-                }
+                CHECK(dup2(pipefd[1], STDOUT_FILENO) == -1, 1);
                 close(pipefd[1]);
             }
             if (!cmd->redir_append && !cmd->redir_out && !last_child)
@@ -91,11 +85,6 @@ void exec_cmd(t_cmd *cmd, int fd_in[1024], bool last_child)
             execute_command(cmd);
             exit(EXIT_SUCCESS);
         }
-    }
-    else if (pid < 0)
-    {
-        perror("fork");
-        exit(EXIT_FAILURE);
     }
     cmd->pid[cmd->index++] = pid;
     close(pipefd[1]);
@@ -133,9 +122,13 @@ void handle_input_redirection(t_cmd *cmd, int *fd_in)
         if (*fd_in != -1)
             close(*fd_in);
         *fd_in = open(cmd->file_in, O_RDONLY);
-        if (*fd_in < 0)
+        if(*fd_in < 0)
         {
-            perror("Error opening input file");
+            write(STDERR_FILENO, "minishell: ", 11);
+            write(STDERR_FILENO, cmd->file_in, ft_strlen(cmd->file_in));
+            write(STDERR_FILENO, ": ", 2);
+            write(STDERR_FILENO, strerror(errno), ft_strlen(strerror(errno)));
+            write(STDERR_FILENO, "\n", 1);
             exit(EXIT_FAILURE);
         }
         dup2(*fd_in, STDIN_FILENO);
@@ -157,28 +150,13 @@ void handle_output_redirection(t_cmd *cmd, bool last_child, int *fd_out,
         *fd_out = open(cmd->file_out, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (cmd->redir_append || cmd->redir_out)
     {
-        if (*fd_out != -1)
-        {
-            if (dup2(*fd_out, STDOUT_FILENO) == -1)
-            {
-                perror("dup2 output redirection");
-                exit(EXIT_FAILURE);
-            }
-            close(*fd_out);
-        }
-        else
-        {
-            perror("open file for redirection");
-            exit(EXIT_FAILURE);
-        }
+        CHECK(*fd_out < 0, 1);
+        CHECK(dup2(*fd_out, STDOUT_FILENO) == -1, 1);
+        close(*fd_out);
     }
     else if (!last_child)
     {
-        if (dup2(fd_pipe[1], STDOUT_FILENO) == -1)
-        {
-            perror("dup2 pipe output");
-            exit(EXIT_FAILURE);
-        }
+        CHECK(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
         close(fd_pipe[1]);
     }
     if (!cmd->redir_append && !cmd->redir_out && !last_child)
@@ -187,12 +165,15 @@ void handle_output_redirection(t_cmd *cmd, bool last_child, int *fd_out,
 
 void execute_command(t_cmd *cmd)
 {
-    if (execve(cmd->cmd[0], cmd->cmd, cmd->envp) == -1)
+    if(execve(cmd->cmd[0], cmd->cmd, cmd->envp) == -1)
     {
-        perror("execve");
-        exit(EXIT_FAILURE);
+        char *error_msg = ": command not found";
+        write(STDERR_FILENO, "minishell: ", 11);
+        write(STDERR_FILENO, cmd->cmd[0], ft_strlen(cmd->cmd[0]));
+        write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
+        write(STDERR_FILENO, "\n", 1);
+        exit(127);
     }
-    return;
 }
 
 void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, bool last_child)
@@ -203,18 +184,10 @@ void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, bool last_child)
     int status;
     (void)fd_index;
 
-    if (!last_child && pipe(fd_pipe) == -1)
-    {
-        perror("pipe");
-        exit(EXIT_FAILURE);
-    }
+    CHECK(!last_child && pipe(fd_pipe) == -1, 1);
 
     pid = fork();
-    if (pid == -1)
-    {
-        perror("fork");
-        exit(EXIT_FAILURE);
-    }
+    CHECK(pid < 0, 1);
 
     if (pid == 0)
     {
@@ -238,24 +211,14 @@ void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, bool last_child)
             handle_input_redirection(cmd, &fd_in[0]);
         else if (fd_in[0] != -1 && !cmd->heredoc)
         {
-            if (dup2(fd_in[0], STDIN_FILENO) == -1)
-            {
-                perror("dup2 stdin (pipe input)");
-                exit(EXIT_FAILURE);
-            }
+            CHECK(dup2(fd_in[0], STDIN_FILENO) == -1, 1);
             close(fd_in[0]);
         }
 
         if (cmd->redir_out || cmd->redir_append)
             handle_output_redirection(cmd, last_child, &fd_in[0], fd_pipe);
         else if (!last_child && !cmd->heredoc)
-        {
-            if (dup2(fd_pipe[1], STDOUT_FILENO) == -1)
-            {
-                perror("dup2 stdout (pipe output)");
-                exit(EXIT_FAILURE);
-            }
-        }
+            CHECK(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
 
         close(fd_pipe[0]);
         close(fd_pipe[1]);

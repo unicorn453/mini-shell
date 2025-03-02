@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/02 17:36:11 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/02 17:43:30 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,12 @@
 # include <string.h>
 # include <sys/wait.h>
 # include <unistd.h>
+
+//---------ft_error_handling.c---------//
+
+void check(int retval, int exit_code);
+
+# define CHECK(x, code) check((x), (code))
 
 //--------end_of_includes-------//
 

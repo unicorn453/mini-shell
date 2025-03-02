@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/02 17:39:18 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/02 17:43:56 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,7 @@ int	main_parsing(char *line, char **envp, t_env *env_list)
 
 	(void)envp;
 	current_cmd = gc_malloc(sizeof(t_cmd));
-	if (current_cmd == NULL)
-	{
-		perror("Minishell: memory allocation error\n");
-		exit(1);
-	}
+	CHECK(current_cmd == NULL, 1);
 	tokens = ft_split_plus(line, " \t\n");
 	if (tokens == NULL)
 		return (perror("Minishell: memory allocation error"), -1);
@@ -40,11 +36,19 @@ int	main_loop(char **envp, t_env	*env_lis)
 
 	while (1)
 	{
-		line = readline("minishell> ");
-		// line = "ls | wc";
+		if (isatty(fileno(stdin)))
+			line = readline("minishell> ");
+		else
+		{
+			line = get_next_line(fileno(stdin));
+			char *trimmed_line = ft_strtrim(line, "\n");
+			free(line);
+			line = trimmed_line;
+		}
+		CHECK(line == NULL, 1);
 		gc_track(line);
 
-		if (*line != '\0')
+		if (*line != '\0' && isatty(fileno(stdin)))
 			add_history(line);
 		main_parsing(line, envp, env_lis); 
 	}
