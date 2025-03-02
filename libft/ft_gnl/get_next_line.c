@@ -3,31 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 11:00:43 by kruseva           #+#    #+#             */
-/*   Updated: 2024/11/22 10:22:14 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/02/25 10:51:38 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include "../libft.h"
+// char	*ft_strdup(const char *s1)
+// {
+// 	size_t	size;
+// 	char	*ptr;
 
-char	*ft_strdup(const char *s1)
-{
-	size_t	size;
-	char	*ptr;
-
-	size = str_len(s1);
-	ptr = malloc(size + 1);
-	if (!ptr)
-		return (NULL);
-	ft_strlcpy(ptr, s1, size + 1);
-	if (!ptr)
-	{
-		return (NULL);
-	}
-	return (ptr);
-}
+// 	size = str_len(s1);
+// 	ptr = malloc(size + 1);
+// 	if (!ptr)
+// 		return (NULL);
+// 	ft_strlcpy(ptr, s1, size + 1);
+// 	if (!ptr)
+// 	{
+// 		return (NULL);
+// 	}
+// 	return (ptr);
+// }
 
 static char	*extract_line(char **saved, int newline_index)
 {

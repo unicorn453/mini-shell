@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/02 13:33:55 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/02 17:43:56 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-int	main_parsing(char *line, char **envp)
+int	main_parsing(char *line, char **envp, t_env *env_list)
 {
 	t_cmd		*current_cmd;
 	static char	**tokens;
@@ -21,14 +21,16 @@ int	main_parsing(char *line, char **envp)
 	current_cmd = gc_malloc(sizeof(t_cmd));
 	CHECK(current_cmd == NULL, 1);
 	tokens = ft_split_plus(line, " \t\n");
-	CHECK(tokens == NULL, 1);
-	init_def_cmd(current_cmd, envp);
+	if (tokens == NULL)
+		return (perror("Minishell: memory allocation error"), -1);
+	main_parsing_loop(env_list, tokens);
+	init_def_cmd(current_cmd, envp, env_list);
 	init_cmd_stack(current_cmd, envp, tokens);
 	wait_for_all_children(current_cmd);
 	return (0);
 }
 
-int	main_loop(char **envp)
+int	main_loop(char **envp, t_env	*env_lis)
 {
 	char	*line;
 
@@ -48,14 +50,9 @@ int	main_loop(char **envp)
 
 		if (*line != '\0' && isatty(fileno(stdin)))
 			add_history(line);
-		main_parsing(line, envp);
+		main_parsing(line, envp, env_lis); 
 	}
 	return (1);
 }
 
-int	main(int argc, char **argv, char **envp)
-{
-	(void)argc;
-	(void)argv;
-	main_loop(envp);
-}
+

@@ -18,6 +18,8 @@
                 "${fileDirname}/garbage_collector.c",
                 "${fileDirname}/ft_heredoc.c",
                 "${fileDirname}/ft_error.c",
+                "${fileDirname}/env_variables.c",
+                "${fileDirname}/builtins/export.c",
                 // "${fileDirname}/libft/ft_split.c",
                 // "${fileDirname}/libft/ft_strjoin.c",
                 // "${fileDirname}/libft/ft_strncmp.c",
@@ -25,7 +27,7 @@
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
                 "-lreadline",
-                "-L/Users/Home/Downloads/mini-hell/libft", // Update this path
+                "-L/Users/dtrendaf/Projects/mini-shell/libft", // Update this path
                 "-lft"
             ],
             "options": {

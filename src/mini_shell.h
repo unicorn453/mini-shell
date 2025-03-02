@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/02 15:22:05 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/02 17:43:30 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct s_garbage_collector
 
 typedef struct s_cmd
 {
+	struct s_env 				*env_list;
 	char						*delimiter;
 	char						**cmd;
 	char						**envp;
@@ -69,14 +70,21 @@ typedef struct s_path
 	char						*temp;
 }								t_path;
 
+typedef struct s_env
+{
+    char            *key;
+    char            *value;
+    struct s_env    *next;
+} t_env;
 //------------------------------//
 
 //---------GC_functions---------//
 void							*gc_malloc(size_t size);
 void							gc_track(void *ptr);
 void							gc_free_all(void);
+void							gc_untrack(void *ptr);
 //------------------------------//
-int								main_loop(char **envp);
+int								main_loop(char **envp, t_env    *env_lis);
 char							**ft_split_plus(char *str, char *charset);
 /*
 ** basic_exec.c
@@ -102,7 +110,7 @@ char							*add_permission_free_path(t_path *path,
 char							*find_command_path(char *cmd, char **envp);
 //---------ft_init_cmd.c---------//
 int								find_right_exec(t_cmd *cmd);
-void							init_def_cmd(t_cmd *cmd, char **envp);
+void							init_def_cmd(t_cmd *cmd, char **envp, t_env     *env_list);
 void							init_cmd_stack(t_cmd *cmd, char **envp,
 									char **parsed_string);
 
@@ -113,5 +121,20 @@ int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
 void							check_error_status(char **parsed_string, int i);
 char							*handle_token_search(int i,
 									char **parsed_string, t_cmd *cmd);
+
+//-------input_parsing.c------//
+void    main_parsing_loop(t_env *env_list, char **tokens);
+char    *handle_env_var(t_env *env_list, char *token);
+char    *search_env_var(t_env *env_list, char *token);
+char    *double_quotes_handler(t_env *env_list, char *token);
+void    quote_parsing(t_env *env_list ,char **tokens);
+char    *single_quote_handler(char *token);
+
+//-------env_variables.c-----//
+t_env   *create_env_node(char *key, char *value);
+void    initialize_env_vars(t_env **env_list, char **envp);
+void    add_env_var(t_env **env_list, char *key, char *value);
+void    handle_export(t_env **env_list, char *arg);
+void    export_env_var(t_env **env_list, char *key, char *value);
 
 #endif
