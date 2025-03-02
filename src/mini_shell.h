@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/01 13:55:01 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/02 15:22:05 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,12 @@
 # include <string.h>
 # include <sys/wait.h>
 # include <unistd.h>
+
+//---------ft_error_handling.c---------//
+
+void check(int retval, int exit_code);
+
+# define CHECK(x, code) check((x), (code))
 
 //--------end_of_includes-------//
 

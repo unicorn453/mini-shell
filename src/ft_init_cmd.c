@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/15 16:28:06 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/02 13:27:40 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,7 @@ void	init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
 	while (parsed_string[parsed_size] != NULL)
 		parsed_size++;
 	cmd->cmd = gc_malloc(sizeof(char *) * 100);
-	if (!cmd->cmd)
-		return ;
+	CHECK(cmd->cmd == NULL, 1);
 	while (parsed_string[i] != NULL)
 	{
 		if (strcmp(parsed_string[i], "|") == 0)

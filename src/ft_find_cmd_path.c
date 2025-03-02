@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:49:03 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/13 17:12:17 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/02 15:30:10 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,10 @@ char	*add_permission_free_path(t_path *path, char *cmd)
 	while (path->paths[path->i])
 	{
 		path->temp = ft_strjoin(path->paths[path->i], "/");
-		if (!path->temp)
-			return (free_paths(path, 0), path->full_path = NULL,
-				path->full_path);
+		CHECK(path->temp == NULL, 1);
 		path->full_path = ft_strjoin(path->temp, cmd);
 		free(path->temp);
-		if (!path->full_path)
-			return (free_paths(path, 0), path->full_path);
+		CHECK(path->full_path == NULL, 1);
 		if (access(path->full_path, X_OK) == 0)
 		{
 			free_paths(path, 0);
@@ -87,8 +84,7 @@ char	*find_command_path(char *cmd, char **envp)
 	char	*ret_str;
 
 	path = initialize_path();
-	if (!path)
-		return (ret_str = NULL, ret_str);
+	CHECK(path == NULL, 1);
 	path->i = 0;
 	while (envp[path->i])
 	{
@@ -99,13 +95,11 @@ char	*find_command_path(char *cmd, char **envp)
 		}
 		path->i++;
 	}
-	if (!path->path_env)
-		return (ret_str = NULL, ret_str);
+	CHECK(path->path_env == NULL, 1);
 	path->paths = ft_split(path->path_env, ':');
-	if (!path->paths)
-		return (ret_str = NULL, ret_str);
+	CHECK(path->paths == NULL, 1);
 	path->full_path = add_permission_free_path(path, cmd);
 	if (path->full_path)
 		return (path->full_path);
-	return (free_paths(path, 0), ret_str = NULL, ret_str);
+	return (free_paths(path, 0), ret_str = cmd, ret_str);
 }

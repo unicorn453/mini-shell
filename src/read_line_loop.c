@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/27 16:01:40 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/02 13:33:55 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,9 @@ int	main_parsing(char *line, char **envp)
 
 	(void)envp;
 	current_cmd = gc_malloc(sizeof(t_cmd));
-	if (current_cmd == NULL)
-	{
-		perror("Minishell: memory allocation error\n");
-		exit(1);
-	}
+	CHECK(current_cmd == NULL, 1);
 	tokens = ft_split_plus(line, " \t\n");
-	if (tokens == NULL)
-		return (perror("Minishell: memory allocation error"), -1);
+	CHECK(tokens == NULL, 1);
 	init_def_cmd(current_cmd, envp);
 	init_cmd_stack(current_cmd, envp, tokens);
 	wait_for_all_children(current_cmd);
@@ -39,11 +34,19 @@ int	main_loop(char **envp)
 
 	while (1)
 	{
-		line = readline("minishell> ");
-		// line = "ls | wc";
+		if (isatty(fileno(stdin)))
+			line = readline("minishell> ");
+		else
+		{
+			line = get_next_line(fileno(stdin));
+			char *trimmed_line = ft_strtrim(line, "\n");
+			free(line);
+			line = trimmed_line;
+		}
+		CHECK(line == NULL, 1);
 		gc_track(line);
 
-		if (*line != '\0')
+		if (*line != '\0' && isatty(fileno(stdin)))
 			add_history(line);
 		main_parsing(line, envp);
 	}
