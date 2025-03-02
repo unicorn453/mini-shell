@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/25 09:55:46 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/02 16:27:37 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,7 @@ int	main_loop(char **envp)
 		line = readline("minishell> ");
 		// line = "ls | wc";
 		gc_track(line);
-		if (line == NULL)
-		{
-			write(1, "\nExiting minishell...\n", 22);
-			break ;
-		}
+
 		if (*line != '\0')
 			add_history(line);
 		main_parsing(line, envp);
