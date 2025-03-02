@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 21:10:48 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/09 18:30:23 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/02/19 18:30:48 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,4 +78,32 @@ void	gc_free_all(void)
 		free(temp);
 	}
 	*mem_list = NULL;
+}
+
+void	gc_untrack(void *ptr)
+{
+	t_garbage_collector	**mem_list;
+	t_garbage_collector	*current;
+	t_garbage_collector	*prev;
+
+	if (!ptr)
+		return ;
+	mem_list = get_mem_list();
+	current = *mem_list;
+	prev = NULL;
+	while (current)
+	{
+		if (current->ptr == ptr)
+		{
+			if (prev)
+				prev->next = current->next;
+			else
+				*mem_list = current->next;
+			free(current->ptr);
+			free(current);
+			return ;
+		}
+		prev = current;
+		current = current->next;
+	}
 }

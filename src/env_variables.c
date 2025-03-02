@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:58:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/16 13:26:34 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/01 16:45:17 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,20 +47,31 @@ void	add_env_var(t_env **env_list, char *key, char *value)
 	*env_list = new_node;
 }
 
-void	initialize_env_vars(t_env **env_list, char **envp)
+void	initialize_env_vars(t_env **env_list, char **envp) 
 {
-	char *pwd;
-	char *shlvl;
+	char 	*pwd;
+	char	*shlvl;
+	int		shlvl_value;
+	int	i;
 
+	i = -1;
+	while (envp[++i])
+		handle_export(env_list, envp[i]);
 	pwd = getcwd(NULL, 0);
+	if (pwd == NULL)
+	{
+		perror("Minishell: getcwd error");
+		return;
+	}
 	shlvl = getenv("SHLVL");
 	if (shlvl == NULL)
-		shlvl = '1';
+		shlvl_value = 1;
 	else
-		shlvl = ft_atoi(shlvl + 1);
+		shlvl_value = ft_atoi(shlvl) + 1;
+	shlvl = ft_itoa(shlvl_value);
+	add_env_var(env_list, "SHLVL", shlvl);
 	add_env_var(env_list, "PWD", pwd);
 	add_env_var(env_list, "OLDPWD", NULL);
-	add_env_var(env_list, "SHLVL", );
-
 	free(pwd);
 }
+

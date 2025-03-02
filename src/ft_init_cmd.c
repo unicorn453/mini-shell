@@ -6,14 +6,15 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/25 10:36:42 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/02 16:36:10 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-void	init_def_cmd(t_cmd *cmd, char **envp)
+void	init_def_cmd(t_cmd *cmd, char **envp, t_env	*env_list)
 {
+	cmd->env_list = env_list;
 	cmd->delimiter = NULL;
 	cmd->envp = envp;
 	cmd->redir_in = false;
@@ -58,7 +59,7 @@ void	init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
 	parsed_size = 0;
 	while (parsed_string[parsed_size] != NULL)
 		parsed_size++;
-	cmd->cmd = gc_malloc(sizeof(char *) * 100);
+	cmd->cmd = gc_malloc(sizeof(char *) * parsed_size);
 	if (!cmd->cmd)
 		return ;
 	while (parsed_string[i] != NULL)
@@ -69,7 +70,6 @@ void	init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
 			i++;
 			cmd->cmd[arg_index] = NULL;
 			find_right_exec(cmd);
-			init_def_cmd(cmd, envp);
 			cmd->pipe = true;
 			init_cmd_stack(cmd, envp, parsed_string + i);
 			return ;
