@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:19:51 by kruseva           #+#    #+#             */
-/*   Updated: 2025/02/28 20:45:14 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/02 16:10:42 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,14 @@ void check_error_status(char **parsed_string, int i)
         write(STDERR_FILENO, error_msg, strlen(error_msg));
         exit(2);
     }
+    else if (parsed_string[i + 1] != NULL)
+    {
+        const char *error_msg = "syntax error near unexpected token '";
+        write(STDERR_FILENO, error_msg, strlen(error_msg));
+        write(STDERR_FILENO, parsed_string[i + 1], strlen(parsed_string[i + 1]));
+        write(STDERR_FILENO, "'\n", 2);
+        exit(2);
+    }
 }
 
 
@@ -35,6 +43,8 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             cmd->file_in = parsed_string[i + 1];
             return "<";
         }
+        else
+            check_error_status(parsed_string, i);
     }
     else if (strcmp(parsed_string[i], ">") == 0)
     {
@@ -44,6 +54,8 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             cmd->file_out = parsed_string[i + 1];
             return ">";
         }
+        else
+            check_error_status(parsed_string, i);
     }
     else if (strcmp(parsed_string[i], ">>") == 0)
     {
@@ -53,6 +65,8 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             cmd->file_out = parsed_string[i + 1];
             return ">>";
         }
+        else
+            check_error_status(parsed_string, i);
     }
     else if (strcmp(parsed_string[i], "<<") == 0)
     {
@@ -73,6 +87,8 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
                 return "<<";
             }
         }
+        else
+            check_error_status(parsed_string, i);
     }
     else 
     {

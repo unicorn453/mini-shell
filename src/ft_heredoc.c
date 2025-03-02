@@ -6,28 +6,21 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/01 13:54:21 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/02 13:56:36 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
+
 
 int handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
 {
     char *line;
     int my_out = -1;
 
-    if (cmd->delimiter == NULL)
-    {
-        perror("No delimiter found");
-        exit(EXIT_FAILURE);
-    }
+    CHECK(cmd->delimiter == NULL, 1);
     my_out = open("file", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (my_out < 0)
-    {
-        perror("Error opening output file for heredoc");
-        exit(EXIT_FAILURE);
-    }
+    CHECK(my_out < 0, 1);
     while (1)
     {
         line = readline("> ");
@@ -77,18 +70,10 @@ int ft_heredoc_check(t_cmd *cmd, int pipefd[2], bool last_child, bool last_hered
         file_fd = open(cmd->file_out,
                        O_WRONLY | O_CREAT | (cmd->redir_append ? O_APPEND : O_TRUNC),
                        0644);
-        if (file_fd < 0)
-        {
-            perror("Error opening output file");
-            exit(EXIT_FAILURE);
-        }
+        CHECK(file_fd < 0, 1);
     }
 
-    if (pipe(pipefd) == -1)
-    {
-        perror("pipe");
-        exit(EXIT_FAILURE);
-    }
+    CHECK(pipe(pipefd) == -1, 1);
 
     if (file_fd != -1)
         handle_heredoc(cmd, &file_fd, last_heredoc);
@@ -99,7 +84,7 @@ int ft_heredoc_check(t_cmd *cmd, int pipefd[2], bool last_child, bool last_hered
 
     if ((last_child || last_heredoc) && dup2(pipefd[0], STDIN_FILENO) == -1)
     {
-        perror("dup2 failed for heredoc");
+       perror("dup2 failed");
         exit(EXIT_FAILURE);
     }
     if (last_child || last_heredoc)
