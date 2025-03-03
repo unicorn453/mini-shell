@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_variables.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:58:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/01 16:45:17 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/03 14:51:15 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ void	add_env_var(t_env **env_list, char *key, char *value)
 	t_env	*new_node;
 
 	new_node = create_env_node(key, value);
+	// printf("key: %s\n and value: %s\n", key, value);
+	// printf("new_node->key: %s\n and new_node->value: %s\n", new_node->key, new_node->value);
 	if (!new_node)
 		return ;
 	new_node->next = *env_list;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/02 17:43:30 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/03 16:44:03 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 
 //---------ft_error_handling.c---------//
 
-void check(int retval, int exit_code);
+void							check(int retval, int exit_code);
 
 # define CHECK(x, code) check((x), (code))
 
@@ -44,7 +44,7 @@ typedef struct s_garbage_collector
 
 typedef struct s_cmd
 {
-	struct s_env 				*env_list;
+	struct s_env				*env_list;
 	char						*delimiter;
 	char						**cmd;
 	char						**envp;
@@ -59,6 +59,7 @@ typedef struct s_cmd
 	int							pid[MAX_PIPES];
 	int							index;
 	bool						last_heredoc;
+	char						*assigned_var;
 }								t_cmd;
 
 typedef struct s_path
@@ -72,10 +73,10 @@ typedef struct s_path
 
 typedef struct s_env
 {
-    char            *key;
-    char            *value;
-    struct s_env    *next;
-} t_env;
+	char						*key;
+	char						*value;
+	struct s_env				*next;
+}								t_env;
 //------------------------------//
 
 //---------GC_functions---------//
@@ -84,7 +85,7 @@ void							gc_track(void *ptr);
 void							gc_free_all(void);
 void							gc_untrack(void *ptr);
 //------------------------------//
-int								main_loop(char **envp, t_env    *env_lis);
+int								main_loop(char **envp, t_env *env_lis);
 char							**ft_split_plus(char *str, char *charset);
 /*
 ** basic_exec.c
@@ -107,12 +108,19 @@ t_path							*initialize_path(void);
 void							free_paths(t_path *path, int error_bool);
 char							*add_permission_free_path(t_path *path,
 									char *cmd);
-char							*find_command_path(char *cmd, char **envp);
+
+int check_builtins(t_env **env_list, t_cmd *cmd, char *command);
+									
+// char							*find_command_path(char *cmd, char **envp);
+char	*find_command_path(t_cmd *cmd_list, t_env **env_list, char *cmd, char **envp);
 //---------ft_init_cmd.c---------//
 int								find_right_exec(t_cmd *cmd);
-void							init_def_cmd(t_cmd *cmd, char **envp, t_env     *env_list);
-void							init_cmd_stack(t_cmd *cmd, char **envp,
-									char **parsed_string);
+void							init_def_cmd(t_cmd *cmd, char **envp,
+									t_env *env_list);
+// void							init_cmd_stack(t_cmd *cmd, char **envp,
+// 									char **parsed_string);
+void print_envlist(t_env **env_list);
+void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_string);
 
 //---------ft_heredoc.c---------//
 int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
@@ -123,18 +131,23 @@ char							*handle_token_search(int i,
 									char **parsed_string, t_cmd *cmd);
 
 //-------input_parsing.c------//
-void    main_parsing_loop(t_env *env_list, char **tokens);
-char    *handle_env_var(t_env *env_list, char *token);
-char    *search_env_var(t_env *env_list, char *token);
-char    *double_quotes_handler(t_env *env_list, char *token);
-void    quote_parsing(t_env *env_list ,char **tokens);
-char    *single_quote_handler(char *token);
+void							main_parsing_loop(t_env *env_list,
+									char **tokens);
+char							*handle_env_var(t_env *env_list, char *token);
+char							*search_env_var(t_env *env_list, char *token);
+char							*double_quotes_handler(t_env *env_list,
+									char *token);
+void							quote_parsing(t_env *env_list, char **tokens);
+char							*single_quote_handler(char *token);
 
 //-------env_variables.c-----//
-t_env   *create_env_node(char *key, char *value);
-void    initialize_env_vars(t_env **env_list, char **envp);
-void    add_env_var(t_env **env_list, char *key, char *value);
-void    handle_export(t_env **env_list, char *arg);
-void    export_env_var(t_env **env_list, char *key, char *value);
+t_env							*create_env_node(char *key, char *value);
+void							initialize_env_vars(t_env **env_list,
+									char **envp);
+void							add_env_var(t_env **env_list, char *key,
+									char *value);
+void							handle_export(t_env **env_list, char *arg);
+void							export_env_var(t_env **env_list, char *key,
+									char *value);
 
 #endif
