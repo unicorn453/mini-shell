@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/03 16:44:03 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/03 18:07:31 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void							gc_track(void *ptr);
 void							gc_free_all(void);
 void							gc_untrack(void *ptr);
 //------------------------------//
-int								main_loop(char **envp, t_env *env_lis);
+int								main_loop(char **envp, t_env **env_lis);
 char							**ft_split_plus(char *str, char *charset);
 /*
 ** basic_exec.c
@@ -116,7 +116,7 @@ char	*find_command_path(t_cmd *cmd_list, t_env **env_list, char *cmd, char **env
 //---------ft_init_cmd.c---------//
 int								find_right_exec(t_cmd *cmd);
 void							init_def_cmd(t_cmd *cmd, char **envp,
-									t_env *env_list);
+									t_env **env_list);
 // void							init_cmd_stack(t_cmd *cmd, char **envp,
 // 									char **parsed_string);
 void print_envlist(t_env **env_list);
@@ -131,13 +131,13 @@ char							*handle_token_search(int i,
 									char **parsed_string, t_cmd *cmd);
 
 //-------input_parsing.c------//
-void							main_parsing_loop(t_env *env_list,
+void							main_parsing_loop(t_env **env_list,
 									char **tokens);
-char							*handle_env_var(t_env *env_list, char *token);
+char							*handle_env_var(t_env **env_list, char *token);
 char							*search_env_var(t_env *env_list, char *token);
-char							*double_quotes_handler(t_env *env_list,
+char							*double_quotes_handler(t_env **env_list,
 									char *token);
-void							quote_parsing(t_env *env_list, char **tokens);
+void							quote_parsing(t_env **env_list, char **tokens);
 char							*single_quote_handler(char *token);
 
 //-------env_variables.c-----//

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/03 16:44:57 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/03 18:10:11 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-int	main_parsing(char *line, char **envp, t_env *env_list)
+int	main_parsing(char *line, char **envp, t_env **env_list)
 {
 	t_cmd		*current_cmd;
 	static char	**tokens;
@@ -25,18 +25,18 @@ int	main_parsing(char *line, char **envp, t_env *env_list)
 		return (perror("Minishell: memory allocation error"), -1);
 	main_parsing_loop(env_list, tokens);
 	init_def_cmd(current_cmd, envp, env_list);
-	init_cmd_stack(current_cmd, &env_list, envp, tokens);
+	init_cmd_stack(current_cmd, env_list, envp, tokens);
 	wait_for_all_children(current_cmd);
 	return (0);
 }
 
-int	main_loop(char **envp, t_env	*env_lis)
+int	main_loop(char **envp, t_env	**env_lis)
 {
 	char	*line;
 
 	while (1)
 	{
-		print_envlist(&env_lis);
+		// print_envlist(env_lis);
 		if (isatty(fileno(stdin)))
 			line = readline("minishell> ");
 			// line = "export WW2=SSSR";
