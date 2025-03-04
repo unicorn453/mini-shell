@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:19:51 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/02 16:10:42 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/03 14:53:26 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void check_error_status(char **parsed_string, int i)
         write(STDERR_FILENO, error_msg, strlen(error_msg));
         exit(2);
     }
-    else if (parsed_string[i + 1] != NULL)
+    else if (parsed_string[i + 1] != NULL && parsed_string[i] == parsed_string[i + 1])
     {
         const char *error_msg = "syntax error near unexpected token '";
         write(STDERR_FILENO, error_msg, strlen(error_msg));
@@ -90,6 +90,11 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
         else
             check_error_status(parsed_string, i);
     }
+    else if (ft_strchr(parsed_string[i], '=') != NULL)
+    {
+        cmd->assigned_var = parsed_string[i];
+        return "=";
+    }
     else 
     {
         return NULL;
@@ -103,9 +108,7 @@ int find_last_heredoc(char **parsed_string, int i)
     while (parsed_string[i] != NULL)
     {
         if (strcmp(parsed_string[i], "<<") == 0)
-        {
             index = i;
-        }
         i++;
     }
     return index;

@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:49:03 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/02 15:30:10 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/03 14:18:47 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,11 +78,47 @@ char	*add_permission_free_path(t_path *path, char *cmd)
 	return (NULL);
 }
 
-char	*find_command_path(char *cmd, char **envp)
+int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
+{
+
+	// printf("cmd->cmd[0] = %s\n", cmd->cmd[0]);
+	(void)env_list;
+	// char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL};
+	char *builtins[] = {"export", "unset", "env", "exit", NULL};
+	int i;
+	i = 0;
+	bool match = false;
+	while(builtins[i])
+	{
+		if(strcmp(builtins[i], command) == 0)
+		{
+			match = true;
+			break;
+		}
+		i++;
+	}
+	if (match)
+	{
+		if((ft_strncmp(builtins[i], "export", 6) == 0))
+		{
+			cmd->cmd[0] = "export";
+		}
+		else
+		{
+			printf("print list");
+		}
+	}
+	return (match);
+}
+
+char	*find_command_path(t_cmd *cmd_list, t_env **env_list, char *cmd, char **envp)
 {
 	t_path	*path;
 	char	*ret_str;
 
+	int check_built = check_builtins(env_list, cmd_list, cmd);
+	if(check_built == 1)
+		return (cmd);
 	path = initialize_path();
 	CHECK(path == NULL, 1);
 	path->i = 0;

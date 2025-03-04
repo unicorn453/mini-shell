@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:41:19 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/02 17:39:26 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/03 18:02:59 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,5 +20,5 @@ int	main(int argc, char **argv, char **envp)
 	initialize_env_vars(&env_list, envp);
 	(void)argc;
 	(void)argv;
-	main_loop(envp, env_list);
+	main_loop(envp, &env_list);
 }

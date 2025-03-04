@@ -6,15 +6,15 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/02 17:43:44 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/03 18:08:22 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-void	init_def_cmd(t_cmd *cmd, char **envp, t_env	*env_list)
+void init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
 {
-	cmd->env_list = env_list;
+	cmd->env_list = *env_list;
 	cmd->delimiter = NULL;
 	cmd->envp = envp;
 	cmd->redir_in = false;
@@ -25,11 +25,12 @@ void	init_def_cmd(t_cmd *cmd, char **envp, t_env	*env_list)
 	cmd->file_in = NULL;
 	cmd->file_out = NULL;
 	cmd->heredoc = false;
+	cmd->assigned_var = NULL;
 }
 
-void	print_stack(t_cmd stack)
+void print_stack(t_cmd stack)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	printf("Command: %s\n", stack.cmd[0]);
@@ -46,13 +47,25 @@ void	print_stack(t_cmd stack)
 	printf("File out: %s\n", stack.file_out);
 	printf("Pipe: %d\n\n", stack.pipe);
 }
-
-void	init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
+void print_envlist(t_env **env_list)
 {
-	int		i;
-	int		arg_index;
-	int		parsed_size;
-	char	*token;
+	t_env *temp;
+
+	temp = *env_list;
+	while (temp)
+	{
+		printf("Key: %s\n", temp->key);
+		printf("Value: %s\n", temp->value);
+		temp = temp->next;
+	}
+}
+
+void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_string)
+{
+	int i;
+	int arg_index;
+	int parsed_size;
+	char *token;
 
 	i = 0;
 	arg_index = 0;
@@ -70,23 +83,32 @@ void	init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
 			cmd->cmd[arg_index] = NULL;
 			find_right_exec(cmd);
 			cmd->pipe = true;
-			init_cmd_stack(cmd, envp, parsed_string + i);
-			return ;
+			init_cmd_stack(cmd, env_list, envp, parsed_string + i);
+			return;
 		}
 		token = handle_token_search(i, parsed_string, cmd);
 		if (token != NULL && strcmp(parsed_string[i], token) == 0)
 		{
-			check_error_status(parsed_string, i);
-			if (parsed_string[i + 1])
+			if (strcmp(token, "=") != 0)
 			{
-				i += 2;
-				continue ;
+				check_error_status(parsed_string, i);
+
+				if (parsed_string[i + 1])
+				{
+					i += 2;
+					continue;
+				}
+			}
+			else
+			{
+				i++;
+				continue;
 			}
 		}
 		else
 		{
 			if (arg_index == 0)
-				cmd->cmd[0] = find_command_path(parsed_string[i], envp);
+				cmd->cmd[0] = find_command_path(cmd, env_list, parsed_string[i], envp);
 			else
 				cmd->cmd[arg_index] = parsed_string[i];
 			arg_index++;
@@ -97,6 +119,15 @@ void	init_cmd_stack(t_cmd *cmd, char **envp, char **parsed_string)
 	if (parsed_string[i] == NULL)
 	{
 		cmd->end_of_cmd = true;
+		int check_env = check_builtins(env_list, cmd, cmd->cmd[0]);
+		if(check_env == true && cmd->assigned_var != NULL)
+	    {
+			handle_export(env_list, cmd->assigned_var);
+				return;
+		}
+		// else if (check_env == true && cmd->assigned_var == NULL)
+		// 	print_envlist(env_list);
+		else
 		find_right_exec(cmd);
 	}
 }

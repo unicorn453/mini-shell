@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:12:54 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/28 14:12:00 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/03 18:07:44 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static char	*str_before_env_var_handler(char *token, char *env_str, int len)
 	return (new_token);
 }
 
-char 	*handle_env_var(t_env *env_list, char *token)
+char 	*handle_env_var(t_env **env_list, char *token)
 {
 	int		i;
 	char	*env_str;
@@ -46,7 +46,7 @@ char 	*handle_env_var(t_env *env_list, char *token)
 			env_str = ft_substr(token, i, ft_strlen(token) - i);
 			if (env_str == NULL)
 				return (perror("Minishell: memory allocation error"), NULL);
-			env_str = search_env_var(env_list, env_str); //token gets untracked/freed  here
+			env_str = search_env_var(*env_list, env_str); //token gets untracked/freed  here
 			if (env_str == NULL)
 				return (perror("Minishell: memory allocation error"), NULL);
 			if (i > 0) // if there is something before the '$' for example abc$USER 
@@ -91,7 +91,7 @@ char	*search_env_var(t_env *env_list, char *token)
 	return (placeholder);
 }
 
-void	main_parsing_loop(t_env *env_list, char **tokens)
+void	main_parsing_loop(t_env **env_list, char **tokens)
 {
 	int		i;
 	int		y;
@@ -118,7 +118,7 @@ void	main_parsing_loop(t_env *env_list, char **tokens)
 			tokens[i] = temp;
 	}
 }
-void	quote_parsing(t_env *env_list ,char **token)
+void	quote_parsing(t_env **env_list ,char **token)
 {
 	int	i;
 
@@ -185,7 +185,7 @@ char	*single_quote_handler(char *token)
 	return (new_token);
 }
 
-char	*double_quotes_handler(t_env *env_list, char *token)
+char	*double_quotes_handler(t_env **env_list, char *token)
 {
 	int		i;
 	int		y;
