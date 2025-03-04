@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/03 18:07:31 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/04 16:55:15 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,11 @@ typedef struct s_cmd
 	int							index;
 	bool						last_heredoc;
 	char						*assigned_var;
+	// char						**assigned_var;
+	bool 						builtin;
+	//to do
+	bool 						heredoc_exists;
+	char 						*heredoc_file;
 }								t_cmd;
 
 typedef struct s_path
@@ -87,6 +92,8 @@ void							gc_untrack(void *ptr);
 //------------------------------//
 int								main_loop(char **envp, t_env **env_lis);
 char							**ft_split_plus(char *str, char *charset);
+//-------builtins/------//
+void get_pwd(void);
 /*
 ** basic_exec.c
 ** This file contains the functions for executing the commands
@@ -99,8 +106,7 @@ void							handle_output_redirection(t_cmd *cmd,
 									int fd_pipe[2]);
 void							execute_command(t_cmd *cmd);
 void							wait_for_all_children(t_cmd *cmd);
-void							exec_pipes(t_cmd *cmd, int *fd_in,
-									int *fd_index, bool last_child);
+void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string);
 void							exec_cmd(t_cmd *cmd, int *fd_in,
 									bool last_child);
 //---------ft_find_cmd_path.c---------//
@@ -109,18 +115,22 @@ void							free_paths(t_path *path, int error_bool);
 char							*add_permission_free_path(t_path *path,
 									char *cmd);
 
-int check_builtins(t_env **env_list, t_cmd *cmd, char *command);
-									
+int								check_builtins(t_env **env_list, t_cmd *cmd,
+									char *command);
+
 // char							*find_command_path(char *cmd, char **envp);
-char	*find_command_path(t_cmd *cmd_list, t_env **env_list, char *cmd, char **envp);
+char							*find_command_path(t_cmd *cmd_list,
+									t_env **env_list, char *cmd, char **envp);
 //---------ft_init_cmd.c---------//
-int								find_right_exec(t_cmd *cmd);
+int find_right_exec(t_cmd *cmd, char **parsed_string);
+bool ft_heredoc_exist(char **parsed_string);
 void							init_def_cmd(t_cmd *cmd, char **envp,
 									t_env **env_list);
 // void							init_cmd_stack(t_cmd *cmd, char **envp,
 // 									char **parsed_string);
-void print_envlist(t_env **env_list);
-void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_string);
+void							print_envlist(t_env **env_list);
+void							init_cmd_stack(t_cmd *cmd, t_env **env_list,
+									char **envp, char **parsed_string);
 
 //---------ft_heredoc.c---------//
 int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
@@ -149,5 +159,4 @@ void							add_env_var(t_env **env_list, char *key,
 void							handle_export(t_env **env_list, char *arg);
 void							export_env_var(t_env **env_list, char *key,
 									char *value);
-
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   basic_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/02 17:43:06 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/04 17:41:24 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int ft_in_out(char *file, int mode)
     {
         fd = open(file, O_RDONLY);
         // CHECK(fd < 0, 1);
-        if(fd < 0)
+        if (fd < 0)
         {
             perror("open failed");
             exit(EXIT_FAILURE);
@@ -30,7 +30,7 @@ int ft_in_out(char *file, int mode)
     {
         fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
         // CHECK(fd < 0, 1, file);
-        if(fd < 0)
+        if (fd < 0)
         {
             perror("open failed");
             exit(EXIT_FAILURE);
@@ -68,13 +68,9 @@ void exec_cmd(t_cmd *cmd, int fd_in[1024], bool last_child)
         else
         {
             if (cmd->redir_in)
-            {
                 handle_input_redirection(cmd, &fd_in[0]);
-            }
             if (cmd->redir_out || cmd->redir_append)
-            {
                 handle_output_redirection(cmd, last_child, &fd_in[0], pipefd);
-            }
             else if (!last_child)
             {
                 CHECK(dup2(pipefd[1], STDOUT_FILENO) == -1, 1);
@@ -92,13 +88,13 @@ void exec_cmd(t_cmd *cmd, int fd_in[1024], bool last_child)
         fd_in[cmd->index] = pipefd[0];
 }
 
-int find_right_exec(t_cmd *cmd)
+int find_right_exec(t_cmd *cmd, char **parsed_string)
 {
     static int fd_in = -1;
     static int fd_index = 0;
     if (cmd->pipe)
     {
-        exec_pipes(cmd, &fd_in, &fd_index, cmd->end_of_cmd);
+        exec_pipes(cmd, &fd_in, &fd_index, parsed_string);
         return (0);
     }
     else
@@ -122,7 +118,7 @@ void handle_input_redirection(t_cmd *cmd, int *fd_in)
         if (*fd_in != -1)
             close(*fd_in);
         *fd_in = open(cmd->file_in, O_RDONLY);
-        if(*fd_in < 0)
+        if (*fd_in < 0)
         {
             write(STDERR_FILENO, "minishell: ", 11);
             write(STDERR_FILENO, cmd->file_in, ft_strlen(cmd->file_in));
@@ -165,18 +161,32 @@ void handle_output_redirection(t_cmd *cmd, bool last_child, int *fd_out,
 
 void execute_command(t_cmd *cmd)
 {
-    if(execve(cmd->cmd[0], cmd->cmd, cmd->envp) == -1)
+    if (execve(cmd->cmd[0], cmd->cmd, cmd->envp) == -1)
     {
         char *error_msg = ": command not found";
         write(STDERR_FILENO, "minishell: ", 11);
         write(STDERR_FILENO, cmd->cmd[0], ft_strlen(cmd->cmd[0]));
         write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
         write(STDERR_FILENO, "\n", 1);
+        if (errno == EACCES || errno == EISDIR)
+            exit(126);
         exit(127);
     }
 }
 
-void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, bool last_child)
+bool ft_heredoc_exist(char **parsed_string)
+{
+    int i = 0;
+    while (parsed_string[i] != NULL)
+    {
+        if (strcmp(parsed_string[i], "<<") == 0)
+            return (1);
+        i++;
+    }
+    return (0);
+}
+
+void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string)
 {
     int fd_pipe[2];
     pid_t pid;
@@ -184,29 +194,33 @@ void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, bool last_child)
     int status;
     (void)fd_index;
 
-    CHECK(!last_child && pipe(fd_pipe) == -1, 1);
+    CHECK(!cmd->end_of_cmd && pipe(fd_pipe) == -1, 1);
 
     pid = fork();
     CHECK(pid < 0, 1);
+    int heredoc_exist = 0;
+    heredoc_exist = ft_heredoc_exist(parsed_string);
 
     if (pid == 0)
     {
         if (cmd->heredoc)
         {
-            char *line = NULL;
-            ft_heredoc_check(cmd, heredoc_fd, last_child, cmd->last_heredoc);
-            if (!cmd->redir_in)
+            printf("heredoc only once\n");
+            ft_heredoc_check(cmd, heredoc_fd, cmd->end_of_cmd, cmd->last_heredoc);
+            if (cmd->last_heredoc && cmd->end_of_cmd)
             {
-                int in = open("file", O_RDONLY);
-                while ((line = get_next_line(in)) != NULL)
-                {
-                    write(fd_pipe[1], line, ft_strlen(line));
-                    free(line);
-                }
-                close(in);
+                printf("end of cmd\n");
+                execute_command(cmd);
+                exit(EXIT_SUCCESS);
             }
         }
-
+        if (cmd->heredoc_file)
+        {
+            int in = open(cmd->heredoc_file, O_RDONLY);
+            CHECK(in < 0, 1);
+            dup2(in, STDIN_FILENO);
+            close(in);
+        }
         if (cmd->redir_in)
             handle_input_redirection(cmd, &fd_in[0]);
         else if (fd_in[0] != -1 && !cmd->heredoc)
@@ -214,16 +228,17 @@ void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, bool last_child)
             CHECK(dup2(fd_in[0], STDIN_FILENO) == -1, 1);
             close(fd_in[0]);
         }
-
         if (cmd->redir_out || cmd->redir_append)
-            handle_output_redirection(cmd, last_child, &fd_in[0], fd_pipe);
-        else if (!last_child && !cmd->heredoc)
+            handle_output_redirection(cmd, cmd->end_of_cmd, &fd_in[0], fd_pipe);
+        else if (!cmd->end_of_cmd && !cmd->heredoc)
             CHECK(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
 
-        close(fd_pipe[0]);
-        close(fd_pipe[1]);
+        if (fd_pipe[0] != -1)
+            close(fd_pipe[0]);
+        if (fd_pipe[1] != -1)
+            close(fd_pipe[1]);
 
-        if (last_child || !cmd->heredoc)
+        if (cmd->end_of_cmd && !cmd->heredoc)
             execute_command(cmd);
         exit(EXIT_SUCCESS);
     }
@@ -231,7 +246,7 @@ void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, bool last_child)
     {
         close(fd_pipe[1]);
 
-        if (!last_child)
+        if (!cmd->end_of_cmd)
         {
             close(fd_in[0]);
             fd_in[0] = fd_pipe[0];
