@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/05 11:04:05 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/05 12:55:22 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
         perror("No delimiter found");
         exit(EXIT_FAILURE);
     }
- if (!last_heredoc && !cmd->end_of_cmd)
+ if ((!last_heredoc && !cmd->end_of_cmd) || (last_heredoc && !cmd->end_of_cmd))
  {
     char tmp_filename[] = "file";
     my_out = open(tmp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -44,6 +44,7 @@ int handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
         line = readline("> ");
         if (!line || strcmp(line, cmd->delimiter) == 0)
         {
+            if (line)
             free(line);
             break;
         }
@@ -66,16 +67,13 @@ int handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
                 break;
             }
         }
-
+if(line)
         free(line);
     }
 
     if (cmd->end_of_cmd || last_heredoc)
         close(my_out);
-        
-        close(my_out);
-
-
+    
     return my_out;
 }
 
@@ -116,6 +114,6 @@ int ft_heredoc_check(t_cmd *cmd, int pipefd[2], bool last_child, bool last_hered
         perror("dup2 failed for heredoc");
         exit(EXIT_FAILURE);
     }
-
+    close(pipefd[0]);
     return file_fd;  
 }

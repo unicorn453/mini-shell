@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/04 13:59:59 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/05 13:23:32 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,17 @@ int	main_loop(char **envp, t_env	**env_lis)
 	while (1)
 	{
 		// print_envlist(env_lis);
-		// if (isatty(fileno(stdin)))
+		if (isatty(fileno(stdin)))
 			line = readline("minishell> ");
 			// line = "< Makefile cat | cat";
 			// line = "export WW2=SSSR";
-		// else
-		// {
-		// 	line = get_next_line(fileno(stdin));
-		// 	char *trimmed_line = ft_strtrim(line, "\n");
-		// 	free(line);
-		// 	line = trimmed_line;
-		// }
+		else
+		{
+			line = get_next_line(fileno(stdin));
+			char *trimmed_line = ft_strtrim(line, "\n");
+			free(line);
+			line = trimmed_line;
+		}
 		CHECK(line == NULL, 1);
 		gc_track(line);
 

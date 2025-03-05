@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/05 10:55:25 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/05 13:11:52 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,11 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
             cmd->cmd[arg_index] = NULL;
             find_right_exec(cmd, parsed_string);
             init_def_cmd(cmd, envp, env_list);
-            parsed_size -= i;
+            parsed_size = i;
+            while(parsed_string[parsed_size] != NULL)
+                parsed_size++;
             cmd->cmd = gc_malloc(sizeof(char *) * (parsed_size + 1));
+            CHECK(cmd->cmd == NULL, 1);
             cmd->pipe = true;
             arg_index = 0;
             i++;
@@ -171,12 +174,11 @@ void ft_ending_of_init(t_cmd *cmd, t_env **env_list, char **parsed_string, int i
                 handle_export(env_list, cmd->assigned_var);
             }
             return;
-        }
-        
-        if (cmd->builtin)
+        }     
+        else if (cmd->builtin)
             return;
         
-        if (cmd->pipe)
+        else
         {
             find_right_exec(cmd, parsed_string);
         }

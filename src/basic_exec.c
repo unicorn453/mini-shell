@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/05 11:07:13 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/05 13:18:00 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,6 @@ void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string
         }
         if(heredoc_exist && !cmd->heredoc && cmd->redir_out)
         {
-            printf("here\n");
             int in = ft_in_out("file", 0);
             CHECK(in < 0, 1);
             dup2(in, STDIN_FILENO);
@@ -231,7 +230,7 @@ void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string
         {
             handle_output_redirection(cmd, cmd->end_of_cmd, &fd_in[0], fd_pipe);
         }
-        if (!cmd->end_of_cmd && !cmd->heredoc && !cmd->redir_out && !cmd->redir_append)
+        if (!cmd->end_of_cmd && !cmd->heredoc && !cmd->redir_out && !cmd->redir_append && !heredoc_exist)
             CHECK(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
 
         if (fd_pipe[0] != -1)
@@ -241,10 +240,16 @@ void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string
         if (!cmd->heredoc)
         {
             if (heredoc_exist && cmd->redir_out)
+            {
                 execute_command(cmd);
+            }
             else if (!heredoc_exist)
+            {
                 execute_command(cmd);
-            
+            } else if (heredoc_exist && cmd->end_of_cmd)
+            {
+                execute_command(cmd);
+            }
         }
         exit(EXIT_SUCCESS);
     }
