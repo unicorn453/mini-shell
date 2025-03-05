@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/04 16:54:42 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/05 11:04:05 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,33 +22,33 @@ int handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
         perror("No delimiter found");
         exit(EXIT_FAILURE);
     }
-
-    // Open temporary file for heredoc content (unique file)
-    char tmp_filename[] = "/tmp/heredocXXXXXX";
-    my_out = mkstemp(tmp_filename);
-    if (my_out == -1) {
-        perror("mkstemp failed");
+ if (!last_heredoc && !cmd->end_of_cmd)
+ {
+    char tmp_filename[] = "file";
+    my_out = open(tmp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (my_out == -1) 
+    {
+        perror("Error creating heredoc file");
         exit(EXIT_FAILURE);
     }
-    cmd->heredoc_file = strdup(tmp_filename);  // Save filename for later use
+    cmd->heredoc_file = strdup(tmp_filename);
     
     if (my_out < 0)
     {
         perror("Error opening output file for heredoc");
         exit(EXIT_FAILURE);
     }
-
-    // Read lines and write them to the file until delimiter is encountered
+}
     while (1)
     {
         line = readline("> ");
         if (!line || strcmp(line, cmd->delimiter) == 0)
         {
             free(line);
-            break;  // Exit when delimiter is found
+            break;
         }
 
-        if (!cmd->end_of_cmd)  // If no file descriptor passed, write to my_out
+        if (!cmd->end_of_cmd)
         {
             if (write(my_out, line, strlen(line)) == -1 || write(my_out, "\n", 1) == -1)
             {
@@ -57,7 +57,7 @@ int handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
                 break;
             }
         }
-        else  // If file descriptor is passed, write to it
+        else 
         {
             if (write(*fd_out, line, strlen(line)) == -1 || write(*fd_out, "\n", 1) == -1)
             {

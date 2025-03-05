@@ -6,11 +6,13 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/04 17:45:28 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/05 10:55:25 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
+
+void ft_ending_of_init(t_cmd *cmd, t_env **env_list, char **parsed_string, int i);
 
 void init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
 {
@@ -29,7 +31,7 @@ void init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
 	cmd->builtin = false;
 	cmd->last_heredoc = false;
 	cmd->heredoc_exists = false;
-	cmd->heredoc_file = NULL;	
+	cmd->heredoc_file = NULL;
 	cmd->index = 0;
 }
 
@@ -83,9 +85,7 @@ void print_stack(t_cmd stack)
 
 void print_envlist(t_env **env_list)
 {
-	t_env *temp;
-
-	temp = *env_list;
+	t_env *temp = *env_list;
 	while (temp)
 	{
 		printf("Key: %s\n", temp->key);
@@ -93,23 +93,18 @@ void print_envlist(t_env **env_list)
 		temp = temp->next;
 	}
 }
+
 void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_string)
 {
-    int i;
-    int arg_index;
-    int parsed_size;
+    int i = 0, arg_index = 0, parsed_size = 0;
     char *token;
 
-    // // Reset the command stack to avoid stale values
-    // init_def_cmd(cmd, envp, env_list);
-
-    i = 0;
-    arg_index = 0;
-    parsed_size = 0;
+    init_def_cmd(cmd, envp, env_list);
+    
     while (parsed_string[parsed_size] != NULL)
         parsed_size++;
 
-    cmd->cmd = gc_malloc(sizeof(char *) * 100);
+    cmd->cmd = gc_malloc(sizeof(char *) * (parsed_size + 1));
     CHECK(cmd->cmd == NULL, 1);
 
     while (parsed_string[i] != NULL)
@@ -117,16 +112,19 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
         if (strcmp(parsed_string[i], "|") == 0)
         {
             cmd->pipe = true;
-            i++;
             cmd->cmd[arg_index] = NULL;
             find_right_exec(cmd, parsed_string);
+            init_def_cmd(cmd, envp, env_list);
+            parsed_size -= i;
+            cmd->cmd = gc_malloc(sizeof(char *) * (parsed_size + 1));
             cmd->pipe = true;
-            init_cmd_stack(cmd, env_list, envp, parsed_string + i);
-            return;
+            arg_index = 0;
+            i++;
+            continue;
         }
 
         token = handle_token_search(i, parsed_string, cmd);
-        if (token != NULL && strcmp(parsed_string[i], token) == 0)
+        if (token && strcmp(parsed_string[i], token) == 0)
         {
             if (strcmp(token, "=") != 0)
             {
@@ -146,133 +144,41 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
         else
         {
             if (arg_index == 0)
-                cmd->cmd[0] = find_command_path(cmd, env_list, parsed_string[i], envp);
+                cmd->cmd[arg_index] = find_command_path(cmd, env_list, parsed_string[i], envp);
             else
                 cmd->cmd[arg_index] = parsed_string[i];
+
             arg_index++;
             i++;
         }
     }
 
     cmd->cmd[arg_index] = NULL;
-    if (parsed_string[i] == NULL)
-    {
-        cmd->end_of_cmd = true;
-        if (cmd->assigned_var != NULL)
-        {
-            int check_env = check_builtins(env_list, cmd, cmd->cmd[0]);
-            if (check_env == true && cmd->assigned_var != NULL)
-            {
-                handle_export(env_list, cmd->assigned_var);
-                return;
-            }
-        }
-        else if (cmd->builtin == true)
-        {
-            return;
-        }
-        else if (cmd->pipe)
-        {
-            printf("cmd->cmd[0] = %s\n", cmd->cmd[0]);
-            find_right_exec(cmd, parsed_string);
-        }
-        else
-        {
-            return;
-        }
-    }
-    else
-    {
-        return;
-    }
+    ft_ending_of_init(cmd, env_list, parsed_string, i);
 }
 
 
+void ft_ending_of_init(t_cmd *cmd, t_env **env_list, char **parsed_string, int i)
+{
+    if (parsed_string[i] == NULL)
+    {
+        cmd->end_of_cmd = true;
 
-// void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_string)
-// {
-// 	int i;
-// 	int arg_index;
-// 	int parsed_size;
-// 	char *token;
-
-// 	i = 0;
-// 	arg_index = 0;
-// 	parsed_size = 0;
-// 	while (parsed_string[parsed_size] != NULL)
-// 		parsed_size++;
-// 	cmd->cmd = gc_malloc(sizeof(char *) * 100);
-// 	CHECK(cmd->cmd == NULL, 1);
-// 	while (parsed_string[i] != NULL)
-// 	{
-// 		// print_stack(*cmd);
-// 		if (strcmp(parsed_string[i], "|") == 0)
-// 		{
-// 			cmd->pipe = true;
-// 			i++;
-// 			cmd->cmd[arg_index] = NULL;
-// 			find_right_exec(cmd, parsed_string);
-// 			cmd->pipe = true;
-// 			// cmd->heredoc = false;
-// 			init_cmd_stack(cmd, env_list, envp, parsed_string + i);
-// 			return;
-// 		}
-// 		token = handle_token_search(i, parsed_string, cmd);
-// 		if (token != NULL && strcmp(parsed_string[i], token) == 0)
-// 		{
-// 			if (strcmp(token, "=") != 0)
-// 			{
-// 				check_error_status(parsed_string, i);
-
-// 				if (parsed_string[i + 1])
-// 				{
-// 					i += 2;
-// 					continue;
-// 				}
-// 			}
-// 			else
-// 			{
-// 				i++;
-// 				continue;
-// 			}
-// 		}
-// 		else
-// 		{
-// 			if (arg_index == 0)
-// 				cmd->cmd[0] = find_command_path(cmd, env_list, parsed_string[i], envp);
-// 			else
-// 				cmd->cmd[arg_index] = parsed_string[i];
-// 			arg_index++;
-// 			i++;
-// 		}
-// 	}
-// 	cmd->cmd[arg_index] = NULL;
-// 	if (parsed_string[i] == NULL)
-// 	{
-// 		cmd->end_of_cmd = true;
-// 		if(cmd->assigned_var != NULL)
-// 	    {
-// 			int check_env = check_builtins(env_list, cmd, cmd->cmd[0]);
-// 			if (check_env == true && cmd->assigned_var != NULL)
-// 				handle_export(env_list, cmd->assigned_var);
-// 				return;
-// 		}
-// 		else if (cmd->builtin == true)
-// 		{
-// 			return;
-// 		}
-// 		else if (cmd->pipe)
-// 		{
-// 			printf("cmd->cmd[0] = %s\n", cmd->cmd[0]);
-// 			find_right_exec(cmd, parsed_string);
-// 		}
-// 		else
-// 		{
-// 			return;
-// 		}
-// 	}
-// 	else
-// 	{
-// 		return;
-// 	}
-// }
+        if (cmd->assigned_var)
+        {
+            if (check_builtins(env_list, cmd, cmd->cmd[0]))
+            {
+                handle_export(env_list, cmd->assigned_var);
+            }
+            return;
+        }
+        
+        if (cmd->builtin)
+            return;
+        
+        if (cmd->pipe)
+        {
+            find_right_exec(cmd, parsed_string);
+        }
+    }
+}
