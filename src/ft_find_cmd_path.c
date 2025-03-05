@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:49:03 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/03 14:18:47 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/05 10:55:15 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,11 +80,9 @@ char	*add_permission_free_path(t_path *path, char *cmd)
 
 int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 {
-
-	// printf("cmd->cmd[0] = %s\n", cmd->cmd[0]);
 	(void)env_list;
 	// char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL};
-	char *builtins[] = {"export", "unset", "env", "exit", NULL};
+	char *builtins[] = {"export", "pwd", "unset", "env", "exit", NULL};
 	int i;
 	i = 0;
 	bool match = false;
@@ -93,6 +91,7 @@ int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 		if(strcmp(builtins[i], command) == 0)
 		{
 			match = true;
+			cmd->builtin = true;
 			break;
 		}
 		i++;
@@ -103,9 +102,10 @@ int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 		{
 			cmd->cmd[0] = "export";
 		}
-		else
+		else if ((ft_strncmp(builtins[i], "pwd", 3) == 0))
 		{
-			printf("print list");
+			get_pwd();
+			cmd->cmd[0] = "pwd";
 		}
 	}
 	return (match);

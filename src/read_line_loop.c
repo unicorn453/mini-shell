@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/03 18:10:11 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/05 13:23:32 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int	main_loop(char **envp, t_env	**env_lis)
 		// print_envlist(env_lis);
 		if (isatty(fileno(stdin)))
 			line = readline("minishell> ");
+			// line = "< Makefile cat | cat";
 			// line = "export WW2=SSSR";
 		else
 		{
