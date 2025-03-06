@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/05 13:18:00 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/06 11:21:03 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,8 +168,6 @@ void execute_command(t_cmd *cmd)
         write(STDERR_FILENO, cmd->cmd[0], ft_strlen(cmd->cmd[0]));
         write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
         write(STDERR_FILENO, "\n", 1);
-        if (errno == EACCES || errno == EISDIR)
-            exit(126);
         exit(127);
     }
 }
@@ -209,10 +207,10 @@ void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string
             if (cmd->end_of_cmd)
             {
                 execute_command(cmd);
-                exit(EXIT_SUCCESS); 
+                exit(EXIT_SUCCESS);
             }
         }
-        if(heredoc_exist && !cmd->heredoc && cmd->redir_out)
+        if (heredoc_exist && !cmd->heredoc && cmd->redir_out)
         {
             int in = ft_in_out("file", 0);
             CHECK(in < 0, 1);
@@ -246,7 +244,8 @@ void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string
             else if (!heredoc_exist)
             {
                 execute_command(cmd);
-            } else if (heredoc_exist && cmd->end_of_cmd)
+            }
+            else if (heredoc_exist && cmd->end_of_cmd)
             {
                 execute_command(cmd);
             }
@@ -275,14 +274,28 @@ void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string
     }
 }
 
-void wait_for_all_children(t_cmd *cmd)
+int wait_for_all_children(t_cmd *cmd)
 {
     int status;
-
+    int exit_status;
     for (int i = 0; i < cmd->index; i++)
     {
-        if (cmd->pid[i] > 0)
+        if (cmd->pid[i] > 0) 
+        {
             waitpid(cmd->pid[i], &status, 0);
+            if (WIFEXITED(status))
+            {
+                exit_status = WEXITSTATUS(status);
+            }
+              //for exit with signals
+        // if (WIFSIGNALED(status))
+        // {
+        //     int sig = WTERMSIG(status);
+        //     printf("Child terminated by signal %d\n", sig);
+        //     cmd->exit_status = 128 + sig; // Mimic Bash behavior
+        // }
+        }
     }
     cmd->index = 0;
+    return (exit_status);
 }

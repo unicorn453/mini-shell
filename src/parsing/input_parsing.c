@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_parsing.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:12:54 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/03 18:07:44 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/06 11:12:42 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ char 	*handle_env_var(t_env **env_list, char *token)
 	i = -1;
 	while (token[++i] != '\0')
 	{
-		if (token[i] == '$' && token[i + 1] != '\0')
+		if (token[i] == '$' && token[i + 1] != '\0' && token[i + 1] != '?')
 		{
 			env_str = ft_substr(token, i, ft_strlen(token) - i);
 			if (env_str == NULL)

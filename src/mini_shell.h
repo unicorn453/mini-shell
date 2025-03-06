@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/04 16:55:15 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/06 11:03:15 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ typedef struct s_cmd
 	//to do
 	bool 						heredoc_exists;
 	char 						*heredoc_file;
+	int								exit_status;
 }								t_cmd;
 
 typedef struct s_path
@@ -105,7 +106,8 @@ void							handle_output_redirection(t_cmd *cmd,
 									bool last_child, int *fd_out,
 									int fd_pipe[2]);
 void							execute_command(t_cmd *cmd);
-void							wait_for_all_children(t_cmd *cmd);
+// void							wait_for_all_children(t_cmd *cmd);
+int wait_for_all_children(t_cmd *cmd);
 void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string);
 void							exec_cmd(t_cmd *cmd, int *fd_in,
 									bool last_child);
@@ -136,7 +138,7 @@ void							init_cmd_stack(t_cmd *cmd, t_env **env_list,
 int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
 									bool last_child, bool last_heredoc);
 //---------ft_error.c---------//
-void							check_error_status(char **parsed_string, int i);
+void check_error_status(char **parsed_string, int i, int status);
 char							*handle_token_search(int i,
 									char **parsed_string, t_cmd *cmd);
 

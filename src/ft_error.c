@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:19:51 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/03 14:53:26 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/06 11:20:30 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 int find_last_heredoc(char **parsed_string, int i);
 
-void check_error_status(char **parsed_string, int i)
+void check_error_status(char **parsed_string, int i, int status)
 {
     if (parsed_string[i + 1] == NULL)
     {
         const char *error_msg = "syntax error near unexpected token 'newline'\n";
         write(STDERR_FILENO, error_msg, strlen(error_msg));
-        exit(2);
+        exit(status);
     }
     else if (parsed_string[i + 1] != NULL && parsed_string[i] == parsed_string[i + 1])
     {
@@ -28,7 +28,7 @@ void check_error_status(char **parsed_string, int i)
         write(STDERR_FILENO, error_msg, strlen(error_msg));
         write(STDERR_FILENO, parsed_string[i + 1], strlen(parsed_string[i + 1]));
         write(STDERR_FILENO, "'\n", 2);
-        exit(2);
+        exit(status);
     }
 }
 
@@ -44,7 +44,7 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             return "<";
         }
         else
-            check_error_status(parsed_string, i);
+            check_error_status(parsed_string, i, 258);
     }
     else if (strcmp(parsed_string[i], ">") == 0)
     {
@@ -55,9 +55,9 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             return ">";
         }
         else
-            check_error_status(parsed_string, i);
+            check_error_status(parsed_string, i, 258);
     }
-    else if (strcmp(parsed_string[i], ">>") == 0)
+    else if (strcmp(parsed_string[i], ">>") == 0 && i != 0)
     {
         if (parsed_string[i + 1] != NULL)
         {
@@ -66,7 +66,7 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             return ">>";
         }
         else
-            check_error_status(parsed_string, i);
+            check_error_status(parsed_string, i, 258);
     }
     else if (strcmp(parsed_string[i], "<<") == 0)
     {
@@ -88,7 +88,7 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             }
         }
         else
-            check_error_status(parsed_string, i);
+            check_error_status(parsed_string, i, 258);
     }
     else if (ft_strchr(parsed_string[i], '=') != NULL)
     {

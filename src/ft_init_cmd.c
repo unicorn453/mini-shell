@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/05 13:11:52 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/06 11:22:00 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
 	cmd->heredoc_exists = false;
 	cmd->heredoc_file = NULL;
 	cmd->index = 0;
+    // cmd->exit_status = 0;
 }
 
 void print_stack(t_cmd stack)
@@ -125,13 +126,19 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
             i++;
             continue;
         }
-
         token = handle_token_search(i, parsed_string, cmd);
+        if (strcmp(parsed_string[i], "$?") == 0)
+        {
+            cmd->cmd[arg_index] = ft_itoa(cmd->exit_status);
+            arg_index++;
+            i++;
+            continue;
+        }
         if (token && strcmp(parsed_string[i], token) == 0)
         {
             if (strcmp(token, "=") != 0)
             {
-                check_error_status(parsed_string, i);
+                check_error_status(parsed_string, i, 258);
                 if (parsed_string[i + 1])
                 {
                     i += 2;
