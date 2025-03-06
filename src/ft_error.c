@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:19:51 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/06 11:20:30 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/06 13:16:48 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
         else
             check_error_status(parsed_string, i, 258);
     }
-    else if (strcmp(parsed_string[i], ">>") == 0 && i != 0)
+    else if (strcmp(parsed_string[i], ">>") == 0)
     {
         if (parsed_string[i + 1] != NULL)
         {
@@ -113,4 +113,3 @@ int find_last_heredoc(char **parsed_string, int i)
     }
     return index;
 }
-

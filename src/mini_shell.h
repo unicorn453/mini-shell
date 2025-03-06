@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/06 11:03:15 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/06 12:48:23 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,8 @@ void							gc_track(void *ptr);
 void							gc_free_all(void);
 void							gc_untrack(void *ptr);
 //------------------------------//
-int								main_loop(char **envp, t_env **env_lis);
+// int								main_loop(char **envp, t_env **env_lis);
+void main_loop(char **envp, t_env	**env_lis);
 char							**ft_split_plus(char *str, char *charset);
 //-------builtins/------//
 void get_pwd(void);
