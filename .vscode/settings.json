@@ -2,6 +2,7 @@
     "files.associations": {
         "mini_shell.h": "c",
         "get_next_line.h": "c",
-        "sstream": "c"
+        "sstream": "c",
+        "system_error": "c"
     }
 }

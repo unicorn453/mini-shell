@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/06 13:13:54 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/07 02:23:24 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,20 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 {
 	static int exit_status;
 	t_cmd		*current_cmd;
+	t_token		*refined_tokens;
 	static char	**tokens;
 
 	(void)envp;
 	current_cmd = gc_malloc(sizeof(t_cmd));
 	CHECK(current_cmd == NULL, 1);
+	refined_tokens = gc_malloc(sizeof(t_token));
+	CHECK(refined_tokens == NULL, 1);
 	tokens = ft_split_plus(line, " \t\n");
 	if (tokens == NULL)
 		return (perror("Minishell: memory allocation error"), -1);
+	int i = -1;
+	while(tokens[++i])
+		printf("token %d: %s\n", i, tokens[i]);
 	main_parsing_loop(env_list, tokens);
 	init_def_cmd(current_cmd, envp, env_list);
 	current_cmd->exit_status = exit_status;

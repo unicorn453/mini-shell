@@ -1,0 +1,115 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   token_refiner.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/06 22:04:59 by dtrendaf          #+#    #+#             */
+/*   Updated: 2025/03/07 03:16:33 by dtrendaf         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../mini_shell.h"
+
+t_token *new_token(char *value)
+{
+    t_token *new;
+	
+	new = gc_malloc(sizeof(t_token));
+    if (new == NULL)
+        return NULL;
+	new->in_qoutes = false;
+    new->value = ft_strdup(value); // protect ur malloc lol ask Pichkata for CHECK imp;
+	gc_track(value);
+    new->next = NULL;
+    return new;
+}
+
+void append_token(t_token **head, char *value)
+{
+    t_token *new;
+	t_token *temp;
+	
+	new = new_token(value);
+    if (*head == NULL)
+        *head = new;
+    else
+	{
+        temp = *head;
+        while (temp->next != NULL)
+            temp = temp->next;
+        temp->next = new;
+    }
+}
+static int ft_strnstr_plus(const char *haystack, const char *needle, size_t len)
+{
+	size_t	i;
+	size_t	j;
+
+	if (needle[0] == '\0')
+		return (-1);
+	i = 0;
+	while (i < len && haystack[i] != '\0')
+	{
+		if (haystack[i] == needle[0])
+		{
+			j = 0;
+			while (needle[j] != '\0' && haystack[i + j] == needle[j] && (i
+					+ j) < len)
+				j++;
+			if (needle[j] == '\0')
+				return ((int)i);
+		}
+		i++;
+	}
+	return (-1);
+}
+
+bool	split_tokes(t_token	*head, char *token, char *charset) 
+{
+	int 	result; // res can be moved to char *token_refiner() if needed for norm
+	char	*temp;
+	
+	temp = NULL;
+	result = ft_strnstr_plus(token, charset, ft_strlen(token));
+	if (result > -1)
+	{
+		if (result > 0) // if there is something before the "charset"
+		{
+			append_token(head, temp = ft_substr(token, 0, result));
+			free(temp);
+			append_token(head, temp = ft_substr(token, result, ft_strlen(charset)));
+			free(temp);
+			temp = NULL;
+			if (result + ft_strlen(charset) < ft_strlen(token)) // if there is something after the charset
+				append_token(head, temp = ft_substr(token,result + ft_strlen(charset), ft_strlen(token)));
+			return(free(temp), false);
+		}
+			if (ft_strlen(token) == ft_strlen(charset))// if the token is only the charset
+				return (true); // def case gets handelt in char *token_refiner() 
+			append_token(head, temp = ft_substr(token, 0, ft_strlen(charset))); // charset is at the start
+				free (temp);
+			temp = ft_substr(token, ft_strlen(charset),(ft_strlen(token) - ft_strlen(charset))); // substring the rest
+			append_token(head, temp);
+			return (free(temp), false);	// false == no def case
+	}
+}
+char	*token_refiner(char **tokens,t_token	*head)
+{
+	static char	*charset[] = {"<", "<<", ">>", ">", "|", "$?", NULL};
+	int			j;
+	int			i;
+	bool		default_case;
+	
+	i = -1;
+	head = NULL;
+	while (tokens[++i])
+	{
+		j = -1;
+		while (charset[++j])
+			default_case = split_tokes(head, tokens[i], charset[j]);
+		if (default_case == true)
+			append_token(head, tokens[i]);
+	}
+}

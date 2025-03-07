@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/06 12:48:23 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/06 21:40:26 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,12 @@ typedef struct s_env
 	char						*value;
 	struct s_env				*next;
 }								t_env;
+
+typedef struct s_token {
+    char	*value;
+	bool	in_qoutes;
+    struct s_token *next;
+} t_token;
 //------------------------------//
 
 //---------GC_functions---------//
