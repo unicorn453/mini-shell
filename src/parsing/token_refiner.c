@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 22:04:59 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/07 03:16:33 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/09 17:38:12 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void append_token(t_token **head, char *value)
         temp->next = new;
     }
 }
+
 static int ft_strnstr_plus(const char *haystack, const char *needle, size_t len)
 {
 	size_t	i;
@@ -66,7 +67,7 @@ static int ft_strnstr_plus(const char *haystack, const char *needle, size_t len)
 	return (-1);
 }
 
-bool	split_tokes(t_token	*head, char *token, char *charset) 
+bool	split_tokes(t_token	**head, char *token, char *charset) 
 {
 	int 	result; // res can be moved to char *token_refiner() if needed for norm
 	char	*temp;
@@ -84,7 +85,7 @@ bool	split_tokes(t_token	*head, char *token, char *charset)
 			temp = NULL;
 			if (result + ft_strlen(charset) < ft_strlen(token)) // if there is something after the charset
 				append_token(head, temp = ft_substr(token,result + ft_strlen(charset), ft_strlen(token)));
-			return(free(temp), false);
+			return(free(temp), true);
 		}
 			if (ft_strlen(token) == ft_strlen(charset))// if the token is only the charset
 				return (true); // def case gets handelt in char *token_refiner() 
@@ -92,24 +93,33 @@ bool	split_tokes(t_token	*head, char *token, char *charset)
 				free (temp);
 			temp = ft_substr(token, ft_strlen(charset),(ft_strlen(token) - ft_strlen(charset))); // substring the rest
 			append_token(head, temp);
-			return (free(temp), false);	// false == no def case
+			return (free(temp), true);	// false == no def case
 	}
+	return(false);
 }
-char	*token_refiner(char **tokens,t_token	*head)
+
+void print_tokens(t_token *head) {
+    while (head != NULL) {
+        printf("New shit %s\n", head->value);
+        head = head->next;
+    }
+}
+
+char	*token_refiner(char **tokens,t_token	**head)
 {
 	static char	*charset[] = {"<", "<<", ">>", ">", "|", "$?", NULL};
 	int			j;
 	int			i;
-	bool		default_case;
 	
 	i = -1;
-	head = NULL;
 	while (tokens[++i])
 	{
 		j = -1;
 		while (charset[++j])
-			default_case = split_tokes(head, tokens[i], charset[j]);
-		if (default_case == true)
-			append_token(head, tokens[i]);
+			split_tokes(head, tokens[i], charset[j]);
+		// if (default_case == true)
+		// 	append_token(&head, tokens[i]);
 	}
+	print_tokens(*head);
+	return(NULL);
 }

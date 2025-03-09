@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/06 21:40:26 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/09 17:38:09 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,4 +168,10 @@ void							add_env_var(t_env **env_list, char *key,
 void							handle_export(t_env **env_list, char *arg);
 void							export_env_var(t_env **env_list, char *key,
 									char *value);
+
+//------token_refiner.c------//
+char	*token_refiner(char **tokens,t_token	**head);
+bool	split_tokes(t_token	**head, char *token, char *charset);
+void 	append_token(t_token **head, char *value);
+t_token *new_token(char *value);
 #endif

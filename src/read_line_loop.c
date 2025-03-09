@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/07 02:23:24 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/09 17:29:44 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	(void)envp;
 	current_cmd = gc_malloc(sizeof(t_cmd));
 	CHECK(current_cmd == NULL, 1);
-	refined_tokens = gc_malloc(sizeof(t_token));
-	CHECK(refined_tokens == NULL, 1);
+	refined_tokens = NULL;
 	tokens = ft_split_plus(line, " \t\n");
 	if (tokens == NULL)
 		return (perror("Minishell: memory allocation error"), -1);
 	int i = -1;
 	while(tokens[++i])
 		printf("token %d: %s\n", i, tokens[i]);
+	token_refiner(tokens, &refined_tokens);
 	main_parsing_loop(env_list, tokens);
 	init_def_cmd(current_cmd, envp, env_list);
 	current_cmd->exit_status = exit_status;
@@ -48,6 +48,7 @@ void main_loop(char **envp, t_env	**env_lis)
 		// print_envlist(env_lis);
 		if (isatty(fileno(stdin)))
 			line = readline("minishell> ");
+			// line =  "<Makefile";
 		else
 		{
 			line = get_next_line(fileno(stdin));
