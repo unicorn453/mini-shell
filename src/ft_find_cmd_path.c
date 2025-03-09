@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "mini_shell.h"
+void echo_call_check(t_cmd *cmd, t_env **env_list);
 
 void	error(void)
 {
@@ -82,7 +83,8 @@ int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 {
 	(void)env_list;
 	// char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL};
-	char *builtins[] = {"export", "pwd", "unset", "env", "exit", NULL};
+	// char *builtins[] = {"export", "pwd", "echo", NULL};
+	char *builtins[] = {"export", "pwd", "echo",  NULL};
 	int i;
 	i = 0;
 	bool match = false;
@@ -104,9 +106,27 @@ int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 		}
 		else if ((ft_strncmp(builtins[i], "pwd", 3) == 0))
 		{
-			get_pwd();
+			// get_pwd();
 			cmd->cmd[0] = "pwd";
 		}
+		else if ((ft_strncmp(builtins[i], "echo", 4) == 0))
+		{
+			// echo_call_check(cmd, env_list);
+			cmd->cmd[0] = "echo";
+		}
+		// else if ((ft_strncmp(builtins[i], "exit", 4) == 0))
+		// {
+		// 	exit(0);
+		// 	cmd->cmd[0] = "exit";
+		// }
+		// else if ((ft_strncmp(builtins[i], "unset", 5) == 0))
+		// {
+		// 	cmd->cmd[0] = "unset";
+		// }
+		// else if ((ft_strncmp(builtins[i], "env", 3) == 0))
+		// {
+		// 	cmd->cmd[0] = "env";
+		// }
 	}
 	return (match);
 }

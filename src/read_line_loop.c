@@ -27,9 +27,9 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	tokens = ft_split_plus(line, " \t\n");
 	if (tokens == NULL)
 		return (perror("Minishell: memory allocation error"), -1);
-	int i = -1;
-	while(tokens[++i])
-		printf("token %d: %s\n", i, tokens[i]);
+	// int i = -1;
+	// while(tokens[++i])
+	// 	printf("token %d: %s\n", i, tokens[i]);
 	main_parsing_loop(env_list, tokens);
 	init_def_cmd(current_cmd, envp, env_list);
 	current_cmd->exit_status = exit_status;

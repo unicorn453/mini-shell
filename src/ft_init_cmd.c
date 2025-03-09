@@ -13,7 +13,53 @@
 #include "mini_shell.h"
 
 void ft_ending_of_init(t_cmd *cmd, t_env **env_list, char **parsed_string, int i);
+void execute_builtins(t_cmd *cmd, t_env **env_list)
+{
+    int pipefd[2];
+    pid_t pid;
 
+    CHECK(pipe(pipefd) == -1, 1);
+    pid = fork();
+    CHECK(pid < 0, 1);
+    if (pid == 0)
+    {
+    if(strcmp(cmd->cmd[0], "echo") == 0 && cmd->cmd[1] != NULL)
+    {
+        echo_call_check(cmd, env_list);
+        close(pipefd[0]);
+        close(pipefd[1]);
+        exit(EXIT_SUCCESS);
+    }
+    else if (strcmp(cmd->cmd[0], "echo") == 0 && cmd->cmd[1] == NULL)
+    {
+        printf("\n");
+        close(pipefd[0]);
+        close(pipefd[1]);
+        exit(EXIT_SUCCESS);
+    }
+    else if(strcmp(cmd->cmd[0], "pwd") == 0)
+    {
+        get_pwd();
+        close(pipefd[0]);
+        close(pipefd[1]);
+        exit(EXIT_SUCCESS);
+    }
+    else if (cmd->assigned_var)
+        {
+            if (strcmp(cmd->cmd[0], "export") == 0)
+            {
+                handle_export(env_list, cmd->assigned_var);
+            }
+            close(pipefd[0]);
+            close(pipefd[1]);
+            exit(EXIT_SUCCESS);
+        }     
+}
+cmd->pid[cmd->index++] = pid;
+// close(pipefd[1]);
+
+
+}
 void init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
 {
 	cmd->env_list = *env_list;
@@ -174,17 +220,23 @@ void ft_ending_of_init(t_cmd *cmd, t_env **env_list, char **parsed_string, int i
     {
         cmd->end_of_cmd = true;
 
-        if (cmd->assigned_var)
+        // if (cmd->assigned_var)
+        // {
+        //     if (check_builtins(env_list, cmd, cmd->cmd[0]))
+        //     {
+        //         handle_export(env_list, cmd->assigned_var);
+        //     }
+        //     return;
+        // }     
+        // else if (cmd->builtin)
+        //     return;
+         if (cmd->builtin)
         {
-            if (check_builtins(env_list, cmd, cmd->cmd[0]))
-            {
-                handle_export(env_list, cmd->assigned_var);
-            }
+            // printf("unknown command: %s\n", cmd->cmd[0]);
+            // if(check_builtins(env_list, cmd, cmd->cmd[0]) && cmd->cmd[1] != NULL)
+            execute_builtins(cmd, env_list);
             return;
-        }     
-        else if (cmd->builtin)
-            return;
-        
+        }
         else
         {
             find_right_exec(cmd, parsed_string);

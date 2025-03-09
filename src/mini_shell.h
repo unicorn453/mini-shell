@@ -168,4 +168,6 @@ void							add_env_var(t_env **env_list, char *key,
 void							handle_export(t_env **env_list, char *arg);
 void							export_env_var(t_env **env_list, char *key,
 									char *value);
+//-------echo.c------//
+void echo_call_check(t_cmd *cmd, t_env **env_list);
 #endif
