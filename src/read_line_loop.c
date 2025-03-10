@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/07 02:23:24 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/10 12:50:11 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	refined_tokens = gc_malloc(sizeof(t_token));
 	CHECK(refined_tokens == NULL, 1);
 	tokens = ft_split_plus(line, " \t\n");
+	
 	if (tokens == NULL)
 		return (perror("Minishell: memory allocation error"), -1);
 	// int i = -1;
@@ -45,7 +46,6 @@ void main_loop(char **envp, t_env	**env_lis)
 
 	while (1)
 	{
-		// print_envlist(env_lis);
 		if (isatty(fileno(stdin)))
 			line = readline("minishell> ");
 		else

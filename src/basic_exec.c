@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/06 11:21:03 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/10 12:42:57 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,6 +295,8 @@ int wait_for_all_children(t_cmd *cmd)
         //     cmd->exit_status = 128 + sig; // Mimic Bash behavior
         // }
         }
+        else if (cmd->pid[i] == 0)
+            exit_status = 0;
     }
     cmd->index = 0;
     return (exit_status);
