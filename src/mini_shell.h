@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/06 21:40:26 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/10 18:39:41 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,4 +170,11 @@ void							export_env_var(t_env **env_list, char *key,
 									char *value);
 //-------echo.c------//
 void echo_call_check(t_cmd *cmd, t_env **env_list);
+
+//------token_refiner.c------//
+void print_tokens(t_token *head);
+void split_tokens(char **tokens, t_token **refined_tokens);
+void 	append_token(t_token **head, char *value);
+t_token *new_token(char *value);
+
 #endif

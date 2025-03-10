@@ -27,6 +27,7 @@
                 "${workspaceFolder}/src/builtins/exit.c",
                 "${workspaceFolder}/src/builtins/env.c",
                 "${workspaceFolder}/src/check.c",
+                "${workspaceFolder}/src/parsing/token_refiner.c",
                 "-o",
                 "${workspaceFolder}/minishell",
                 "-lreadline",
