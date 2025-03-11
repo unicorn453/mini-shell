@@ -92,12 +92,6 @@ void main_loop(char **envp, t_env	**env_lis)
 		}
 		//non - testing
 		// CHECK(line == NULL, 1);
-		if (line == NULL)
-{
-    printf("Line is NULL, exiting...\n");
-    fflush(stdout);
-    exit(1);
-}
 		gc_track(line);
 
 		if (*line != '\0' && isatty(fileno(stdin)))

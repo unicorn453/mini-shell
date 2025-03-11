@@ -84,7 +84,7 @@ int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 	(void)env_list;
 	// char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL};
 	// char *builtins[] = {"export", "pwd", "echo", NULL};
-	char *builtins[] = {"export", "pwd", "echo",  NULL};
+	char *builtins[] = {"export", "pwd", "echo", "/bin/echo", NULL};
 	int i;
 	i = 0;
 	bool match = false;
@@ -109,9 +109,8 @@ int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 			// get_pwd();
 			cmd->cmd[0] = "pwd";
 		}
-		else if ((ft_strncmp(builtins[i], "echo", 4) == 0))
+		else if ((ft_strncmp(builtins[i], "echo", 4) == 0) || (ft_strncmp(builtins[i], "/bin/echo", 9) == 0))
 		{
-			// echo_call_check(cmd, env_list);
 			cmd->cmd[0] = "echo";
 		}
 		// else if ((ft_strncmp(builtins[i], "exit", 4) == 0))

@@ -29,12 +29,12 @@ void execute_builtins(t_cmd *cmd, t_env **env_list)
     CHECK(pid < 0, 1);
     if (pid == 0)
     {
-        if (strcmp(cmd->cmd[0], "echo") == 0 && cmd->cmd[1] != NULL)
+        if ((strcmp(cmd->cmd[0], "echo") == 0 || strcmp(cmd->cmd[0], "/bin/echo") == 0) && cmd->cmd[1] != NULL)
         {
             echo_call_check(cmd, env_list);
             exit(0);
         }
-        else if (strcmp(cmd->cmd[0], "echo") == 0 && cmd->cmd[1] == NULL)
+        else if ((strcmp(cmd->cmd[0], "echo") == 0 || strcmp(cmd->cmd[0], "/bin/echo") == 0) && cmd->cmd[1] == NULL)
         {
             printf("\n");
             exit(0);
@@ -134,7 +134,6 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
 {
     int i = 0, arg_index = 0, parsed_size = 0;
     char *token;
-    int len;
 
     init_def_cmd(cmd, envp, env_list);
     
@@ -146,7 +145,7 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
 
     while (parsed_string[i] != NULL)
     {
-        printf("Parsed string: %s\n", parsed_string[i]);
+        // printf("Parsed string: %s\n", parsed_string[i]);
         if (strcmp(parsed_string[i], "|") == 0)
         {
             cmd->pipe = true;
@@ -166,14 +165,10 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
         token = handle_token_search(i, parsed_string, cmd);
         if ((strcmp(parsed_string[i], "$?" )  == 0 ))
         {
-            if ((ft_strchr(cmd->cmd[0], '/') != NULL))
-            {
-                cmd->cmd[arg_index] = ft_itoa(cmd->exit_status);
-            }
-            else {
+            
                 cmd->cmd[arg_index] = ft_itoa(cmd->exit_status);
                 arg_index++;
-            }
+    
             i++;
             continue;
         }
@@ -200,14 +195,6 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
                 cmd->cmd[arg_index] = find_command_path(cmd, env_list, parsed_string[i], envp);
             else
             {
-                if ((len = ft_strlen(cmd->cmd[arg_index])) > 1)
-                {
-                    char *temp = cmd->cmd[arg_index]; // Store old pointer
-                    cmd->cmd[arg_index] = ft_strjoin(cmd->cmd[arg_index], parsed_string[i]); // Join new string
-        
-                    free(temp); // Free old string to prevent leaks
-                }
-                else
                 cmd->cmd[arg_index] = parsed_string[i];
             }
 

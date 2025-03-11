@@ -36,10 +36,12 @@ void echo_call_check(t_cmd *cmd, t_env **env_list)
                 if (env_var == NULL)
                     return;
                 printf("%s", env_var);
-                k += ft_strlen(env_var);
+                k += (ft_strlen(env_var));
             }
             else if (!found_var)
-                printf("%s", cmd->cmd[i]);
+            {
+                printf("%c", cmd->cmd[i][k]);
+            }
             k++;
         }
         if (cmd->cmd[i][k] == '\'')
@@ -52,6 +54,7 @@ void echo_call_check(t_cmd *cmd, t_env **env_list)
             }
         }
         i++;
+        k = 0;
     }
     printf("\n");
 }
