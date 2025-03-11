@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -lreadline
+CFLAGS = -Wall -Wextra -Werror
 
 LIBFT_DIR = ./libft
 LIBFT = $(LIBFT_DIR)/libft.a
@@ -16,7 +16,7 @@ NAME = $(MINI_SHELL_EXE)
 all: $(NAME)
 
 $(MINI_SHELL_EXE): $(MINI_SHELL_SRC) $(LIBFT)
-	$(CC) $(CFLAGS) -o $(MINI_SHELL_EXE) $(MINI_SHELL_SRC) $(LIBFT)
+	$(CC) $(CFLAGS) -o $(MINI_SHELL_EXE) $(MINI_SHELL_SRC) $(LIBFT) -lreadline
 
 $(LIBFT): 
 	$(MAKE) -C $(LIBFT_DIR)

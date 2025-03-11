@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 15:22:45 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/10 18:23:13 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/11 15:29:03 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void check(int retval, int exit_code)
     if (retval != 0)
     {
         fprintf(stderr, "bash: %s\n", strerror(errno));
-        gc_free_all();
         exit(exit_code);
     }
 }

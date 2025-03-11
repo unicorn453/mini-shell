@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:41:19 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/06 13:01:47 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/11 15:22:20 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,6 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	main_loop(envp, &env_list);
+	gc_free_all();
 	return (exit_status);
 }

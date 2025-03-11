@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/10 18:39:41 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/11 14:35:58 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,8 @@ void							handle_output_redirection(t_cmd *cmd,
 void							execute_command(t_cmd *cmd);
 // void							wait_for_all_children(t_cmd *cmd);
 int wait_for_all_children(t_cmd *cmd);
-void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string);
-void							exec_cmd(t_cmd *cmd, int *fd_in,
-									bool last_child);
+void exec_pipes(t_cmd *cmd, int *fd_in, int *fd_index, char **parsed_string);
+void exec_cmd(t_cmd *cmd, int *fd_in, bool last_child);
 //---------ft_find_cmd_path.c---------//
 t_path							*initialize_path(void);
 void							free_paths(t_path *path, int error_bool);

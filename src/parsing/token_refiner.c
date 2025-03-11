@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 22:04:59 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/10 18:39:06 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/11 16:12:36 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@ t_token *new_token(char *value)
     t_token *new;
 	
 	new = gc_malloc(sizeof(t_token));
-    if (new == NULL)
-        return NULL;
+    CHECK(new == NULL, 1);
 	new->in_qoutes = false;
     new->value = ft_strdup(value); // protect ur malloc lol ask Pichkata for CHECK imp;
 	CHECK(new->value == NULL, 1);
@@ -51,7 +50,7 @@ void print_tokens(t_token *head) {
 }
 void split_tokens(char **tokens, t_token **refined_tokens)
 {
-    static char *charset[] = {"<", "<<", ">>", ">", "|", "$?", NULL};
+    static char *charset[] = {"<<", "<", ">>", ">", "|", "$?", NULL};
     int i = 0;
     int j;
     int start;

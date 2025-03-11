@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/10 12:42:57 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/11 14:35:45 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int ft_in_out(char *file, int mode)
     return (fd);
 }
 
-void exec_cmd(t_cmd *cmd, int fd_in[1024], bool last_child)
+void exec_cmd(t_cmd *cmd, int *fd_in, bool last_child)
 {
     int pipefd[2];
     pid_t pid;
@@ -184,7 +184,7 @@ bool ft_heredoc_exist(char **parsed_string)
     return (0);
 }
 
-void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string)
+void exec_pipes(t_cmd *cmd, int *fd_in, int *fd_index, char **parsed_string)
 {
     int fd_pipe[2];
     pid_t pid;

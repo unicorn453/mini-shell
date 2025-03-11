@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/10 12:41:08 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/11 18:06:50 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,17 @@ void ft_ending_of_init(t_cmd *cmd, t_env **env_list, char **parsed_string, int i
 void execute_builtins(t_cmd *cmd, t_env **env_list)
 {
     pid_t pid;
-    // int status;
-
-    // Run `export` in the parent process (since it modifies env_list)
+    
     if (strcmp(cmd->cmd[0], "export") == 0 && cmd->assigned_var)
     {
         handle_export(env_list, cmd->assigned_var);
-        cmd->pid[cmd->index++] = 0;  // Simulate successful execution
+        cmd->pid[cmd->index++] = 0;
         return;
     }
 
     pid = fork();
     CHECK(pid < 0, 1);
-
-    if (pid == 0) // Child process
+    if (pid == 0)
     {
         if (strcmp(cmd->cmd[0], "echo") == 0 && cmd->cmd[1] != NULL)
         {
@@ -49,11 +46,6 @@ void execute_builtins(t_cmd *cmd, t_env **env_list)
         }
         exit(1); 
     }
-
-
-    // waitpid(pid, &status, 0);
-    // if (WIFEXITED(status))
-    //     cmd->exit_status = WEXITSTATUS(status);
 
     cmd->pid[cmd->index++] = pid;
 }
@@ -142,6 +134,7 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
 {
     int i = 0, arg_index = 0, parsed_size = 0;
     char *token;
+    int len;
 
     init_def_cmd(cmd, envp, env_list);
     
@@ -153,6 +146,7 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
 
     while (parsed_string[i] != NULL)
     {
+        printf("Parsed string: %s\n", parsed_string[i]);
         if (strcmp(parsed_string[i], "|") == 0)
         {
             cmd->pipe = true;
@@ -170,10 +164,16 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
             continue;
         }
         token = handle_token_search(i, parsed_string, cmd);
-        if (strcmp(parsed_string[i], "$?") == 0)
+        if ((strcmp(parsed_string[i], "$?" )  == 0 ))
         {
-            cmd->cmd[arg_index] = ft_itoa(cmd->exit_status);
-            arg_index++;
+            if ((ft_strchr(cmd->cmd[0], '/') != NULL))
+            {
+                cmd->cmd[arg_index] = ft_itoa(cmd->exit_status);
+            }
+            else {
+                cmd->cmd[arg_index] = ft_itoa(cmd->exit_status);
+                arg_index++;
+            }
             i++;
             continue;
         }
@@ -199,7 +199,17 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
             if (arg_index == 0)
                 cmd->cmd[arg_index] = find_command_path(cmd, env_list, parsed_string[i], envp);
             else
+            {
+                if ((len = ft_strlen(cmd->cmd[arg_index])) > 1)
+                {
+                    char *temp = cmd->cmd[arg_index]; // Store old pointer
+                    cmd->cmd[arg_index] = ft_strjoin(cmd->cmd[arg_index], parsed_string[i]); // Join new string
+        
+                    free(temp); // Free old string to prevent leaks
+                }
+                else
                 cmd->cmd[arg_index] = parsed_string[i];
+            }
 
             arg_index++;
             i++;

@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:12:54 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/10 12:49:27 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/11 15:39:36 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,7 @@ static char	*str_before_env_var_handler(char *token, char *env_str, int len)
 		return (perror("Minishell: memory allocation error"), NULL);
 	gc_track(before_env);
 	new_token = ft_strjoin(before_env, env_str);
-	if (new_token == NULL)
-	{
-		gc_free_all();
-		return (perror("Minishell: memory allocation error"), NULL);
-	}
+	CHECK(new_token == NULL, 2);
 	gc_track(new_token);
 	return (new_token);
 }
@@ -51,8 +47,7 @@ char 	*handle_env_var(t_env **env_list, char *token)
 			if (i > 0) // if there is something before the '$' for example abc$USER 
 			{
 				res = str_before_env_var_handler(token, env_str, i);
-				if (res == NULL)
-					exit(2);
+				CHECK(res == NULL, 2);
 				return(res);
 			}
 			return(env_str);
@@ -148,20 +143,12 @@ void	quote_parsing(t_env **env_list ,char **token)
 		if ((*token)[i] == '\'')
 		{
 			*token = single_quote_handler(*token);
-			if (*token == NULL)
-			{
-				gc_free_all();
-				exit(2);
-			}
+			CHECK(*token == NULL, 2);
 		}
 		else if ((*token)[i] == '"')
 		{
 			*token = double_quotes_handler(env_list, *token);
-			if (*token == NULL)
-			{
-				gc_free_all();
-				exit(2);
-			}
+			CHECK(*token == NULL, 2);
 		}
 	}
 }
@@ -212,8 +199,7 @@ char	*double_quotes_handler(t_env **env_list, char *token)
 	char	*expanded_token;
 
 	i = count_chars(token, '"');
-	if ((i & 1) == 1)
-		return (perror("Minishell: Error: unclosed double qoutes"), NULL);
+	CHECK((i & 1) == 1, 1);
 	new_token = gc_malloc(ft_strlen(token) - i + 1);
 	if (new_token == NULL)
 		return (perror("Minishell: memory allocation error"), NULL);

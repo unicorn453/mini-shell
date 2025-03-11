@@ -39,7 +39,7 @@ void echo_call_check(t_cmd *cmd, t_env **env_list)
                 k += ft_strlen(env_var);
             }
             else if (!found_var)
-                printf("%c", cmd->cmd[i][k]);
+                printf("%s", cmd->cmd[i]);
             k++;
         }
         if (cmd->cmd[i][k] == '\'')
