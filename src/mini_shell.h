@@ -144,7 +144,7 @@ void							init_cmd_stack(t_cmd *cmd, t_env **env_list,
 int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
 									bool last_child, bool last_heredoc);
 //---------ft_error.c---------//
-void check_error_status(char **parsed_string, int i, int status);
+int check_error_status(char **parsed_string, int i, int status);
 char							*handle_token_search(int i,
 									char **parsed_string, t_cmd *cmd);
 

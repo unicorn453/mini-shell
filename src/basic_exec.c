@@ -278,6 +278,11 @@ int wait_for_all_children(t_cmd *cmd)
 {
     int status;
     int exit_status;
+    if (cmd->pid[0] == -1)
+        {
+            exit_status = cmd->pid[1];
+            return (exit_status);
+        }
     for (int i = 0; i < cmd->index; i++)
     {
         if (cmd->pid[i] > 0) 

@@ -148,6 +148,13 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
         // printf("Parsed string: %s\n", parsed_string[i]);
         if (strcmp(parsed_string[i], "|") == 0)
         {
+            int status = check_error_status(parsed_string, i, 258);
+            if (status!= 0)
+                {
+                    cmd->pid[0] = -1;
+                    cmd->pid[1] = status;
+                    return;
+                }
             cmd->pipe = true;
             cmd->cmd[arg_index] = NULL;
             find_right_exec(cmd, parsed_string);
@@ -176,7 +183,14 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
         {
             if (strcmp(token, "=") != 0)
             {
-                check_error_status(parsed_string, i, 258);
+               
+                   int status = check_error_status(parsed_string, i, 258);
+                   if (status!= 0)
+                   {
+                       cmd->pid[0] = -1;
+                       cmd->pid[1] = status;
+                       return;
+                   }
                 if (parsed_string[i + 1])
                 {
                     i += 2;

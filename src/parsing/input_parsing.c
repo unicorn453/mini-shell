@@ -109,6 +109,7 @@ void	main_parsing_loop(t_env **env_list, char **tokens)
 	// bool	parse_env_var;
 	bool env_var;
 	env_var = false;
+	bool    in_single = false;
 
 	i = -1;
 	while (tokens[++i])
@@ -119,9 +120,11 @@ void	main_parsing_loop(t_env **env_list, char **tokens)
 		{
 			if (tokens[i][y] == '\'' || tokens[i][y] == '"')
 			{
+				if (tokens[i][y] == '\'' && env_var)
+					in_single = true;
 				if (!env_var && tokens[i][y] == '\'')
 					quote_parsing(env_list, &tokens[i]);
-				else if ((env_var && tokens[i][y] == '"') || (!env_var && tokens[i][y] == '"'))
+				else if (((env_var && tokens[i][y] == '"') || (!env_var && tokens[i][y] == '"')) && !in_single)
 				quote_parsing(env_list ,&tokens[i]);
 				// parse_env_var = false;
 			}
