@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/11 18:06:50 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/12 17:30:02 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,12 @@ void execute_builtins(t_cmd *cmd, t_env **env_list)
         cmd->pid[cmd->index++] = 0;
         return;
     }
+    else if (strcmp(cmd->cmd[0], "cd") == 0)
+        {
+            cd_test_call(cmd, env_list);
+            cmd->pid[cmd->index++] = 0;
+            return;
+        }
 
     pid = fork();
     CHECK(pid < 0, 1);

@@ -3,6 +3,22 @@
         "mini_shell.h": "c",
         "get_next_line.h": "c",
         "sstream": "c",
-        "system_error": "c"
+        "system_error": "c",
+        "__bit_reference": "c",
+        "__functional_base": "c",
+        "__node_handle": "c",
+        "algorithm": "c",
+        "bitset": "c",
+        "chrono": "c",
+        "__memory": "c",
+        "functional": "c",
+        "iterator": "c",
+        "limits": "c",
+        "memory": "c",
+        "optional": "c",
+        "ratio": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "vector": "c"
     }
 }
