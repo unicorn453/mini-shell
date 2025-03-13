@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/12 17:08:59 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/13 10:26:10 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,6 @@ void							add_env_var(t_env **env_list, char *key,
 void							handle_export(t_env **env_list, char *arg);
 void							export_env_var(t_env **env_list, char *key,
 									char *value);
-									void remove_env_var(t_env **env_list, char *key);
 //-------echo.c------//
 void echo_call_check(t_cmd *cmd, t_env **env_list);
 
@@ -179,5 +178,7 @@ t_token *new_token(char *value);
 
 //------builtins/cd.c------//
 void cd_test_call(t_cmd *cmd, t_env **env_list);
+//------builtins/unset.c------//
+void remove_env_var(t_env **env_list, char *key);
 
 #endif

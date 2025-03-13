@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:58:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/12 17:26:55 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/13 10:24:58 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,39 +48,6 @@ void	add_env_var(t_env **env_list, char *key, char *value)
 	new_node->next = *env_list;
 	*env_list = new_node;
 }
-
-void remove_env_var(t_env **env_list, char *key)
-{
-    t_env *temp = NULL;
-    t_env *prev = NULL;
-    t_env *curr = *env_list;
-
-    while (curr)
-    {
-        if (ft_strncmp(curr->key, key, ft_strlen(key)) == 0)
-        {
-            temp = curr;
-            if (prev)
-                prev->next = curr->next;  // Skip the node being removed
-            else
-                *env_list = curr->next; // Update head if first node is removed
-
-            gc_untrack(temp->key);
-            gc_untrack(temp->value);
-            gc_untrack(temp);
-			if (prev)
-			curr = prev->next;
-			else
-			curr = *env_list;
-        }
-        else
-        {
-            prev = curr;
-            curr = curr->next;
-        }
-    }
-}
-
 
 void	initialize_env_vars(t_env **env_list, char **envp) 
 {

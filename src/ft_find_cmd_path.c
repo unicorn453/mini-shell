@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:49:03 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/12 12:21:24 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/13 10:26:39 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 	(void)env_list;
 	// char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL};
 	// char *builtins[] = {"export", "pwd", "echo", NULL};
-	char *builtins[] = {"export", "pwd", "echo", "/bin/echo", "cd", NULL};
+	char *builtins[] = {"export", "pwd", "echo", "/bin/echo", "cd", "unset", NULL};
 	int i;
 	i = 0;
 	bool match = false;
@@ -117,14 +117,14 @@ int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 		{
 			cmd->cmd[0] = "cd";
 		}
+		else if ((ft_strncmp(builtins[i], "unset", 5) == 0))
+		{
+			cmd->cmd[0] = "unset";
+		}
 		// else if ((ft_strncmp(builtins[i], "exit", 4) == 0))
 		// {
 		// 	exit(0);
 		// 	cmd->cmd[0] = "exit";
-		// }
-		// else if ((ft_strncmp(builtins[i], "unset", 5) == 0))
-		// {
-		// 	cmd->cmd[0] = "unset";
 		// }
 		// else if ((ft_strncmp(builtins[i], "env", 3) == 0))
 		// {
