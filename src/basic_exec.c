@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/13 19:37:34 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/14 12:13:57 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,13 +87,18 @@ void exec_cmd(t_cmd *cmd, int *fd_in, bool last_child)
     if (!last_child)
         fd_in[cmd->index] = pipefd[0];
 }
-int *original_std(int fd)
-{
-    static int stdi = -111;
-    if (stdi == -111)
-        stdi = fd;
 
-    return &stdi;
+int *original_std(int fd_in, int fd_out)
+{
+    static int stdis[2] = {-111, -111};
+
+    if (stdis[0] == -111)
+    {
+        stdis[0] = fd_in;
+        stdis[1] = fd_out;
+    }
+
+    return stdis;
 }
 
 int find_right_exec(t_cmd *cmd, char **parsed_string)
@@ -101,15 +106,18 @@ int find_right_exec(t_cmd *cmd, char **parsed_string)
     static int fd_in = -1;
     static int fd_index = 0;
 
-    int original_fd = dup(STDIN_FILENO);
-    CHECK(original_fd == -1, 1);
+    int original_stdin = dup(STDIN_FILENO);
+    int original_stdout = dup(STDOUT_FILENO);
 
-    original_std(original_fd);
+    CHECK(original_stdin == -1, 1);
+    CHECK(original_stdout == -1, 1);
+
+    original_std(original_stdin, original_stdout);
 
     if (cmd->pipe)
     {
         exec_pipes(cmd, &fd_in, &fd_index, parsed_string);
-        return (0);
+        return 0;
     }
     else
     {
@@ -122,11 +130,15 @@ int find_right_exec(t_cmd *cmd, char **parsed_string)
         fd_in = -1;
     }
 
-    dup2(*original_std(-1), STDIN_FILENO);
-    close(*original_std(-1));
+    dup2(original_std(-1, -1)[0], STDIN_FILENO);
+    close(original_std(-1, -1)[0]);
 
-    return (1);
+    dup2(original_std(-1, -1)[1], STDOUT_FILENO);
+    close(original_std(-1, -1)[1]);
+
+    return 1;
 }
+
 
 void handle_input_redirection(t_cmd *cmd, int *fd_in)
 {
@@ -203,9 +215,9 @@ bool ft_heredoc_exist(char **parsed_string)
 
 void exec_pipes(t_cmd *cmd, int *fd_in, int *fd_index, char **parsed_string)
 {
-    int fd_pipe[2];
+    int fd_pipe[2] = {-1, -1};
+int heredoc_fd[2] = {-1, -1};
     pid_t pid;
-    int heredoc_fd[2];
     int status;
     (void)fd_index;
 
@@ -239,6 +251,7 @@ void exec_pipes(t_cmd *cmd, int *fd_in, int *fd_index, char **parsed_string)
         else if (fd_in[0] != -1 && !cmd->heredoc && !heredoc_exist)
         {
             CHECK(dup2(fd_in[0], STDIN_FILENO) == -1, 1);
+            if (fd_in[0] != -1)
             close(fd_in[0]);
         }
         if (cmd->redir_out || cmd->redir_append)
@@ -271,21 +284,27 @@ void exec_pipes(t_cmd *cmd, int *fd_in, int *fd_index, char **parsed_string)
     }
     else
     {
+        if(fd_pipe[1] != -1)
         close(fd_pipe[1]);
 
         if (!cmd->end_of_cmd)
         {
+            if(fd_in[0] != -1)
             close(fd_in[0]);
             fd_in[0] = fd_pipe[0];
         }
         else
+        {
+            if(fd_pipe[0] != -1)
             close(fd_pipe[0]);
+        }
 
         if (!cmd->heredoc)
             cmd->pid[cmd->index++] = pid;
         else
         {
             waitpid(pid, &status, 0);
+            if (heredoc_fd[0] != -1)
             close(heredoc_fd[0]);
         }
     }
