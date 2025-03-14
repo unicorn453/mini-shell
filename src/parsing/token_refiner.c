@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 22:04:59 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/11 16:12:36 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/14 17:23:13 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void split_tokens(char **tokens, t_token **refined_tokens)
         if (*no_charse_str)
         {
             append_token(refined_tokens, no_charse_str);
-            free(no_charse_str);
+            // free(no_charse_str);
         }
 
         i++;

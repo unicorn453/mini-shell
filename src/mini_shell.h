@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/13 10:26:10 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/14 16:32:15 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,11 @@ typedef struct s_cmd
 	bool						last_heredoc;
 	char						*assigned_var;
 	// char						**assigned_var;
-	bool 						builtin;
-	//to do
-	bool 						heredoc_exists;
-	char 						*heredoc_file;
-	int								exit_status;
+	bool						builtin;
+	// to do
+	bool						heredoc_exists;
+	char						*heredoc_file;
+	int							exit_status;
 }								t_cmd;
 
 typedef struct s_path
@@ -84,11 +84,12 @@ typedef struct s_env
 	struct s_env				*next;
 }								t_env;
 
-typedef struct s_token {
-    char	*value;
-	bool	in_qoutes;
-    struct s_token *next;
-} t_token;
+typedef struct s_token
+{
+	char						*value;
+	bool						in_qoutes;
+	struct s_token				*next;
+}								t_token;
 //------------------------------//
 
 //---------GC_functions---------//
@@ -98,10 +99,10 @@ void							gc_free_all(void);
 void							gc_untrack(void *ptr);
 //------------------------------//
 // int								main_loop(char **envp, t_env **env_lis);
-void main_loop(char **envp, t_env	**env_lis);
+void							main_loop(char **envp, t_env **env_lis);
 char							**ft_split_plus(char *str, char *charset);
 //-------builtins/------//
-void get_pwd(void);
+void							get_pwd(void);
 /*
 ** basic_exec.c
 ** This file contains the functions for executing the commands
@@ -114,9 +115,11 @@ void							handle_output_redirection(t_cmd *cmd,
 									int fd_pipe[2]);
 void							execute_command(t_cmd *cmd);
 // void							wait_for_all_children(t_cmd *cmd);
-int wait_for_all_children(t_cmd *cmd);
-void exec_pipes(t_cmd *cmd, int *fd_in, int *fd_index, char **parsed_string);
-void exec_cmd(t_cmd *cmd, int *fd_in, bool last_child);
+int								wait_for_all_children(t_cmd *cmd);
+void							exec_pipes(t_cmd *cmd, int *fd_in,
+									int *fd_index, char **parsed_string);
+void							exec_cmd(t_cmd *cmd, int *fd_in,
+									bool last_child);
 //---------ft_find_cmd_path.c---------//
 t_path							*initialize_path(void);
 void							free_paths(t_path *path, int error_bool);
@@ -130,8 +133,9 @@ int								check_builtins(t_env **env_list, t_cmd *cmd,
 char							*find_command_path(t_cmd *cmd_list,
 									t_env **env_list, char *cmd, char **envp);
 //---------ft_init_cmd.c---------//
-int find_right_exec(t_cmd *cmd, char **parsed_string);
-bool ft_heredoc_exist(char **parsed_string);
+int								find_right_exec(t_cmd *cmd,
+									char **parsed_string);
+bool							ft_heredoc_exist(char **parsed_string);
 void							init_def_cmd(t_cmd *cmd, char **envp,
 									t_env **env_list);
 // void							init_cmd_stack(t_cmd *cmd, char **envp,
@@ -144,7 +148,8 @@ void							init_cmd_stack(t_cmd *cmd, t_env **env_list,
 int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
 									bool last_child, bool last_heredoc);
 //---------ft_error.c---------//
-int check_error_status(char **parsed_string, int i, int status);
+int								check_error_status(char **parsed_string, int i,
+									int status);
 char							*handle_token_search(int i,
 									char **parsed_string, t_cmd *cmd);
 
@@ -168,17 +173,20 @@ void							handle_export(t_env **env_list, char *arg);
 void							export_env_var(t_env **env_list, char *key,
 									char *value);
 //-------echo.c------//
-void echo_call_check(t_cmd *cmd, t_env **env_list);
+void							echo_call_check(t_cmd *cmd, t_env **env_list);
 
 //------token_refiner.c------//
-void print_tokens(t_token *head);
-void split_tokens(char **tokens, t_token **refined_tokens);
-void 	append_token(t_token **head, char *value);
-t_token *new_token(char *value);
+void							print_tokens(t_token *head);
+void							split_tokens(char **tokens,
+									t_token **refined_tokens);
+void							append_token(t_token **head, char *value);
+t_token							*new_token(char *value);
 
 //------builtins/cd.c------//
-void cd_test_call(t_cmd *cmd, t_env **env_list);
+void							cd_test_call(t_cmd *cmd, t_env **env_list);
 //------builtins/unset.c------//
-void remove_env_var(t_env **env_list, char *key);
+void							remove_env_var(t_env **env_list, char *key);
+
+void							ft_run_exit(t_cmd *cmd);
 
 #endif
