@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/06 11:21:03 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/13 19:37:34 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int ft_in_out(char *file, int mode)
     return (fd);
 }
 
-void exec_cmd(t_cmd *cmd, int fd_in[1024], bool last_child)
+void exec_cmd(t_cmd *cmd, int *fd_in, bool last_child)
 {
     int pipefd[2];
     pid_t pid;
@@ -87,11 +87,25 @@ void exec_cmd(t_cmd *cmd, int fd_in[1024], bool last_child)
     if (!last_child)
         fd_in[cmd->index] = pipefd[0];
 }
+int *original_std(int fd)
+{
+    static int stdi = -111;
+    if (stdi == -111)
+        stdi = fd;
+
+    return &stdi;
+}
 
 int find_right_exec(t_cmd *cmd, char **parsed_string)
 {
     static int fd_in = -1;
     static int fd_index = 0;
+
+    int original_fd = dup(STDIN_FILENO);
+    CHECK(original_fd == -1, 1);
+
+    original_std(original_fd);
+
     if (cmd->pipe)
     {
         exec_pipes(cmd, &fd_in, &fd_index, parsed_string);
@@ -106,8 +120,11 @@ int find_right_exec(t_cmd *cmd, char **parsed_string)
         }
         exec_cmd(cmd, &fd_in, cmd->end_of_cmd);
         fd_in = -1;
-        return (0);
     }
+
+    dup2(*original_std(-1), STDIN_FILENO);
+    close(*original_std(-1));
+
     return (1);
 }
 
@@ -184,7 +201,7 @@ bool ft_heredoc_exist(char **parsed_string)
     return (0);
 }
 
-void exec_pipes(t_cmd *cmd, int fd_in[1024], int *fd_index, char **parsed_string)
+void exec_pipes(t_cmd *cmd, int *fd_in, int *fd_index, char **parsed_string)
 {
     int fd_pipe[2];
     pid_t pid;
@@ -278,23 +295,30 @@ int wait_for_all_children(t_cmd *cmd)
 {
     int status;
     int exit_status;
+    if (cmd->pid[0] == -1)
+    {
+        exit_status = cmd->pid[1];
+        return (exit_status);
+    }
     for (int i = 0; i < cmd->index; i++)
     {
-        if (cmd->pid[i] > 0) 
+        if (cmd->pid[i] > 0)
         {
             waitpid(cmd->pid[i], &status, 0);
             if (WIFEXITED(status))
             {
                 exit_status = WEXITSTATUS(status);
             }
-              //for exit with signals
-        // if (WIFSIGNALED(status))
-        // {
-        //     int sig = WTERMSIG(status);
-        //     printf("Child terminated by signal %d\n", sig);
-        //     cmd->exit_status = 128 + sig; // Mimic Bash behavior
-        // }
+            // for exit with signals
+            // if (WIFSIGNALED(status))
+            // {
+            //     int sig = WTERMSIG(status);
+            //     printf("Child terminated by signal %d\n", sig);
+            //     cmd->exit_status = 128 + sig; // Mimic Bash behavior
+            // }
         }
+        else if (cmd->pid[i] == 0)
+            exit_status = 0;
     }
     cmd->index = 0;
     return (exit_status);

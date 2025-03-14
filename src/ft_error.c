@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:19:51 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/06 13:16:48 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/11 15:20:11 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,23 @@
 
 int find_last_heredoc(char **parsed_string, int i);
 
-void check_error_status(char **parsed_string, int i, int status)
+int check_error_status(char **parsed_string, int i, int status)
 {
     if (parsed_string[i + 1] == NULL)
     {
         const char *error_msg = "syntax error near unexpected token 'newline'\n";
         write(STDERR_FILENO, error_msg, strlen(error_msg));
-        exit(status);
+        return status;
     }
-    else if (parsed_string[i + 1] != NULL && parsed_string[i] == parsed_string[i + 1])
+    else if (parsed_string[i + 1] != NULL && strcmp(parsed_string[i + 1], parsed_string[i]) == 0)
     {
         const char *error_msg = "syntax error near unexpected token '";
         write(STDERR_FILENO, error_msg, strlen(error_msg));
         write(STDERR_FILENO, parsed_string[i + 1], strlen(parsed_string[i + 1]));
         write(STDERR_FILENO, "'\n", 2);
-        exit(status);
+        return status;
     }
+    return 0;
 }
 
 
@@ -44,7 +45,16 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             return "<";
         }
         else
-            check_error_status(parsed_string, i, 258);
+        {
+           int status = check_error_status(parsed_string, i, 258);
+           if (status!= 0)
+           {
+               cmd->pid[0] = -1;
+               cmd->pid[1] = status;
+               return NULL;
+           }
+
+        }
     }
     else if (strcmp(parsed_string[i], ">") == 0)
     {
@@ -55,7 +65,16 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             return ">";
         }
         else
-            check_error_status(parsed_string, i, 258);
+        {
+           int status = check_error_status(parsed_string, i, 258);
+           if (status!= 0)
+           {
+               cmd->pid[0] = -1;
+               cmd->pid[1] = status;
+               return NULL;
+           }
+
+        }
     }
     else if (strcmp(parsed_string[i], ">>") == 0)
     {
@@ -66,7 +85,15 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             return ">>";
         }
         else
-            check_error_status(parsed_string, i, 258);
+        {
+           int status = check_error_status(parsed_string, i, 258);
+           if (status!= 0)
+           {
+               cmd->pid[0] = -1;
+               cmd->pid[1] = status;
+               return NULL;
+           }
+        }
     }
     else if (strcmp(parsed_string[i], "<<") == 0)
     {
@@ -88,7 +115,16 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             }
         }
         else
-            check_error_status(parsed_string, i, 258);
+        {
+           int status = check_error_status(parsed_string, i, 258);
+           if (status!= 0)
+           {
+               cmd->pid[0] = -1;
+               cmd->pid[1] = status;
+               return "<<";
+           }
+
+        }
     }
     else if (ft_strchr(parsed_string[i], '=') != NULL)
     {

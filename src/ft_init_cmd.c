@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/06 11:22:00 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/13 10:31:40 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,53 @@
 
 void ft_ending_of_init(t_cmd *cmd, t_env **env_list, char **parsed_string, int i);
 
+void execute_builtins(t_cmd *cmd, t_env **env_list)
+{
+    pid_t pid;
+    
+    if (strcmp(cmd->cmd[0], "export") == 0 && cmd->assigned_var)
+    {
+        handle_export(env_list, cmd->assigned_var);
+        cmd->pid[cmd->index++] = 0;
+        return;
+    }
+    else if (strcmp(cmd->cmd[0], "cd") == 0)
+        {
+            cd_test_call(cmd, env_list);
+            cmd->pid[cmd->index++] = 0;
+            return;
+        }
+    else if (strcmp(cmd->cmd[0], "unset") == 0)
+    {
+        if(cmd->cmd[1])
+        remove_env_var(env_list, cmd->cmd[1]);
+        cmd->pid[cmd->index++] = 0;
+            return;
+    }
+    pid = fork();
+    CHECK(pid < 0, 1);
+    if (pid == 0)
+    {
+        if ((strcmp(cmd->cmd[0], "echo") == 0 || strcmp(cmd->cmd[0], "/bin/echo") == 0) && cmd->cmd[1] != NULL)
+        {
+            echo_call_check(cmd, env_list);
+            exit(0);
+        }
+        else if ((strcmp(cmd->cmd[0], "echo") == 0 || strcmp(cmd->cmd[0], "/bin/echo") == 0) && cmd->cmd[1] == NULL)
+        {
+            printf("\n");
+            exit(0);
+        }
+        else if (strcmp(cmd->cmd[0], "pwd") == 0)
+        {
+            get_pwd();
+            exit(0);
+        }
+        exit(1); 
+    }
+
+    cmd->pid[cmd->index++] = pid;
+}
 void init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
 {
 	cmd->env_list = *env_list;
@@ -110,8 +157,16 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
 
     while (parsed_string[i] != NULL)
     {
+        // printf("Parsed string: %s\n", parsed_string[i]);
         if (strcmp(parsed_string[i], "|") == 0)
         {
+            int status = check_error_status(parsed_string, i, 258);
+            if (status!= 0)
+                {
+                    cmd->pid[0] = -1;
+                    cmd->pid[1] = status;
+                    return;
+                }
             cmd->pipe = true;
             cmd->cmd[arg_index] = NULL;
             find_right_exec(cmd, parsed_string);
@@ -127,10 +182,12 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
             continue;
         }
         token = handle_token_search(i, parsed_string, cmd);
-        if (strcmp(parsed_string[i], "$?") == 0)
+        if ((strcmp(parsed_string[i], "$?" )  == 0 ))
         {
-            cmd->cmd[arg_index] = ft_itoa(cmd->exit_status);
-            arg_index++;
+            
+                cmd->cmd[arg_index] = ft_itoa(cmd->exit_status);
+                arg_index++;
+    
             i++;
             continue;
         }
@@ -138,7 +195,14 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
         {
             if (strcmp(token, "=") != 0)
             {
-                check_error_status(parsed_string, i, 258);
+               
+                   int status = check_error_status(parsed_string, i, 258);
+                   if (status!= 0)
+                   {
+                       cmd->pid[0] = -1;
+                       cmd->pid[1] = status;
+                       return;
+                   }
                 if (parsed_string[i + 1])
                 {
                     i += 2;
@@ -156,7 +220,9 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
             if (arg_index == 0)
                 cmd->cmd[arg_index] = find_command_path(cmd, env_list, parsed_string[i], envp);
             else
+            {
                 cmd->cmd[arg_index] = parsed_string[i];
+            }
 
             arg_index++;
             i++;
@@ -174,17 +240,23 @@ void ft_ending_of_init(t_cmd *cmd, t_env **env_list, char **parsed_string, int i
     {
         cmd->end_of_cmd = true;
 
-        if (cmd->assigned_var)
+        // if (cmd->assigned_var)
+        // {
+        //     if (check_builtins(env_list, cmd, cmd->cmd[0]))
+        //     {
+        //         handle_export(env_list, cmd->assigned_var);
+        //     }
+        //     return;
+        // }     
+        // else if (cmd->builtin)
+        //     return;
+         if (cmd->builtin)
         {
-            if (check_builtins(env_list, cmd, cmd->cmd[0]))
-            {
-                handle_export(env_list, cmd->assigned_var);
-            }
+            // printf("unknown command: %s\n", cmd->cmd[0]);
+            // if(check_builtins(env_list, cmd, cmd->cmd[0]) && cmd->cmd[1] != NULL)
+            execute_builtins(cmd, env_list);
             return;
-        }     
-        else if (cmd->builtin)
-            return;
-        
+        }
         else
         {
             find_right_exec(cmd, parsed_string);

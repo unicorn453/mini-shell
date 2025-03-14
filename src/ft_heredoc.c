@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/05 12:55:22 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/12 17:06:38 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@ int handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
 {
     char *line;
     int my_out = -1;
-
-    if (cmd->delimiter == NULL)
-    {
-        perror("No delimiter found");
-        exit(EXIT_FAILURE);
-    }
+    CHECK(cmd->delimiter == NULL, 1);
+    // if (cmd->delimiter == NULL)
+    // {
+    //     perror("No delimiter found");
+    //     exit(EXIT_FAILURE);
+    // }
  if ((!last_heredoc && !cmd->end_of_cmd) || (last_heredoc && !cmd->end_of_cmd))
  {
     char tmp_filename[] = "file";

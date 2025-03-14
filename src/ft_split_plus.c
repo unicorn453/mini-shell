@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_plus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:57:42 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/10 19:25:31 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/11 15:29:12 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,26 +59,6 @@ char	**ft_split_plus(char *str, char *charset)
 	return_val[k] = NULL;
 	return (return_val);
 }
-
-// int	main(void)
-// {
-// 	char	string[] = "apple bi ,,,\"banana ,  b\",,cherry,date,";
-// 	char	*separeter;
-// 	char	**result;
-// 	int		i;
-
-// 	separeter = "\t ";
-// 	result = ft_split_plus(string, separeter);
-// 	i = 0;
-// 	while (result[i] != NULL)
-// 	{
-// 		printf("%s\n", result[i]);
-// 		i++;
-// 	}
-// 	gc_free_all();
-// 	system("leaks a.out");
-// 	return (0);
-// }
 
 int	ft_count_char(char *str, char *charechter)
 {

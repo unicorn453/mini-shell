@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:12:54 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/06 11:12:42 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/11 15:39:36 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,12 @@ static char	*str_before_env_var_handler(char *token, char *env_str, int len)
 	char	*before_env;
 	char	*new_token;
 	
-	// printf("here: %s\n", env_str);
 	before_env = ft_substr(token, 0, len);
 	if (before_env == NULL)
 		return (perror("Minishell: memory allocation error"), NULL);
 	gc_track(before_env);
 	new_token = ft_strjoin(before_env, env_str);
-	if (new_token == NULL)
-	{
-		gc_free_all();
-		return (perror("Minishell: memory allocation error"), NULL);
-	}
+	CHECK(new_token == NULL, 2);
 	gc_track(new_token);
 	return (new_token);
 }
@@ -52,8 +47,7 @@ char 	*handle_env_var(t_env **env_list, char *token)
 			if (i > 0) // if there is something before the '$' for example abc$USER 
 			{
 				res = str_before_env_var_handler(token, env_str, i);
-				if (res == NULL)
-					exit(2);
+				CHECK(res == NULL, 2);
 				return(res);
 			}
 			return(env_str);
@@ -90,32 +84,56 @@ char	*search_env_var(t_env *env_list, char *token)
 	gc_track(placeholder);
 	return (placeholder);
 }
-
+bool check_var(char *token)
+{
+	int i;
+	bool env_var;
+	env_var = false;
+	i = 0;
+	while(token[i])
+			{
+				if (token[i] == '$')
+				{
+					env_var = true;
+					return (env_var);
+				}
+				i++;
+			}
+	return (env_var);
+}
 void	main_parsing_loop(t_env **env_list, char **tokens)
 {
 	int		i;
 	int		y;
-	char	*temp = NULL;
-	bool	parse_env_var;
+	// char	*temp = NULL;
+	// bool	parse_env_var;
+	bool env_var;
+	env_var = false;
+	bool    in_single = false;
 
 	i = -1;
 	while (tokens[++i])
 	{
 		y = -1;
-		parse_env_var = true;
+		env_var = check_var(tokens[i]);
 		while (tokens[i][++y])
 		{
 			if (tokens[i][y] == '\'' || tokens[i][y] == '"')
 			{
+				if (tokens[i][y] == '\'' && env_var)
+					in_single = true;
+				if (!env_var && tokens[i][y] == '\'')
+					quote_parsing(env_list, &tokens[i]);
+				else if (((env_var && tokens[i][y] == '"') || (!env_var && tokens[i][y] == '"')) && !in_single)
 				quote_parsing(env_list ,&tokens[i]);
-				parse_env_var = false;
+				// parse_env_var = false;
 			}
 		}
-		if (parse_env_var == true)
-			temp = handle_env_var(env_list, tokens[i]);
-		gc_track(temp);
-		if (temp != NULL)
-			tokens[i] = temp;
+		// if (parse_env_var == true)
+		// 	temp = handle_env_var(env_list, tokens[i]);
+		// gc_track(temp);
+		// if (temp != NULL)
+		// 	tokens[i] = temp;
 	}
 }
 void	quote_parsing(t_env **env_list ,char **token)
@@ -128,20 +146,12 @@ void	quote_parsing(t_env **env_list ,char **token)
 		if ((*token)[i] == '\'')
 		{
 			*token = single_quote_handler(*token);
-			if (*token == NULL)
-			{
-				gc_free_all();
-				exit(2);
-			}
+			CHECK(*token == NULL, 2);
 		}
 		else if ((*token)[i] == '"')
 		{
 			*token = double_quotes_handler(env_list, *token);
-			if (*token == NULL)
-			{
-				gc_free_all();
-				exit(2);
-			}
+			CHECK(*token == NULL, 2);
 		}
 	}
 }
@@ -165,7 +175,6 @@ char	*single_quote_handler(char *token)
 	int		i;
 	int		y;
 	char	*new_token;
-
 	i = count_chars(token, '\'');
 	if ((i & 1) == 1)
 		return (perror("Minishell: Error: unclosed single qoutes"), NULL);
@@ -193,8 +202,7 @@ char	*double_quotes_handler(t_env **env_list, char *token)
 	char	*expanded_token;
 
 	i = count_chars(token, '"');
-	if ((i & 1) == 1)
-		return (perror("Minishell: Error: unclosed double qoutes"), NULL);
+	CHECK((i & 1) == 1, 1);
 	new_token = gc_malloc(ft_strlen(token) - i + 1);
 	if (new_token == NULL)
 		return (perror("Minishell: memory allocation error"), NULL);
