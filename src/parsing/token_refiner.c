@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 22:04:59 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/14 17:23:13 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/15 13:05:21 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_token *new_token(char *value)
 	new = gc_malloc(sizeof(t_token));
     CHECK(new == NULL, 1);
 	new->in_qoutes = false;
-    new->value = ft_strdup(value); // protect ur malloc lol ask Pichkata for CHECK imp;
+    new->value = ft_strdup(value);
 	CHECK(new->value == NULL, 1);
 	gc_track(value);
     new->next = NULL;

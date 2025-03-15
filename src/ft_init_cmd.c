@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/14 16:36:08 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/15 13:36:20 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,11 @@ void execute_builtins(t_cmd *cmd, t_env **env_list)
         else if (strcmp(cmd->cmd[0], "pwd") == 0)
         {
             get_pwd();
+            exit(0);
+        }
+        else if (strcmp(cmd->cmd[0], "env") == 0)
+        {
+            print_env_reverse(env_list);
             exit(0);
         }
         exit(1); 

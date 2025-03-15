@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/14 16:32:15 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/15 13:37:35 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ typedef struct s_env
 	char						*key;
 	char						*value;
 	struct s_env				*next;
+	struct s_env				*prev;
 }								t_env;
 
 typedef struct s_token
@@ -188,5 +189,8 @@ void							cd_test_call(t_cmd *cmd, t_env **env_list);
 void							remove_env_var(t_env **env_list, char *key);
 
 void							ft_run_exit(t_cmd *cmd);
+//------builtins/env.c------//
+void							print_env_reverse(t_env **env_list);
+int								env_len(t_env **env_list);
 
 #endif
