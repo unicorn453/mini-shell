@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_refiner.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 22:04:59 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/11 16:12:36 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/16 19:33:26 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ t_token *new_token(char *value)
 	new = gc_malloc(sizeof(t_token));
     CHECK(new == NULL, 1);
 	new->in_qoutes = false;
-    new->value = ft_strdup(value); // protect ur malloc lol ask Pichkata for CHECK imp;
+    new->value = ft_strdup(value);
 	CHECK(new->value == NULL, 1);
-	gc_track(value);
+	gc_track(new->value);
     new->next = NULL;
     return new;
 }
@@ -100,7 +100,7 @@ void split_tokens(char **tokens, t_token **refined_tokens)
         if (*no_charse_str)
         {
             append_token(refined_tokens, no_charse_str);
-            free(no_charse_str);
+            // free(no_charse_str);
         }
 
         i++;

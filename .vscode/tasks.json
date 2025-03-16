@@ -28,6 +28,7 @@
                 "${workspaceFolder}/src/builtins/env.c",
                 "${workspaceFolder}/src/check.c",
                 "${workspaceFolder}/src/parsing/token_refiner.c",
+                "${workspaceFolder}/src/signals/signal.c",
                 "-o",
                 "${workspaceFolder}/minishell",
                 "-lreadline",

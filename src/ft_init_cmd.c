@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_init_cmd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/13 10:31:40 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/16 15:34:08 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,13 @@ void execute_builtins(t_cmd *cmd, t_env **env_list)
         cmd->pid[cmd->index++] = 0;
             return;
     }
+    else if (strcmp(cmd->cmd[0], "exit") == 0 && cmd->cmd[1] != NULL)
+        ft_run_exit(cmd);
     pid = fork();
     CHECK(pid < 0, 1);
     if (pid == 0)
     {
+        signal(SIGINT, SIG_DFL);
         if ((strcmp(cmd->cmd[0], "echo") == 0 || strcmp(cmd->cmd[0], "/bin/echo") == 0) && cmd->cmd[1] != NULL)
         {
             echo_call_check(cmd, env_list);
@@ -56,9 +59,13 @@ void execute_builtins(t_cmd *cmd, t_env **env_list)
             get_pwd();
             exit(0);
         }
+        else if (strcmp(cmd->cmd[0], "env") == 0)
+        {
+            print_env_reverse(env_list);
+            exit(0);
+        }
         exit(1); 
     }
-
     cmd->pid[cmd->index++] = pid;
 }
 void init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
@@ -174,6 +181,7 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
             parsed_size = i;
             while(parsed_string[parsed_size] != NULL)
                 parsed_size++;
+            gc_untrack(cmd->cmd); /// keep an eye ot maybe wrong maybe correct check with valgrind
             cmd->cmd = gc_malloc(sizeof(char *) * (parsed_size + 1));
             CHECK(cmd->cmd == NULL, 1);
             cmd->pipe = true;

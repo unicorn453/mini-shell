@@ -19,6 +19,7 @@
         "ratio": "c",
         "tuple": "c",
         "type_traits": "c",
-        "vector": "c"
+        "vector": "c",
+        "stdlib.h": "c"
     }
 }
