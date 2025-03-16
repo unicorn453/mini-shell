@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/15 13:37:35 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/16 15:02:37 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # include <string.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <termios.h>
+# include <signal.h>
 
 //---------ft_error_handling.c---------//
 
@@ -192,5 +194,6 @@ void							ft_run_exit(t_cmd *cmd);
 //------builtins/env.c------//
 void							print_env_reverse(t_env **env_list);
 int								env_len(t_env **env_list);
-
+//______signals.c__________//
+void							setup_interactive_signals(void);
 #endif

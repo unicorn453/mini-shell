@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/14 17:22:15 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/16 18:56:51 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,17 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	return (exit_status);
 }
 
+static int check_for_empty_input(char *line)
+{
+	if (ft_strncmp(line, "\0", ft_strlen(line)) == 0)
+	{
+		free(line);
+		return (-1);
+	}
+	else 
+		return(1);	
+}
+
 void main_loop(char **envp, t_env	**env_lis)
 {
 	char	*line;
@@ -82,16 +93,23 @@ void main_loop(char **envp, t_env	**env_lis)
 	{
 		if (isatty(fileno(stdin)))
 		line = readline("minishell> ");
-		// line = "/bin/echo $?\"42\"";
-		else
-		{
-			line = get_next_line(fileno(stdin));
-			char *trimmed_line = ft_strtrim(line, "\n");
-			free(line);
-			line = trimmed_line;
-		}
-		//non - testing
-		// CHECK(line == NULL, 1);
+		// static int hehe = 1;
+		// line = malloc(8);
+		// if(hehe++ == 1)
+		// 	line = "ls | wc";
+		// else 
+		// 	line = NULL;
+		// // else
+		// {
+		// 	line = get_next_line(fileno(stdin));
+		// 	char *trimmed_line = ft_strtrim(line, "\n");
+		// 	free(line);
+		// 	line = trimmed_line;
+		// }
+		if (line == NULL)
+			ft_run_exit(NULL);
+		if(check_for_empty_input(line) == -1)
+			continue;
 		gc_track(line);
 
 		if (*line != '\0' && isatty(fileno(stdin)))

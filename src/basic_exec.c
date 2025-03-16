@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   basic_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/14 12:13:57 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/16 14:48:43 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,8 +285,7 @@ int heredoc_fd[2] = {-1, -1};
     else
     {
         if(fd_pipe[1] != -1)
-        close(fd_pipe[1]);
-
+            close(fd_pipe[1]);
         if (!cmd->end_of_cmd)
         {
             if(fd_in[0] != -1)
@@ -296,7 +295,7 @@ int heredoc_fd[2] = {-1, -1};
         else
         {
             if(fd_pipe[0] != -1)
-            close(fd_pipe[0]);
+                close(fd_pipe[0]);
         }
 
         if (!cmd->heredoc)
@@ -325,16 +324,15 @@ int wait_for_all_children(t_cmd *cmd)
         {
             waitpid(cmd->pid[i], &status, 0);
             if (WIFEXITED(status))
-            {
                 exit_status = WEXITSTATUS(status);
+            if (WIFSIGNALED(status))
+            {
+                int sig = WTERMSIG(status);
+                if (sig == 3)
+                    printf("Quit: 3\n");
+                cmd->exit_status = 128 + sig;
+                return (cmd->exit_status);
             }
-            // for exit with signals
-            // if (WIFSIGNALED(status))
-            // {
-            //     int sig = WTERMSIG(status);
-            //     printf("Child terminated by signal %d\n", sig);
-            //     cmd->exit_status = 128 + sig; // Mimic Bash behavior
-            // }
         }
         else if (cmd->pid[i] == 0)
             exit_status = 0;

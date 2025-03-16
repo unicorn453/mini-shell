@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_refiner.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 22:04:59 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/15 13:05:21 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/16 19:33:26 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_token *new_token(char *value)
 	new->in_qoutes = false;
     new->value = ft_strdup(value);
 	CHECK(new->value == NULL, 1);
-	gc_track(value);
+	gc_track(new->value);
     new->next = NULL;
     return new;
 }
