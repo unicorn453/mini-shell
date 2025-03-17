@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/16 18:56:51 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/17 10:53:42 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,13 +99,13 @@ void main_loop(char **envp, t_env	**env_lis)
 		// 	line = "ls | wc";
 		// else 
 		// 	line = NULL;
-		// // else
-		// {
-		// 	line = get_next_line(fileno(stdin));
-		// 	char *trimmed_line = ft_strtrim(line, "\n");
-		// 	free(line);
-		// 	line = trimmed_line;
-		// }
+		else
+		{
+			line = get_next_line(fileno(stdin));
+			char *trimmed_line = ft_strtrim(line, "\n");
+			free(line);
+			line = trimmed_line;
+		}
 		if (line == NULL)
 			ft_run_exit(NULL);
 		if(check_for_empty_input(line) == -1)
