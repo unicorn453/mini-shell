@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/17 11:26:06 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/17 16:38:57 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,18 @@ void	execute_command(t_cmd *cmd)
 {
 	char	*error_msg;
 
-	if (execve(cmd->cmd[0], cmd->cmd, cmd->envp) == -1)
+	if (cmd->cmd[0])
 	{
-		error_msg = ": command not found";
-		write(STDERR_FILENO, "minishell: ", 11);
-		write(STDERR_FILENO, cmd->cmd[0], ft_strlen(cmd->cmd[0]));
-		write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
-		write(STDERR_FILENO, "\n", 1);
-		exit(127);
+		if (execve(cmd->cmd[0], cmd->cmd, cmd->envp) == -1)
+		{
+			error_msg = ": command not found";
+			write(STDERR_FILENO, "minishell: ", 11);
+			write(STDERR_FILENO, cmd->cmd[0], ft_strlen(cmd->cmd[0]));
+			write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
+			write(STDERR_FILENO, "\n", 1);
+			exit(127);
+		}
+		
 	}
 }
 

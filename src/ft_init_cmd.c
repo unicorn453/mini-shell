@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_init_cmd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/16 15:34:08 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/17 18:47:01 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void execute_builtins(t_cmd *cmd, t_env **env_list)
         cmd->pid[cmd->index++] = 0;
             return;
     }
-    else if (strcmp(cmd->cmd[0], "exit") == 0 && cmd->cmd[1] != NULL)
+    else if (strcmp(cmd->cmd[0], "exit") == 0)
         ft_run_exit(cmd);
     pid = fork();
     CHECK(pid < 0, 1);
@@ -149,6 +149,7 @@ void print_envlist(t_env **env_list)
 	}
 }
 
+
 void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_string)
 {
     int i = 0, arg_index = 0, parsed_size = 0;
@@ -164,7 +165,6 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
 
     while (parsed_string[i] != NULL)
     {
-        // printf("Parsed string: %s\n", parsed_string[i]);
         if (strcmp(parsed_string[i], "|") == 0)
         {
             int status = check_error_status(parsed_string, i, 258);
@@ -203,9 +203,8 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
         {
             if (strcmp(token, "=") != 0)
             {
-               
                    int status = check_error_status(parsed_string, i, 258);
-                   if (status!= 0)
+                   if (status != 0)
                    {
                        cmd->pid[0] = -1;
                        cmd->pid[1] = status;
