@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:12:54 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/16 19:50:30 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/17 10:18:10 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void	main_parsing_loop(t_env **env_list, char **tokens)
 	// bool	parse_env_var;
 	bool env_var;
 	env_var = false;
-	bool    in_single = false;
+	// bool    in_single = false;
 
 	i = -1;
 	while (tokens[++i])
@@ -120,12 +120,8 @@ void	main_parsing_loop(t_env **env_list, char **tokens)
 		{
 			if (tokens[i][y] == '\'' || tokens[i][y] == '"')
 			{
-				if (tokens[i][y] == '\'' && env_var)
-					in_single = true;
-				if (!env_var && tokens[i][y] == '\'')
 					quote_parsing(env_list, &tokens[i]);
-				else if (((env_var && tokens[i][y] == '"') || (!env_var && tokens[i][y] == '"')) && !in_single)
-				quote_parsing(env_list ,&tokens[i]);
+					break;
 				// parse_env_var = false;
 			}
 		}
@@ -146,12 +142,12 @@ void	quote_parsing(t_env **env_list ,char **token)
 		if ((*token)[i] == '\'')
 		{
 			*token = single_quote_handler(*token);
-			// CHECK(*token == NULL, 2);
+			return ;
 		}
 		else if ((*token)[i] == '"')
 		{
 			*token = double_quotes_handler(env_list, *token);
-			// CHECK(*token == NULL, 2);
+			return ;
 		}
 	}
 }
@@ -201,7 +197,8 @@ char	*double_quotes_handler(t_env **env_list, char *token)
 	char	*expanded_token;
 
 	i = count_chars(token, '"');
-		CHECK((i & 1) == 1, 1);
+	if((i & 1) == 1)
+		return (perror("Minishell: Error: unclosed double qoutes"), NULL);
 	new_token = gc_malloc(ft_strlen(token) - i + 1);
 		CHECK(new_token == NULL, 2);
 	// if (new_token == NULL)
@@ -215,7 +212,7 @@ char	*double_quotes_handler(t_env **env_list, char *token)
 	}
 	new_token[++y] = '\0';
 	gc_untrack(token);  // Untrack old memory
-	gc_track(new_token);
+	// gc_track(new_token);
 	expanded_token = handle_env_var(env_list, new_token);
 	if (expanded_token != NULL)
 		new_token = expanded_token;
