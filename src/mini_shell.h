@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/16 15:02:37 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/17 10:30:54 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@
 # include <fcntl.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/wait.h>
-# include <unistd.h>
 # include <termios.h>
-# include <signal.h>
+# include <unistd.h>
 
 //---------ft_error_handling.c---------//
 
@@ -43,6 +43,12 @@ typedef struct s_garbage_collector
 	void						*ptr;
 	struct s_garbage_collector	*next;
 }								t_garbage_collector;
+
+typedef struct s_pipe
+{
+	int							fd_pipe[2];
+	int							heredoc_fd[2];
+}								t_pipe;
 
 typedef struct s_cmd
 {
@@ -110,19 +116,12 @@ void							get_pwd(void);
 ** basic_exec.c
 ** This file contains the functions for executing the commands
 */
-void							handle_input_redirection(t_cmd *cmd,
-									int *fd_in);
-
-void							handle_output_redirection(t_cmd *cmd,
-									bool last_child, int *fd_out,
-									int fd_pipe[2]);
 void							execute_command(t_cmd *cmd);
-// void							wait_for_all_children(t_cmd *cmd);
 int								wait_for_all_children(t_cmd *cmd);
 void							exec_pipes(t_cmd *cmd, int *fd_in,
-									int *fd_index, char **parsed_string);
-void							exec_cmd(t_cmd *cmd, int *fd_in,
-									bool last_child);
+									char **parsed_string);
+int								find_right_exec(t_cmd *cmd,
+									char **parsed_string);
 //---------ft_find_cmd_path.c---------//
 t_path							*initialize_path(void);
 void							free_paths(t_path *path, int error_bool);
@@ -136,9 +135,6 @@ int								check_builtins(t_env **env_list, t_cmd *cmd,
 char							*find_command_path(t_cmd *cmd_list,
 									t_env **env_list, char *cmd, char **envp);
 //---------ft_init_cmd.c---------//
-int								find_right_exec(t_cmd *cmd,
-									char **parsed_string);
-bool							ft_heredoc_exist(char **parsed_string);
 void							init_def_cmd(t_cmd *cmd, char **envp,
 									t_env **env_list);
 // void							init_cmd_stack(t_cmd *cmd, char **envp,
@@ -196,4 +192,34 @@ void							print_env_reverse(t_env **env_list);
 int								env_len(t_env **env_list);
 //______signals.c__________//
 void							setup_interactive_signals(void);
+//------execution/single_com_exec.c------//
+void							exec_cmd(t_cmd *cmd, int *fd_in,
+									bool last_child);
+int								exec_cmd_redir(t_cmd *cmd, int *fd_in,
+									bool last_child, int pipefd[2]);
+int								exec_cmd_child(t_cmd *cmd, int *fd_in,
+									bool last_child, int pipefd[2]);
+int								exec_cmd_heredoc(t_cmd *cmd, int pipefd[2],
+									int *fd_in, bool last_child);
+bool							ft_heredoc_exist(char **parsed_string);
+//------execution/pipe_cmd_exec.c------//
+void							ft_exec_pipes_child_heredoc(t_cmd *cmd,
+									int heredoc_fd[2], int *fd_in,
+									int heredoc_exist);
+void							ft_exec_pipes_child(t_cmd *cmd, int *fd_in,
+									int fd_pipe[2], int heredoc_exist);
+t_pipe							*pipes(void);
+void							ft_exec_pipes_parent(t_cmd *cmd, int fd_pipe[2],
+									int *fd_in, pid_t pid);
+void							init_pipes(void);
+//------execution/file_manage.c------//
+int								*original_fds(int fd_in, int fd_out);
+void							handle_input_redirection(t_cmd *cmd,
+									int *fd_in);
+
+void							handle_output_redirection(t_cmd *cmd,
+									bool last_child, int *fd_out,
+									int fd_pipe[2]);
+int								ft_in_out(char *file, int mode);
+
 #endif
