@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_find_cmd_path.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:49:03 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/16 18:03:14 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/18 18:39:44 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,20 +64,26 @@ char	*add_permission_free_path(t_path *path, char *cmd)
 		path->temp = ft_strjoin(path->paths[path->i], "/");
 		CHECK(path->temp == NULL, 1);
 		path->full_path = ft_strjoin(path->temp, cmd);
+		gc_track(path->full_path);
 		free(path->temp);
 		CHECK(path->full_path == NULL, 1);
+
 		if (access(path->full_path, X_OK) == 0)
 		{
 			free_paths(path, 0);
 			return (path->full_path);
 		}
-		unlink(path->full_path);
-		free(path->full_path);
-		path->full_path = NULL;
+
+		// Ensure unlink is only called if the file actually exists
+		if (path->full_path)
+			unlink(path->full_path);
+
+		path->full_path = NULL;  // Prevent potential use-after-free errors
 		path->i++;
 	}
 	return (NULL);
 }
+
 
 int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 {

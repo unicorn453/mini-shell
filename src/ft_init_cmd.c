@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/18 13:47:36 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/18 17:21:24 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,12 @@ void execute_builtins(t_cmd *cmd, t_env **env_list)
     if (strcmp(cmd->cmd[0], "export") == 0 && cmd->assigned_var)
     {
         handle_export(env_list, cmd->assigned_var);
+        cmd->pid[cmd->index++] = 0;
+        return;
+    }
+    else if (strcmp(cmd->cmd[0], "export") == 0 && !cmd->assigned_var)
+    {
+        print_env_reverse(env_list);
         cmd->pid[cmd->index++] = 0;
         return;
     }

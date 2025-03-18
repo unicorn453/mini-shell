@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/18 13:02:07 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:59:27 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ typedef struct s_init
 //------------------------------//
 
 //---------GC_functions---------//
+void close_open_fds(void);
 void							*gc_malloc(size_t size);
 void							gc_track(void *ptr);
 void							gc_free_all(void);
@@ -245,4 +246,6 @@ void							ft_ending_of_init(t_cmd *cmd, t_env **env_list,
 									char **parsed_string, int i);
 void							process_argument_in_cmd(t_cmd *cmd, char **envp,
 									t_env **env_list, t_init *init);
+
+									void	print_env_var(char *arg, t_env **env_list);
 #endif

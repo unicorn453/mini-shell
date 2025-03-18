@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_refiner.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 22:04:59 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/16 19:33:26 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/18 18:23:27 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ void print_tokens(t_token *head) {
         head = head->next;
     }
 }
+
+
 void split_tokens(char **tokens, t_token **refined_tokens)
 {
     static char *charset[] = {"<<", "<", ">>", ">", "|", "$?", NULL};
@@ -56,12 +58,15 @@ void split_tokens(char **tokens, t_token **refined_tokens)
     int start;
     int len;
     char *no_charse_str;
+    char *new_str;
 
     while (tokens[i])
     {
         start = 0;
         len = strlen(tokens[i]);
         no_charse_str = ft_strdup("");
+        if (!no_charse_str)
+            return; // Memory allocation failure handling
 
         while (start < len)
         {
@@ -77,6 +82,8 @@ void split_tokens(char **tokens, t_token **refined_tokens)
                         append_token(refined_tokens, no_charse_str);
                         free(no_charse_str);
                         no_charse_str = ft_strdup("");
+                        if (!no_charse_str)
+                            return; // Handle memory allocation failure
                     }
 
                     append_token(refined_tokens, charset[j]);
@@ -89,8 +96,13 @@ void split_tokens(char **tokens, t_token **refined_tokens)
             if (!charset[j])
             {
                 char temp[2] = {tokens[i][start], '\0'};
-                char *new_str = ft_strjoin(no_charse_str, temp);
-				CHECK(new_str == NULL, 1);
+                new_str = ft_strjoin(no_charse_str, temp);
+                if (!new_str)
+                {
+                    free(no_charse_str);
+                    return; // Handle memory allocation failure
+                }
+
                 free(no_charse_str);
                 no_charse_str = new_str;
                 start++;
@@ -100,12 +112,13 @@ void split_tokens(char **tokens, t_token **refined_tokens)
         if (*no_charse_str)
         {
             append_token(refined_tokens, no_charse_str);
-            // free(no_charse_str);
         }
 
+        free(no_charse_str); // Free at the end of the token
         i++;
     }
 }
+
 
 // static int ft_strnstr_plus(const char *haystack, const char *needle, size_t len)
 // {

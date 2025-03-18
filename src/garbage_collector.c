@@ -3,14 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   garbage_collector.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 21:10:48 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/16 19:45:01 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/18 19:47:04 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
+
+void cleanup_readline(void)
+{
+    clear_history();  // Frees history entries
+    rl_clear_history();  // Ensures further cleanup
+}
 
 t_garbage_collector	**get_mem_list(void)
 {
@@ -87,6 +93,17 @@ void	gc_track(void *ptr)
 // 	}
 // 	*mem_list = NULL;
 // }
+void close_open_fds(void)
+{
+    int fd;
+	fd = 3;
+	while (fd < 10240)
+	{
+		close(fd);
+		fd++;
+	}
+}
+
 void	gc_free_all(void)
 {
 	t_garbage_collector	**mem_list;
@@ -105,6 +122,8 @@ void	gc_free_all(void)
 		current = current->next;
 		free(temp);
 	}
+	close_open_fds();
+	cleanup_readline();
 	*mem_list = NULL;
 }
 
