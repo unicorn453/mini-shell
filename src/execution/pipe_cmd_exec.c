@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:07:13 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/18 19:29:44 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/18 21:02:33 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ void	ft_exec_pipes_child_heredoc(t_cmd *cmd, int heredoc_fd[2], int *fd_in,
 			execute_command(cmd);
 		if (cmd->end_of_cmd)
 		{
-			gc_free_all();
 			exit(EXIT_SUCCESS);
 		}
 	}
@@ -69,6 +68,11 @@ void	ft_exec_pipes_child(t_cmd *cmd, int *fd_in, int fd_pipe[2],
 		close(fd_pipe[1]);
 	if (!cmd->heredoc)
 	{
+		if (cmd->builtin)
+		{
+			execute_builtins(cmd, &cmd->env_list);
+			exit(EXIT_SUCCESS);
+		}
 		if (heredoc_exist && cmd->redir_out)
 			execute_command(cmd);
 		else if (!heredoc_exist)

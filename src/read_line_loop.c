@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/18 11:17:40 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/18 21:06:10 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	// main_parsing_loop(env_list, refined_tokens);
 	init_def_cmd(current_cmd, envp, env_list);
 	current_cmd->exit_status = exit_status;
-	init_cmd_stack(current_cmd, env_list, envp, ref_tokens);
+	 init_cmd_stack(current_cmd, env_list, envp, ref_tokens);
 	// init_cmd_stack(current_cmd, env_list, envp, refined_tokens);
 	exit_status = wait_for_all_children(current_cmd);
 	return (exit_status);
@@ -88,7 +88,7 @@ void main_loop(char **envp, t_env	**env_lis)
 	int		exit_status = 0;
 
 	 // Disable stdout buffering to prevent delayed output
-	 setbuf(stdout, NULL);
+	//  setbuf(stdout, NULL);
 
 	while (1)
 	{
@@ -112,7 +112,6 @@ void main_loop(char **envp, t_env	**env_lis)
 		if(check_for_empty_input(line) == -1)
 			continue;
 		gc_track(line);
-
 		if (*line != '\0' && isatty(fileno(stdin)))
 			add_history(line);
 		exit_status = main_parsing(line, envp, env_lis);

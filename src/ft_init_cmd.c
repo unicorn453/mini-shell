@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/18 17:21:24 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/18 21:08:25 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,9 @@ void initialize_command_structure(t_cmd *cmd, char **envp, t_init *init)
         init->parsed_size++;
        
     cmd->cmd = gc_malloc(sizeof(char *) * (init->parsed_size + 1));
-    cmd->cmd[init->parsed_size] = NULL;
     CHECK(cmd->cmd == NULL, 1);
+    for (int j = 0; j <= init->parsed_size; j++)
+        cmd->cmd[j] = NULL;
     init_def_cmd(cmd, envp, init->env_list);
 }
 
