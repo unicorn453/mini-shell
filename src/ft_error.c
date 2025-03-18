@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:19:51 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/11 15:20:11 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/17 16:41:53 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,6 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             cmd->file_in = parsed_string[i + 1];
             return "<";
         }
-        else
-        {
-           int status = check_error_status(parsed_string, i, 258);
-           if (status!= 0)
-           {
-               cmd->pid[0] = -1;
-               cmd->pid[1] = status;
-               return NULL;
-           }
-
-        }
     }
     else if (strcmp(parsed_string[i], ">") == 0)
     {
@@ -64,17 +53,6 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             cmd->file_out = parsed_string[i + 1];
             return ">";
         }
-        else
-        {
-           int status = check_error_status(parsed_string, i, 258);
-           if (status!= 0)
-           {
-               cmd->pid[0] = -1;
-               cmd->pid[1] = status;
-               return NULL;
-           }
-
-        }
     }
     else if (strcmp(parsed_string[i], ">>") == 0)
     {
@@ -83,16 +61,6 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
             cmd->redir_append = true;
             cmd->file_out = parsed_string[i + 1];
             return ">>";
-        }
-        else
-        {
-           int status = check_error_status(parsed_string, i, 258);
-           if (status!= 0)
-           {
-               cmd->pid[0] = -1;
-               cmd->pid[1] = status;
-               return NULL;
-           }
         }
     }
     else if (strcmp(parsed_string[i], "<<") == 0)
@@ -113,17 +81,6 @@ char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
                 cmd->last_heredoc = true;
                 return "<<";
             }
-        }
-        else
-        {
-           int status = check_error_status(parsed_string, i, 258);
-           if (status!= 0)
-           {
-               cmd->pid[0] = -1;
-               cmd->pid[1] = status;
-               return "<<";
-           }
-
         }
     }
     else if (ft_strchr(parsed_string[i], '=') != NULL)

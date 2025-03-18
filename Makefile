@@ -10,7 +10,7 @@ MINI_SHELL_SRC = src/main.c src/parsing/input_parsing.c src/read_line_loop.c src
 				 src/check.c src/builtins/echo.c src/parsing/token_refiner.c src/builtins/cd.c \
 				 src/builtins/unset.c  src/builtins/exit.c src/builtins/env.c src/signals/signal.c \
 				 src/execution/basic_exec.c src/execution/pipe_cmd_exec.c src/execution/single_cmd_exec.c \
-				 src/execution/file_manage.c
+				 src/execution/file_manage.c src/execution/cmd_initialization.c 
 
 MINI_SHELL_EXE = minishell
 
