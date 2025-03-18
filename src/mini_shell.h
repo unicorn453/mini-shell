@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/17 10:30:54 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/18 13:02:07 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,17 @@ typedef struct s_token
 	bool						in_qoutes;
 	struct s_token				*next;
 }								t_token;
+
+typedef struct s_init
+{
+	int							i;
+	int							arg_index;
+	int							parsed_size;
+	char						*token;
+	t_env						**env_list;
+	char						**parsed_string;
+}								t_init;
+
 //------------------------------//
 
 //---------GC_functions---------//
@@ -142,6 +153,7 @@ void							init_def_cmd(t_cmd *cmd, char **envp,
 void							print_envlist(t_env **env_list);
 void							init_cmd_stack(t_cmd *cmd, t_env **env_list,
 									char **envp, char **parsed_string);
+void							execute_builtins(t_cmd *cmd, t_env **env_list);
 
 //---------ft_heredoc.c---------//
 int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
@@ -222,4 +234,15 @@ void							handle_output_redirection(t_cmd *cmd,
 									int fd_pipe[2]);
 int								ft_in_out(char *file, int mode);
 
+bool							not_a_special_charset(char *str);
+
+//------execution/cmd_initialization.c------//
+
+void							handle_pipe_case(t_cmd *cmd, char **envp,
+									t_init *init);
+bool							not_a_special_charset(char *str);
+void							ft_ending_of_init(t_cmd *cmd, t_env **env_list,
+									char **parsed_string, int i);
+void							process_argument_in_cmd(t_cmd *cmd, char **envp,
+									t_env **env_list, t_init *init);
 #endif
