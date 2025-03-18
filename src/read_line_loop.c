@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/17 10:53:42 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/18 11:17:40 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ char  **save_new_tokens(t_token **refined_tokens)
 	temp = *refined_tokens;
 	char **new_tokens = gc_malloc(sizeof(char *) * (size + 1));
 	CHECK(new_tokens == NULL, 1);
+	new_tokens[size] = NULL;
 
 	while(i < size)
 	{

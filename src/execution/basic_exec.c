@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/17 16:38:57 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/18 13:37:53 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void	execute_command(t_cmd *cmd)
 			write(STDERR_FILENO, "\n", 1);
 			exit(127);
 		}
-		
 	}
 }
 
