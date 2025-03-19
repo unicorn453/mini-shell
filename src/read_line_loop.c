@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/18 21:06:10 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/19 18:43:52 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int size_of_list(t_token *list)
 	return (i);
 }
 
-char  **save_new_tokens(t_token **refined_tokens)
+char **save_new_tokens(t_token **refined_tokens)
 {
 	t_token *temp;
 	int i = 0;
@@ -34,14 +34,26 @@ char  **save_new_tokens(t_token **refined_tokens)
 	CHECK(new_tokens == NULL, 1);
 	new_tokens[size] = NULL;
 
-	while(i < size)
+	while (i < size)
 	{
 		new_tokens[i] = temp->value;
 		temp = temp->next;
 		i++;
-	}	
+	}
 	new_tokens[i] = NULL;
 	return (new_tokens);
+}
+bool check_for_builtin(char *line)
+{
+	char *all_builtin[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit", "/bin/echo", NULL};
+	int i = 0;
+	while (all_builtin[i])
+	{
+		if (ft_strncmp(all_builtin[i], line, ft_strlen(all_builtin[i])) == 0)
+			return (true);
+		i++;
+	}
+	return (false);
 }
 
 int	main_parsing(char *line, char **envp, t_env **env_list)
@@ -50,7 +62,10 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	t_cmd		*current_cmd;
 	t_token		*refined_tokens;
 	static char	**tokens;
-	char **ref_tokens;
+	tokens = NULL;
+	char **ref_tokens = NULL;
+	static bool builtins;
+	builtins = check_for_builtin(line);
 
 	(void)envp;
 	current_cmd = gc_malloc(sizeof(t_cmd));
@@ -58,18 +73,29 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	refined_tokens = NULL;
 	tokens = ft_split_plus(line, " \t\n");
 	if (tokens == NULL)
+	{
 		return (perror("Minishell: memory allocation error"), -1);
-	split_tokens(tokens, &refined_tokens);
-	ref_tokens = save_new_tokens(&refined_tokens);
-	main_parsing_loop(env_list, ref_tokens);
-	// main_parsing_loop(env_list, refined_tokens);
-	init_def_cmd(current_cmd, envp, env_list);
-	current_cmd->exit_status = exit_status;
-	 init_cmd_stack(current_cmd, env_list, envp, ref_tokens);
-	// init_cmd_stack(current_cmd, env_list, envp, refined_tokens);
+	}
+	if(!builtins)
+	{
+		split_tokens(tokens, &refined_tokens);
+		ref_tokens = save_new_tokens(&refined_tokens);
+		main_parsing_loop(env_list, ref_tokens);
+	}
+	else 
+	{
+		main_parsing_loop(env_list, tokens);
+	}
+		init_def_cmd(current_cmd, envp, env_list);
+		current_cmd->exit_status = exit_status;
+		if (!builtins)
+			init_cmd_stack(current_cmd, env_list, envp, ref_tokens);
+		else
+		init_cmd_stack(current_cmd, env_list, envp, tokens);
 	exit_status = wait_for_all_children(current_cmd);
 	return (exit_status);
 }
+
 
 static int check_for_empty_input(char *line)
 {
@@ -78,27 +104,27 @@ static int check_for_empty_input(char *line)
 		free(line);
 		return (-1);
 	}
-	else 
-		return(1);	
+	else
+		return (1);
 }
 
-void main_loop(char **envp, t_env	**env_lis)
+void main_loop(char **envp, t_env **env_lis)
 {
-	char	*line;
-	int		exit_status = 0;
+	char *line;
+	int exit_status = 0;
 
-	 // Disable stdout buffering to prevent delayed output
+	// Disable stdout buffering to prevent delayed output
 	//  setbuf(stdout, NULL);
 
 	while (1)
 	{
 		if (isatty(fileno(stdin)))
-		line = readline("minishell> ");
+			line = readline("minishell> ");
 		// static int hehe = 1;
 		// line = malloc(8);
 		// if(hehe++ == 1)
 		// 	line = "ls | wc";
-		// else 
+		// else
 		// 	line = NULL;
 		else
 		{
@@ -109,13 +135,13 @@ void main_loop(char **envp, t_env	**env_lis)
 		}
 		if (line == NULL)
 			ft_run_exit(NULL);
-		if(check_for_empty_input(line) == -1)
+		if (check_for_empty_input(line) == -1)
 			continue;
 		gc_track(line);
 		if (*line != '\0' && isatty(fileno(stdin)))
 			add_history(line);
 		exit_status = main_parsing(line, envp, env_lis);
-		if(!(isatty(fileno(stdin))))
+		if (!(isatty(fileno(stdin))))
 		{
 			exit(exit_status);
 		}
