@@ -3,49 +3,84 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 14:14:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/19 17:23:01 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 19:02:27 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../mini_shell.h"
 
-t_bool *in_quotes_or_not(void)
+char	*single_quote_handler(char *token, int *position)
 {
-    static t_bool in_qoutes;
+	int		i;
+	int		y;
+	int		count;
+	char	*new_token;
 
-    return(&in_qoutes);
+	count = 0;
+	new_token = gc_malloc(ft_strlen(token) - 2 + 1);
+	CHECK(new_token == NULL, 2);
+	i = 0;
+	y = -1;
+	while (token[i] && token[i] != '\'')
+		i++;
+	if (token[i] == '\'')
+	{
+		i++;
+		count = 1;
+		while (token[i] && token[i] != '\'')
+			new_token[++y] = token[i++];
+		if (token[i] == '\'')
+		{
+			count = 2;
+			*position = i;
+		}
+	}
+	return (new_token[++y] = '\0', new_token);
 }
-// bool *in_quotes_or_not(void)
-// {
-//     // This is a static array that persists between function calls
-//     static bool *quotes_array = NULL;
-//     static int array_size = 0;
-    
-//     // If we need to resize or initialize
-//     if (quotes_array == NULL)
-//     {
-//         // Initial size - you might want to adjust this based on your needs
-//         array_size = 1024;
-//         quotes_array = gc_malloc(sizeof(bool) * array_size);
-//         CHECK(quotes_array == NULL, 2);
-        
-//         // Initialize all values to false
-//         for (int i = 0; i < array_size; i++)
-//             quotes_array[i] = false;
-//     }
-    
-//     return quotes_array;
-// }
 
-// Reset function to clear the array between commands
-void reset_quotes_array(void)
+char	*double_quotes_handler(t_env **env_list, char *token, int *position)
 {
-    int i;
+	int		i;
+	int		y;
+	char	*new_token;
+	char	*expanded_token;
 
-    i = -1;
-    while (++i < 1024)
-        in_quotes_or_not()->in_qoutes[i] = false;
+	(void)position;
+	new_token = gc_malloc(ft_strlen(token) - 2 + 1);
+	CHECK(new_token == NULL, 2);
+	i = -1;
+	y = -1;
+	while (token[++i])
+	{
+		if (token[i] != '"')
+			new_token[++y] = token[i];
+	}
+	new_token[++y] = '\0';
+	gc_untrack(token);
+	if (check_var(new_token) == false)
+		return (new_token);
+	expanded_token = handle_env_var(env_list, new_token);
+	gc_untrack(new_token);
+	if (expanded_token != NULL)
+		new_token = expanded_token;
+	return (new_token);
+}
+
+t_bool	*in_quotes_or_not(void)
+{
+	static t_bool	in_qoutes;
+
+	return (&in_qoutes);
+}
+
+void	reset_quotes_array(void)
+{
+	int	i;
+
+	i = -1;
+	while (++i < 1024)
+		in_quotes_or_not()->in_qoutes[i] = false;
 }

@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:24:11 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/17 11:27:06 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/20 20:30:47 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	handle_input_redirection(t_cmd *cmd, int *fd_in)
 {
 	if (cmd->redir_in)
 	{
-		if (*fd_in != -1)
+		if (*fd_in >= 0)
 			close(*fd_in);
 		*fd_in = open(cmd->file_in, O_RDONLY);
 		if (*fd_in < 0)
@@ -58,12 +58,14 @@ void	handle_input_redirection(t_cmd *cmd, int *fd_in)
 			exit(EXIT_FAILURE);
 		}
 		dup2(*fd_in, STDIN_FILENO);
-		close(*fd_in);
+		if (*fd_in >= 0)
+			close(*fd_in);
 	}
 	else if (*fd_in != -1)
 	{
 		dup2(*fd_in, STDIN_FILENO);
-		close(*fd_in);
+		if (*fd_in >= 0)
+			close(*fd_in);
 	}
 }
 
@@ -99,4 +101,12 @@ int	*original_fds(int fd_in, int fd_out)
 		stdio[1] = fd_out;
 	}
 	return (stdio);
+}
+
+void	execution(t_cmd *cmd)
+{
+	if (!cmd->builtin)
+		execute_command(cmd);
+	else
+		execute_builtins(cmd, &cmd->env_list);
 }
