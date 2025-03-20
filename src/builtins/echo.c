@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 12:53:06 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/19 21:25:50 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 16:53:34 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ char	*search_var(t_env *env_list, char *token)
 		if (ft_strncmp(temp->key, token, ft_strlen(token)) == 0)
 		{
 			placeholder = ft_strdup(temp->value);
+			gc_track(placeholder);
 			if (placeholder == NULL)
 				return (perror("Minishell: memory allocation error"), NULL);
 			return (placeholder);
@@ -80,24 +81,62 @@ void	process_argument(char *arg, t_env **env_list)
 	}
 }
 
-void	echo_call_check(t_cmd *cmd, t_env **env_list)
-{
-	int	i;
+// void	echo_call_check(t_cmd *cmd, t_env **env_list)
+// {
+// 	int	i;
 
-	(void)env_list;
-	if (strcmp(cmd->cmd[1], "-n") == 0)
-		i = 2;
-	else
-		i = 1;
-	while (cmd->cmd[i])
-	{
-		if(cmd->cmd[i][0] != '\0')
-			printf("%s",cmd->cmd[i]);
-		else
-			printf("%s ",cmd->cmd[i]);
-		// process_argument(cmd->cmd[i], env_list);
-		i++;
-	}
-	if (strcmp(cmd->cmd[1], "-n") != 0)
-		printf("\n");
+// 	(void)env_list;
+// 	if (strcmp(cmd->cmd[1], "-n") == 0)
+// 		i = 2;
+// 	else
+// 		i = 1;
+// 	while (cmd->cmd[i])
+// 	{
+// 		if(cmd->cmd[i + 1] != NULL)
+// 			printf("%s ",cmd->cmd[i]);
+// 		else
+// 			printf("%s",cmd->cmd[i]);
+// 		// process_argument(cmd->cmd[i], env_list);
+// 		i++;
+// 	}
+// 	if (strcmp(cmd->cmd[1], "-n") != 0)
+// 		printf("\n");
+// }
+
+void echo_call_check(t_cmd *cmd, t_env **env_list)
+{
+    int i;
+    int n_flag = 0;
+    (void)env_list;
+    // Check if no arguments were provided
+    if (!cmd->cmd[1])
+    {
+        printf("\n");
+        return;
+    }
+    
+    // Check for -n flag (only if it's exactly "-n")
+    if (cmd->cmd[1] && strcmp(cmd->cmd[1], "-n") == 0)
+    {
+        n_flag = 1;
+        i = 2;
+    }
+    else
+        i = 1;
+    
+    // Print each argument
+    while (cmd->cmd[i])
+    {
+        printf("%s", cmd->cmd[i]);
+        
+        // Add space if not the last argument
+        if (cmd->cmd[i + 1])
+            printf(" ");
+        
+        i++;
+    }
+    
+    // Print newline if -n flag was not provided
+    if (!n_flag)
+        printf("\n");
 }

@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/19 23:23:38 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 16:55:15 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,13 +150,13 @@ void process_special_tokens(t_cmd *cmd, t_init *init)
 {
     char *token = handle_token_search(init->i, init->parsed_string, cmd);
     
-    if (strcmp(init->parsed_string[init->i], "$?") == 0)
-    {
-        cmd->cmd[init->arg_index] = ft_itoa(cmd->exit_status);
-        init->arg_index++;
-        init->i++;
-        return;
-    }
+    // if (strcmp(init->parsed_string[init->i], "$?") == 0)
+    // {
+    //     cmd->cmd[init->arg_index] = ft_itoa(cmd->exit_status);
+    //     init->arg_index++;
+    //     init->i++;
+    //     return;
+    // }
     
     if (token && strcmp(init->parsed_string[init->i], token) == 0)
     {

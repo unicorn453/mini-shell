@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 22:04:59 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/19 22:33:59 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 16:55:42 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ void append_token(t_token **head, char *value)
     }
 }
 void split_tokens(char **tokens, t_token **refined_tokens) {
-    static char *charset[] = {"<<", "<", ">>", ">", "|", "$?", NULL};
+    static char *charset[] = {"<<", "<", ">>", ">", "|", NULL};
     int i = 0, j, start, len;
     char *no_charse_str;
     bool in_single = false, in_double = false;
