@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:07:13 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/17 11:23:36 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/20 17:47:16 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,13 @@ void	ft_exec_pipes_child(t_cmd *cmd, int *fd_in, int fd_pipe[2],
 	if (!cmd->heredoc)
 	{
 		if (cmd->builtin)
-		    execute_builtins(cmd, &cmd->env_list);
+			execute_builtins(cmd, &cmd->env_list);
 		if (heredoc_exist && cmd->redir_out)
 			execute_command(cmd);
 		else if (!heredoc_exist && !cmd->builtin)
 			execute_command(cmd);
 		else if (heredoc_exist && cmd->end_of_cmd)
 			execute_command(cmd);
-
 	}
 }
 

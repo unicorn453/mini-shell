@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 09:11:20 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/17 16:39:40 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/20 19:21:12 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,10 +83,7 @@ void	exec_cmd(t_cmd *cmd, int *fd_in, bool last_child)
 			exit(EXIT_SUCCESS);
 		else if (exec_cmd == 1)
 		{
-			if(!cmd->builtin)
-			execute_command(cmd);
-			else
-			execute_builtins(cmd, &cmd->env_list);
+			execution(cmd);
 			exit(EXIT_SUCCESS);
 		}
 	}

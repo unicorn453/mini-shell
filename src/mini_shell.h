@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/20 17:12:29 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 20:16:27 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,7 @@ typedef struct s_token
 {
 	char						*value;
 	struct s_token				*next;
-}
-								t_token;
+}								t_token;
 typedef struct s_bool
 {
 	bool						in_qoutes[1024];
@@ -116,8 +115,18 @@ typedef struct s_init
 
 typedef struct s_exit
 {
-	int exit_code;
-}				t_exit;
+	int							exit_code;
+}								t_exit;
+
+typedef struct s_process
+{
+    int		start;
+	int		len;
+	char	*no_charse_str;
+	bool	in_single;
+	bool	in_double;
+	int		op_len;
+}				t_process;
 
 //------------------------------//
 
@@ -174,14 +183,19 @@ char							*handle_token_search(int i,
 									char **parsed_string, t_cmd *cmd);
 
 //-------input_parsing.c------//
+char							*str_before_env_var_handler(char *token,
+									char *env_str, int len);
+char							*search_env_var(t_env *env_list, char *token);
+int								cut_on_charset(char *str, char *charset);
+bool							check_var(char *token);
+void							quote_parsing(t_env **env_list, char **tokens);
+
+//-------input_parsing_two.c------//
+char							*b_a_env_var_handler(char *token, char *env_str,
+									char *after_env, int i);
+char							*handle_env_var(t_env **env_list, char *token);
 void							main_parsing_loop(t_env **env_list,
 									char **tokens);
-char							*handle_env_var(t_env **env_list, char *token);
-char							*search_env_var(t_env *env_list, char *token);
-char							*double_quotes_handler(t_env **env_list,
-									char *token, int *position);
-void							quote_parsing(t_env **env_list, char **tokens);
-char							*single_quote_handler(char *token, int *i);
 
 //-------env_variables.c-----//
 t_env							*create_env_node(char *key, char *value);
@@ -196,11 +210,19 @@ void							export_env_var(t_env **env_list, char *key,
 void							echo_call_check(t_cmd *cmd, t_env **env_list);
 
 //------token_refiner.c------//
-void							print_tokens(t_token *head);
+void							handle_quotes(char current_char,
+									bool *in_single, bool *in_double);
 void							split_tokens(char **tokens,
 									t_token **refined_tokens);
 void							append_token(t_token **head, char *value);
 t_token							*new_token(char *value);
+int	check_for_operators(char *str, char **charset, t_process *process,
+	t_token **refined_tokens);
+
+//------token_refiner_two.c------//
+void							append_char(char **no_charse_str, char c);
+void							process_token(char *token, char **charset,
+									t_token **refined_tokens);
 
 //------builtins/cd.c------//
 void							cd_test_call(t_cmd *cmd, t_env **env_list);
@@ -242,6 +264,7 @@ void							handle_output_redirection(t_cmd *cmd,
 									bool last_child, int *fd_out,
 									int fd_pipe[2]);
 int								ft_in_out(char *file, int mode);
+void							execution(t_cmd *cmd);
 
 // bool							not_a_special_charset(char *str);
 
@@ -256,7 +279,10 @@ void							process_argument_in_cmd(t_cmd *cmd, char **envp,
 									t_env **env_list, t_init *init);
 
 //-----------qoutes.c--------------//
-t_bool 							*in_quotes_or_not(void);
+t_bool							*in_quotes_or_not(void);
 void							reset_quotes_array(void);
-t_exit *get_exit_code(void);
+t_exit							*get_exit_code(void);
+char							*single_quote_handler(char *token, int *i);
+char							*double_quotes_handler(t_env **env_list,
+									char *token, int *position);
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   basic_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/19 23:25:45 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 20:27:27 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ int	find_right_exec(t_cmd *cmd, char **parsed_string)
 	else if (fd_in != -1)
 	{
 		dup2(fd_in, STDIN_FILENO);
-		close(fd_in);
+		if (fd_in >= 0)
+			close(fd_in);
 	}
 	exec_cmd(cmd, &fd_in, cmd->end_of_cmd);
 	fd_in = -1;
@@ -80,64 +81,31 @@ void	exec_pipes(t_cmd *cmd, int *fd_in, char **parsed_string)
 		ft_exec_pipes_parent(cmd, pipes()->fd_pipe, fd_in, pid);
 }
 
-int wait_for_all_children(t_cmd *cmd)
+int	wait_for_all_children(t_cmd *cmd)
 {
-    int status;
-    int exit_status;
-    if (cmd->pid[0] == -1)
-    {
-        exit_status = cmd->pid[1];
-        return (exit_status);
-    }
-    for (int i = 0; i < cmd->index; i++)
-    {
-        if (cmd->pid[i] > 0)
-        {
-            waitpid(cmd->pid[i], &status, 0);
-            if (WIFEXITED(status))
-                exit_status = WEXITSTATUS(status);
-            if (WIFSIGNALED(status))
-            {
-                int sig = WTERMSIG(status);
-                if (sig == 3)
-                    printf("Quit: 3\n");
-                cmd->exit_status = 128 + sig;
-                return (cmd->exit_status);
-            }
-        }
-        else if (cmd->pid[i] == 0)
-            exit_status = 0;
-    }
-    cmd->index = 0;
-    return (exit_status);
+	int	status;
+	int	exit_status;
+	int	i;
+
+	if (cmd->pid[0] == -1)
+		return (cmd->pid[1]);
+	i = -1;
+	while (++i < cmd->index)
+	{
+		if (cmd->pid[i] > 0)
+		{
+			waitpid(cmd->pid[i], &status, 0);
+			if (WIFEXITED(status))
+				exit_status = WEXITSTATUS(status);
+			if (WIFSIGNALED(status))
+			{
+				if (WTERMSIG(status) == 3)
+					printf("Quit: 3\n");
+				return (cmd->exit_status = 128 + WTERMSIG(status));
+			}
+		}
+		else
+			exit_status = 0;
+	}
+	return (cmd->index = 0, exit_status);
 }
-
-
-// int	wait_for_all_children(t_cmd *cmd)
-// {
-// 	int	status;
-// 	int	exit_status;
-// 	int	i;
-
-// 	if (cmd->pid[0] == -1)
-// 		return (cmd->pid[1]);
-// 	i = -1;
-// 	while (++i < cmd->index)
-// 	{
-// 		if (cmd->pid[i] > 0)
-// 		{
-// 			waitpid(cmd->pid[i], &status, 0);
-// 			if (WIFEXITED(status))
-// 				exit_status = WEXITSTATUS(status);
-// 			if (WIFSIGNALED(status))
-// 			{
-// 				if (WTERMSIG(status) == 3)
-// 					printf("Quit: 3\n");
-// 				return (cmd->exit_status = 128 + WTERMSIG(status));
-// 			}
-// 		}
-// 		else
-// 			exit_status = 0;
-// 	}
-// 	return (cmd->index = 0, exit_status);
-// }
