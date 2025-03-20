@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/19 23:08:27 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 17:12:29 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,11 @@ typedef struct s_init
 	t_env						**env_list;
 	char						**parsed_string;
 }								t_init;
+
+typedef struct s_exit
+{
+	int exit_code;
+}				t_exit;
 
 //------------------------------//
 
@@ -245,7 +250,7 @@ int								ft_in_out(char *file, int mode);
 void							handle_pipe_case(t_cmd *cmd, char **envp,
 									t_init *init);
 bool							not_a_special_charset(char *str, int index);
-void							ft_ending_of_init(t_cmd *cmd, t_env **env_list,
+void							ft_ending_of_init(t_cmd *cmd,
 									char **parsed_string, int i);
 void							process_argument_in_cmd(t_cmd *cmd, char **envp,
 									t_env **env_list, t_init *init);
@@ -253,4 +258,5 @@ void							process_argument_in_cmd(t_cmd *cmd, char **envp,
 //-----------qoutes.c--------------//
 t_bool 							*in_quotes_or_not(void);
 void							reset_quotes_array(void);
+t_exit *get_exit_code(void);
 #endif

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "mini_shell.h"
-void echo_call_check(t_cmd *cmd, t_env **env_list);
 
 void	error(void)
 {

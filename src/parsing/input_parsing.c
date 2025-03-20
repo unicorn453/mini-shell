@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:12:54 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/19 21:32:09 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 17:26:48 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ char 	*handle_env_var(t_env **env_list, char *token)
 	i = -1;
 	while (token[++i] != '\0')
 	{
-		if (token[i] == '$' && token[i + 1] != '\0' && token[i + 1] != '?')
+		if (token[i] == '$' && token[i + 1] != '\0')
 		{
-			env_str = ft_substr(token, i, cut_on_charset(&token[i + 1]," $") + 1);
+			env_str = ft_substr(token, i, cut_on_charset(&token[i + 1]," $'") + 1);
 			CHECK(env_str == NULL, 2);
 			if(ft_strlen(env_str) + i < ft_strlen(token))
 				after_env = ft_substr(token, ft_strlen(env_str) + i, ft_strlen(token));
@@ -94,9 +94,10 @@ char	*search_env_var(t_env *env_list, char *token)
 	char	*placeholder;
 	char	*new_token;
 	
+	if (ft_strcmp(token, "$?") == 0)
+		return(gc_track(new_token = ft_itoa(get_exit_code()->exit_code)),new_token);
 	new_token = ft_substr(token, 1, ft_strlen(token));
 	CHECK(new_token == NULL, 2);
-	// free(token);
 	temp = env_list;
 	while (temp)
 	{
@@ -125,7 +126,7 @@ bool check_var(char *token)
 	i = 0;
 	while(token[i])
 	{
-		if (token[i] == '$' && token[i + 1] != '?')
+		if (token[i] == '$')
 		{
 			env_var = true;
 			return (env_var);
@@ -174,69 +175,104 @@ void	main_parsing_loop(t_env **env_list, char **tokens)
 
 void	quote_parsing(t_env **env_list ,char **token)
 {
-	int	i;
+	static int 	i = 0;
 
-	i = 0;
 	while ((*token)[i] != '\0')
 	{
+		// printf("%c\n",(*token)[i]);
 		if ((*token)[i] == '\'')
 		{
 			*token = single_quote_handler(*token, &i);
-			if ((*token)[i + 1] == '\0')
+			if ((*token)[i] == '\0')
 				continue;
 		}
 		else if ((*token)[i] == '"')
 		{
 			*token = double_quotes_handler(env_list, *token, &i);
-			continue;
+			// printf("valie of i %d\n value of strinf %s", i, *token);
+			if ((*token)[i - 1] == '\0')
+				break ;
 		}
 		++i;
 	}
 }
 
-static int	count_chars(char *str, char c)
-{
-	int	i;
-	int y;
+// static int	count_chars(char *str, char c)
+// {
+// 	int	i;
+// 	int y;
 	
-	y = 0;
-	i = 0;
-	while (str[y])
-	{
-		if (str[y] == c)
-			i++;
-		y++;
-	}
-	return (i);
-}
-
-char	*single_quote_handler(char *token, int *position)
+// 	y = 0;
+// 	i = 0;
+// 	while (str[y])
+// 	{
+// 		if (str[y] == c)
+// 			i++;
+// 		y++;
+// 	}
+// 	return (i);
+// }
+char *single_quote_handler(char *token, int *position)
 {
-	int		i;
-	int		y;
-	int		count;
-	char	*new_token;
-	
-	i = count_chars(token, '\'');
-	count = 0;
-	new_token = gc_malloc(ft_strlen(token) - i + 1);
-	CHECK(new_token == NULL, 2);
-	i = -1;
-	y = -1;
-	while (token[++i])
-	{		
-		if (token[i] != '\'')
-			new_token[++y] = token[i];
-		else
-		{
-			*position = i;
-			if(++count == 2 && y == -1)
-				return (&token[i + 1]);	
-		}
-	}
-	new_token[++y] = '\0';
-	return (new_token);
+    int i;
+    int y;
+    int count;
+    char *new_token;
+    
+    count = 0;
+    new_token = gc_malloc(ft_strlen(token) - 2 + 1);
+    CHECK(new_token == NULL, 2);
+    i = -1;
+    y = -1;
+    
+    // Skip until first single quote
+    while (token[++i] && token[i] != '\'');
+    
+    if (token[i] == '\'') {
+        i++; // Skip the opening quote
+        count = 1;
+        
+        // Copy everything between quotes
+        while (token[i] && token[i] != '\'') {
+            new_token[++y] = token[i++];
+        }
+        
+        if (token[i] == '\'') {
+            count = 2;
+            *position = i; // Set position to the closing quote
+        }
+    }
+    
+    new_token[++y] = '\0';
+    return (new_token);
 }
+// char	*single_quote_handler(char *token, int *position)
+// {
+// 	int		i;
+// 	int		y;
+// 	int		count;
+// 	char	*new_token;
+	
+// 	// i = count_chars(token, '\'');
+// 	count = 0;
+// 	new_token = gc_malloc(ft_strlen(token) - 2 + 1);
+// 	CHECK(new_token == NULL, 2);
+// 	i = -1;
+// 	y = -1;
+// 	while (token[++i])
+// 	{		
+// 		if (token[i] != '\'')
+// 			new_token[++y] = token[i];
+// 		else
+// 		{
+// 			*position = i - 1;
+// 			if(++count == 2 && y == -1)
+// 				return (&token[i + 1]);	
+// 		}
+// 	}
+// 	new_token[++y] = '\0';
+// 	return (new_token);
+// }
 
 char	*double_quotes_handler(t_env **env_list, char *token, int *position)
 {
@@ -245,8 +281,9 @@ char	*double_quotes_handler(t_env **env_list, char *token, int *position)
 	char	*new_token;
 	char	*expanded_token;
  
-	i = count_chars(token, '"');
-	new_token = gc_malloc(ft_strlen(token) - i + 1);
+	(void)position;
+	// i = count_chars(token, '"');
+	new_token = gc_malloc(ft_strlen(token) - 2 + 1);
 	CHECK(new_token == NULL, 2);
 	i = -1;
 	y = -1;
@@ -254,8 +291,8 @@ char	*double_quotes_handler(t_env **env_list, char *token, int *position)
 	{
 		if (token[i] != '"')
 			new_token[++y] = token[i];
-		else
-			*position = i;
+		// else
+		// 	*position = i;
 	}
 	new_token[++y] = '\0';
 	gc_untrack(token);

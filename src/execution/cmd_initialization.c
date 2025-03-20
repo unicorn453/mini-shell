@@ -15,7 +15,6 @@
 void	handle_pipe_case(t_cmd *cmd, char **envp, t_init *init)
 {
 	int	status;
-
 	status = check_error_status(init->parsed_string, init->i, 258);
 	if (status != 0)
 	{
@@ -47,8 +46,10 @@ bool	not_a_special_charset(char *str, int index)
 		return (false);
 	if (strcmp(str, "<<") == 0)
 		return (false);
-	if (strcmp(str, ">>") == 0)
+	 else if (strcmp(str, ">>") == 0)
 		return (false);
+	else if (strcmp(str, "|") == 0)
+	 return (false);
 	return (true);
 }
 
@@ -57,30 +58,26 @@ void	process_argument_in_cmd(t_cmd *cmd, char **envp, t_env **env_list,
 {
 	if (init->arg_index == 0
 		&& not_a_special_charset(init->parsed_string[init->i], init->i))
-		cmd->cmd[init->arg_index] = find_command_path(cmd, env_list,
-				init->parsed_string[init->i], envp);
+		{
+			cmd->cmd[init->arg_index] = find_command_path(cmd, env_list,
+					init->parsed_string[init->i], envp);
+		}
 	else if (init->arg_index != 0
 		&& not_a_special_charset(init->parsed_string[init->i], init->i))
-		cmd->cmd[init->arg_index] = init->parsed_string[init->i];
+		{
+			cmd->cmd[init->arg_index] = init->parsed_string[init->i];
+		}
 	init->arg_index++;
+	if(strcmp(init->parsed_string[init->i], "|") != 0)
 	init->i++;
 }
 
-void	ft_ending_of_init(t_cmd *cmd, t_env **env_list, char **parsed_string,
+void	ft_ending_of_init(t_cmd *cmd, char **parsed_string,
 		int i)
 {
 	if (parsed_string[i] == NULL)
 	{
 		cmd->end_of_cmd = true;
-		if (cmd->builtin)
-		{
-			if (cmd->cmd[0])
-				execute_builtins(cmd, env_list);
-			return ;
-		}
-		else
-		{
 			find_right_exec(cmd, parsed_string);
-		}
 	}
 }
