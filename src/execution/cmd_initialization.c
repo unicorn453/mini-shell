@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 12:52:32 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/20 20:29:52 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/20 22:50:15 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,12 @@ void	ft_ending_of_init(t_cmd *cmd, char **parsed_string, int i)
 {
 	if (parsed_string[i] == NULL)
 	{
+		if (cmd->special_builtin)
+		{
+			if (cmd->cmd[0])
+				execute_builtins_special(cmd, &cmd->env_list);
+			return ;
+		}
 		cmd->end_of_cmd = true;
 		find_right_exec(cmd, parsed_string);
 	}

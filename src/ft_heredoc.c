@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_heredoc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/19 23:21:50 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 20:43:14 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,8 @@ int	handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
 	read_heredoc_input(cmd, my_out, fd_out);
 	if (cmd->end_of_cmd || last_heredoc)
 	{
-		close(my_out);
+		if (my_out >= 0)
+			close(my_out);
 		unlink("file");
 	}
 	return (my_out);
@@ -108,11 +109,14 @@ int	ft_heredoc_check(t_cmd *cmd, int pipefd[2], bool last_child,
 		handle_heredoc(cmd, &file_fd, last_heredoc);
 	else
 		file_fd = handle_heredoc(cmd, &pipefd[1], last_heredoc);
-	close(pipefd[1]);
+	if (pipefd[1] >= 0)
+		close(pipefd[1]);
 	if (last_child && dup2(pipefd[0], STDIN_FILENO) == -1)
 	{
 		perror("dup2 failed for heredoc");
 		exit(EXIT_FAILURE);
 	}
-	return (close(pipefd[0]), file_fd);
+	if (pipefd[0] >= 0)
+		close(pipefd[0]);
+	return (file_fd);
 }

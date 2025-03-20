@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 18:06:15 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/19 22:34:35 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 20:40:35 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,15 @@ void	handle_sigquit(int sig)
 {
 	(void)sig;
 	rl_redisplay();
-	// printf("im hereeee\n");
-	// Do nothing (ignore Ctrl-\)
 }
 
 void	setup_interactive_signals(void)
 {
-	struct sigaction sa_int;
-	struct sigaction sa_quit;
+	struct sigaction	sa_int;
+	struct sigaction	sa_quit;
 	struct termios		term;
-	
-	if(isatty(STDERR_FILENO))
+
+	if (isatty(STDERR_FILENO))
 	{
 		tcgetattr(STDIN_FILENO, &term);
 		term.c_lflag &= ~ECHOCTL;
@@ -45,7 +43,6 @@ void	setup_interactive_signals(void)
 	sigemptyset(&sa_int.sa_mask);
 	sa_int.sa_flags = SA_RESTART;
 	sigaction(SIGINT, &sa_int, NULL);
-
 	sa_quit.sa_handler = handle_sigquit;
 	sigemptyset(&sa_quit.sa_mask);
 	sa_quit.sa_flags = SA_RESTART;

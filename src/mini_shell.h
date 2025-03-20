@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/20 20:16:27 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/20 23:08:56 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ typedef struct s_cmd
 	char						*assigned_var;
 	// char						**assigned_var;
 	bool						builtin;
+	bool						special_builtin;
 	// to do
 	bool						heredoc_exists;
 	char						*heredoc_file;
@@ -120,13 +121,13 @@ typedef struct s_exit
 
 typedef struct s_process
 {
-    int		start;
-	int		len;
-	char	*no_charse_str;
-	bool	in_single;
-	bool	in_double;
-	int		op_len;
-}				t_process;
+	int							start;
+	int							len;
+	char						*no_charse_str;
+	bool						in_single;
+	bool						in_double;
+	int							op_len;
+}								t_process;
 
 //------------------------------//
 
@@ -172,6 +173,8 @@ void							print_envlist(t_env **env_list);
 void							init_cmd_stack(t_cmd *cmd, t_env **env_list,
 									char **envp, char **parsed_string);
 void							execute_builtins(t_cmd *cmd, t_env **env_list);
+void							execute_builtins_special(t_cmd *cmd,
+									t_env **env_list);
 
 //---------ft_heredoc.c---------//
 int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
@@ -180,6 +183,18 @@ int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
 int								check_error_status(char **parsed_string, int i,
 									int status);
 char							*handle_token_search(int i,
+									char **parsed_string, t_cmd *cmd);
+int								find_last_heredoc(char **parsed_string, int i);
+
+//---------handle_token_search.c---------//
+
+char							*handle_redir_in(int i, char **parsed_string,
+									t_cmd *cmd);
+char							*handle_redir_out(int i, char **parsed_string,
+									t_cmd *cmd);
+char							*handle_redir_append(int i,
+									char **parsed_string, t_cmd *cmd);
+char							*handle_heredoc_searching(int i,
 									char **parsed_string, t_cmd *cmd);
 
 //-------input_parsing.c------//
@@ -216,8 +231,9 @@ void							split_tokens(char **tokens,
 									t_token **refined_tokens);
 void							append_token(t_token **head, char *value);
 t_token							*new_token(char *value);
-int	check_for_operators(char *str, char **charset, t_process *process,
-	t_token **refined_tokens);
+int								check_for_operators(char *str, char **charset,
+									t_process *process,
+									t_token **refined_tokens);
 
 //------token_refiner_two.c------//
 void							append_char(char **no_charse_str, char c);
@@ -285,4 +301,12 @@ t_exit							*get_exit_code(void);
 char							*single_quote_handler(char *token, int *i);
 char							*double_quotes_handler(t_env **env_list,
 									char *token, int *position);
+
+//----------main_parsing.c----------//
+char							**save_new_tokens(t_token **refined_tokens);
+bool							check_for_builtin(char *line);
+int								main_parsing(char *line, char **envp,
+									t_env **env_list);
+//----------read_line_loop.c----------//
+int								size_of_list(t_token *list);
 #endif

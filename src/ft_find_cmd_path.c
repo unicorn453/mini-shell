@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_find_cmd_path.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:49:03 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/19 22:12:04 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 22:02:40 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,50 @@ char	*add_permission_free_path(t_path *path, char *cmd)
 	return (NULL);
 }
 
+int check_speacial_builtins(t_env **env_list, t_cmd *cmd, char *command)
+{
+	(void)env_list;
+	char *builtins[] = {"export", "cd", "unset", "exit", NULL};
+	int i;
+	i = 0;
+	bool match = false;
+	while(builtins[i])
+	{
+		if(strcmp(builtins[i], command) == 0)
+		{
+			match = true;
+			cmd->special_builtin = true;
+			break;
+		}
+		i++;
+	}
+	if (match)
+	{
+		if((ft_strncmp(builtins[i], "export", 6) == 0))
+		{
+			cmd->cmd[0] = "export";
+		}
+		else if ((ft_strncmp(builtins[i], "cd", 2) == 0))
+		{
+			cmd->cmd[0] = "cd";
+		}
+		else if ((ft_strncmp(builtins[i], "unset", 5) == 0))
+		{
+			cmd->cmd[0] = "unset";
+		}
+		else if ((ft_strncmp(builtins[i], "exit", 4) == 0))
+		{
+			cmd->cmd[0] = "exit";
+		}
+	}
+	return (match);
+}
+
 int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 {
 	(void)env_list;
-	char *builtins[] = {"export", "pwd", "echo", "/bin/echo", "cd", "unset", "exit", "env", NULL};
+	// char *builtins[] = {"export", "pwd", "echo", "/bin/echo", "cd", "unset", "exit", "env", NULL};
+	char *builtins[] = {"echo", "/bin/echo", "pwd", "env", NULL};
 	int i;
 	i = 0;
 	bool match = false;
@@ -98,29 +138,13 @@ int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 	}
 	if (match)
 	{
-		if((ft_strncmp(builtins[i], "export", 6) == 0))
-		{
-			cmd->cmd[0] = "export";
-		}
-		else if ((ft_strncmp(builtins[i], "pwd", 3) == 0))
+		if ((ft_strncmp(builtins[i], "pwd", 3) == 0))
 		{
 			cmd->cmd[0] = "pwd";
 		}
 		else if ((ft_strncmp(builtins[i], "echo", 4) == 0) || (ft_strncmp(builtins[i], "/bin/echo", 9) == 0))
 		{
 			cmd->cmd[0] = "echo";
-		}
-		else if ((ft_strncmp(builtins[i], "cd", 2) == 0))
-		{
-			cmd->cmd[0] = "cd";
-		}
-		else if ((ft_strncmp(builtins[i], "unset", 5) == 0))
-		{
-			cmd->cmd[0] = "unset";
-		}
-		else if ((ft_strncmp(builtins[i], "exit", 4) == 0))
-		{
-			cmd->cmd[0] = "exit";
 		}
 		else if ((ft_strncmp(builtins[i], "env", 3) == 0))
 		{
@@ -134,9 +158,10 @@ char	*find_command_path(t_cmd *cmd_list, t_env **env_list, char *cmd, char **env
 {
 	t_path	*path;
 	char	*ret_str;
-
+	cmd_list->env_list = *env_list;
 	int check_built = check_builtins(env_list, cmd_list, cmd);
-	if(check_built == 1)
+	int check_special_built = check_speacial_builtins(env_list, cmd_list, cmd);
+	if(check_built == 1 || check_special_built == 1)
 		return (cmd);
 	path = initialize_path();
 	CHECK(path == NULL, 1);

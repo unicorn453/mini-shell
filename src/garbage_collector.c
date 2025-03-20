@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   garbage_collector.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 21:10:48 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/19 22:06:44 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 20:46:15 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,15 @@ void	gc_track(void *ptr)
 	*mem_list = new_node;
 }
 
-static void close_open_fds(void)
+static void	close_open_fds(void)
 {
-    int fd;
+	int	fd;
+
 	fd = 3;
 	while (fd < 10240)
 	{
-		close(fd);
+		if (fd >= 0)
+			close(fd);
 		fd++;
 	}
 }
@@ -132,6 +134,3 @@ void	gc_untrack(void *ptr)
 		current = current->next;
 	}
 }
-
-
-
