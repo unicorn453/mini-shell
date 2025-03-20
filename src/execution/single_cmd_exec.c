@@ -83,7 +83,10 @@ void	exec_cmd(t_cmd *cmd, int *fd_in, bool last_child)
 			exit(EXIT_SUCCESS);
 		else if (exec_cmd == 1)
 		{
+			if(!cmd->builtin)
 			execute_command(cmd);
+			else
+			execute_builtins(cmd, &cmd->env_list);
 			exit(EXIT_SUCCESS);
 		}
 	}

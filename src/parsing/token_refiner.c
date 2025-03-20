@@ -123,10 +123,8 @@ void append_token(t_token **head, char *value)
     t_token *new;
     t_token *temp;
     
-    if (value[0] == '\0')
-    {
-        return ;
-    }
+    if (ft_strcmp(value, "\"\"") == 0 || ft_strcmp(value, "''")  == 0)
+    return ;
     new = new_token(value);
     if (*head == NULL)
         *head = new;

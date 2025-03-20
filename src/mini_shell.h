@@ -245,7 +245,7 @@ int								ft_in_out(char *file, int mode);
 void							handle_pipe_case(t_cmd *cmd, char **envp,
 									t_init *init);
 bool							not_a_special_charset(char *str, int index);
-void							ft_ending_of_init(t_cmd *cmd, t_env **env_list,
+void							ft_ending_of_init(t_cmd *cmd,
 									char **parsed_string, int i);
 void							process_argument_in_cmd(t_cmd *cmd, char **envp,
 									t_env **env_list, t_init *init);

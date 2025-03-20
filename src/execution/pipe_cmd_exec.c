@@ -66,12 +66,15 @@ void	ft_exec_pipes_child(t_cmd *cmd, int *fd_in, int fd_pipe[2],
 		close(fd_pipe[1]);
 	if (!cmd->heredoc)
 	{
+		if (cmd->builtin)
+		    execute_builtins(cmd, &cmd->env_list);
 		if (heredoc_exist && cmd->redir_out)
 			execute_command(cmd);
-		else if (!heredoc_exist)
+		else if (!heredoc_exist && !cmd->builtin)
 			execute_command(cmd);
 		else if (heredoc_exist && cmd->end_of_cmd)
 			execute_command(cmd);
+
 	}
 }
 

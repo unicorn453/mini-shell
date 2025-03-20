@@ -39,6 +39,10 @@ void init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
 void execute_builtins(t_cmd *cmd, t_env **env_list)
 {
     pid_t pid;
+
+	int fd_pipe[2];
+	fd_pipe[0] = -1;
+	fd_pipe[1] = -1;
     
     if (strcmp(cmd->cmd[0], "export") == 0 && cmd->assigned_var)
     {
@@ -67,34 +71,35 @@ void execute_builtins(t_cmd *cmd, t_env **env_list)
     }
     else if (strcmp(cmd->cmd[0], "exit") == 0)
         ft_run_exit(cmd);
-    pid = fork();
-    CHECK(pid < 0, 1);
-    if (pid == 0)
-    {
-        signal(SIGINT, SIG_DFL);
-        if ((strcmp(cmd->cmd[0], "echo") == 0 || strcmp(cmd->cmd[0], "/bin/echo") == 0) && cmd->cmd[1] != NULL)
-        {
-            echo_call_check(cmd, env_list);
-            exit(0);
-        }
-        else if ((strcmp(cmd->cmd[0], "echo") == 0 || strcmp(cmd->cmd[0], "/bin/echo") == 0) && cmd->cmd[1] == NULL)
-        {
-            printf("\n");
-            exit(0);
-        }
-        else if (strcmp(cmd->cmd[0], "pwd") == 0)
-        {
-            get_pwd();
-            exit(0);
-        }
-        else if (strcmp(cmd->cmd[0], "env") == 0)
-        {
-            print_env_reverse(env_list);
-            exit(0);
-        }
-        exit(1); 
-    }
-    cmd->pid[cmd->index++] = pid;
+	CHECK(!cmd->end_of_cmd && pipe(fd_pipe) == -1, 1);
+	pid = fork();
+	CHECK(pid < 0, 1);
+	if (pid == 0)
+	{
+		signal(SIGINT, SIG_DFL);
+		if ((strcmp(cmd->cmd[0], "echo") == 0 || strcmp(cmd->cmd[0], "/bin/echo") == 0) && cmd->cmd[1] != NULL)
+		{
+			echo_call_check(cmd, env_list);
+			exit(0);
+		}
+		else if ((strcmp(cmd->cmd[0], "echo") == 0 || strcmp(cmd->cmd[0], "/bin/echo") == 0) && cmd->cmd[1] == NULL)
+		{
+			printf("\n");
+			exit(0);
+		}
+		else if (strcmp(cmd->cmd[0], "pwd") == 0)
+		{
+			get_pwd();
+			exit(0);
+		}
+		else if (strcmp(cmd->cmd[0], "env") == 0)
+		{
+			print_env_reverse(env_list);
+			exit(0);
+		}
+		exit(1); 
+	}
+	cmd->pid[cmd->index++] = pid;
 }
 
 void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_string)
@@ -122,7 +127,7 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
         process_argument_in_cmd(cmd, envp, env_list, &init);
     }
     cmd->cmd[init.arg_index] = NULL;
-    ft_ending_of_init(cmd, env_list, init.parsed_string, init.i);
+    ft_ending_of_init(cmd, init.parsed_string, init.i);
 }
 
 
