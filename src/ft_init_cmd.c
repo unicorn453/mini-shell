@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_init_cmd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/18 13:47:36 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/19 23:23:38 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,12 @@ void execute_builtins(t_cmd *cmd, t_env **env_list)
     if (strcmp(cmd->cmd[0], "export") == 0 && cmd->assigned_var)
     {
         handle_export(env_list, cmd->assigned_var);
+        cmd->pid[cmd->index++] = 0;
+        return;
+    }
+    else if (strcmp(cmd->cmd[0], "export") == 0 && !cmd->assigned_var)
+    {
+        print_env_reverse(env_list);
         cmd->pid[cmd->index++] = 0;
         return;
     }
@@ -94,25 +100,27 @@ void execute_builtins(t_cmd *cmd, t_env **env_list)
 void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_string)
 {
     t_init init;
+    
     init.parsed_string = parsed_string;
     init.env_list = env_list;
     initialize_command_structure(cmd, envp, &init);
-    
     while (init.parsed_string[init.i] != NULL)
     {
         if (init.parsed_string[init.i] == NULL)
         break; 
-        if (strcmp(init.parsed_string[init.i], "|") == 0)
+        if (strcmp(init.parsed_string[init.i], "|") == 0 && in_quotes_or_not()->in_qoutes[init.i] == false)
         {
             handle_pipe_case(cmd, envp, &init);
             if(cmd->pid[0] == -1)
             return;
             continue;
         }
-        process_special_tokens(cmd, &init);
+        if (ft_strchr(parsed_string[init.i], '=') != NULL)
+            cmd->assigned_var = parsed_string[init.i];
+        if(in_quotes_or_not()->in_qoutes[init.i] == false)
+            process_special_tokens(cmd, &init);
         process_argument_in_cmd(cmd, envp, env_list, &init);
     }
-    
     cmd->cmd[init.arg_index] = NULL;
     ft_ending_of_init(cmd, env_list, init.parsed_string, init.i);
 }
@@ -125,10 +133,11 @@ void initialize_command_structure(t_cmd *cmd, char **envp, t_init *init)
     init->parsed_size = 0;
     while (init->parsed_string[init->parsed_size] != NULL)
         init->parsed_size++;
-       
     cmd->cmd = gc_malloc(sizeof(char *) * (init->parsed_size + 1));
-    cmd->cmd[init->parsed_size] = NULL;
     CHECK(cmd->cmd == NULL, 1);
+    cmd->cmd[init->parsed_size] = NULL;
+    for (int j = 0; j <= init->parsed_size; j++)
+        cmd->cmd[j] = NULL;
     init_def_cmd(cmd, envp, init->env_list);
 }
 

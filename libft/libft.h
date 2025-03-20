@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:49:38 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/02/14 14:24:43 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/17 13:01:24 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
-# include "ft_printf/ft_printf.h"
 # include "ft_gnl/get_next_line.h"
+# include "ft_printf/ft_printf.h"
 # include <stdio.h>
 
 int		ft_isalpha(int c);
@@ -36,6 +36,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
+int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_strchr(const char *string, int symbol);
 int		ft_tolower(int symbol);
 int		ft_toupper(int symbol);

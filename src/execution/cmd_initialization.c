@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_initialization.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 12:52:32 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/18 13:40:18 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/19 20:40:15 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,10 @@ void	handle_pipe_case(t_cmd *cmd, char **envp, t_init *init)
 	init->i++;
 }
 
-bool	not_a_special_charset(char *str)
+bool	not_a_special_charset(char *str, int index)
 {
+	if (in_quotes_or_not()->in_qoutes[index] == true)
+		return (true);
 	if (str == NULL)
 		return (false);
 	if (strcmp(str, "<<") == 0)
@@ -54,11 +56,11 @@ void	process_argument_in_cmd(t_cmd *cmd, char **envp, t_env **env_list,
 		t_init *init)
 {
 	if (init->arg_index == 0
-		&& not_a_special_charset(init->parsed_string[init->i]))
+		&& not_a_special_charset(init->parsed_string[init->i], init->i))
 		cmd->cmd[init->arg_index] = find_command_path(cmd, env_list,
 				init->parsed_string[init->i], envp);
 	else if (init->arg_index != 0
-		&& not_a_special_charset(init->parsed_string[init->i]))
+		&& not_a_special_charset(init->parsed_string[init->i], init->i))
 		cmd->cmd[init->arg_index] = init->parsed_string[init->i];
 	init->arg_index++;
 	init->i++;

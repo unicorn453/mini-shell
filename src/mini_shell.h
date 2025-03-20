@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/18 13:02:07 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/19 23:08:27 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,13 @@ typedef struct s_env
 typedef struct s_token
 {
 	char						*value;
-	bool						in_qoutes;
 	struct s_token				*next;
-}								t_token;
+}
+								t_token;
+typedef struct s_bool
+{
+	bool						in_qoutes[1024];
+}								t_bool;
 
 typedef struct s_init
 {
@@ -170,9 +174,9 @@ void							main_parsing_loop(t_env **env_list,
 char							*handle_env_var(t_env **env_list, char *token);
 char							*search_env_var(t_env *env_list, char *token);
 char							*double_quotes_handler(t_env **env_list,
-									char *token);
+									char *token, int *position);
 void							quote_parsing(t_env **env_list, char **tokens);
-char							*single_quote_handler(char *token);
+char							*single_quote_handler(char *token, int *i);
 
 //-------env_variables.c-----//
 t_env							*create_env_node(char *key, char *value);
@@ -234,15 +238,19 @@ void							handle_output_redirection(t_cmd *cmd,
 									int fd_pipe[2]);
 int								ft_in_out(char *file, int mode);
 
-bool							not_a_special_charset(char *str);
+// bool							not_a_special_charset(char *str);
 
 //------execution/cmd_initialization.c------//
 
 void							handle_pipe_case(t_cmd *cmd, char **envp,
 									t_init *init);
-bool							not_a_special_charset(char *str);
+bool							not_a_special_charset(char *str, int index);
 void							ft_ending_of_init(t_cmd *cmd, t_env **env_list,
 									char **parsed_string, int i);
 void							process_argument_in_cmd(t_cmd *cmd, char **envp,
 									t_env **env_list, t_init *init);
+
+//-----------qoutes.c--------------//
+t_bool 							*in_quotes_or_not(void);
+void							reset_quotes_array(void);
 #endif

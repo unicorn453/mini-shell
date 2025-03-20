@@ -20,6 +20,7 @@
         "tuple": "c",
         "type_traits": "c",
         "vector": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "unordered_map": "c"
     }
 }
