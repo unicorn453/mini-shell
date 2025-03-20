@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/18 11:17:40 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/19 22:56:38 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int size_of_list(t_token *list)
 char  **save_new_tokens(t_token **refined_tokens)
 {
 	t_token *temp;
+	
 	int i = 0;
 	int size = size_of_list(*refined_tokens);
 	temp = *refined_tokens;
@@ -44,13 +45,51 @@ char  **save_new_tokens(t_token **refined_tokens)
 	return (new_tokens);
 }
 
+// bool *get_tokens_quote_status(t_token *head)
+// {
+//     t_token *temp;
+//     bool *quotes_array;
+// 	int count;
+	
+// 	count = 0;
+// 	temp = head;
+//     while (temp != NULL)
+//     {
+//         count++;
+//         temp = temp->next;
+//     }
+//     quotes_array = gc_malloc(sizeof(bool) * count);
+//     CHECK(quotes_array == NULL, 2);
+//     temp = head;
+//     for (int i = 0; i < count && temp != NULL; i++)
+//     {
+//         quotes_array[i] = temp->in_qoutes;
+//         temp = temp->next;
+//     }
+//     return quotes_array;
+// }
+
+bool check_for_builtin(char *line)
+{
+	char *all_builtin[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit", "/bin/echo", NULL};
+	int i = 0;
+	while (all_builtin[i])
+	{
+		if (ft_strncmp(all_builtin[i], line, ft_strlen(all_builtin[i])) == 0)
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
 int	main_parsing(char *line, char **envp, t_env **env_list)
 {
 	static int exit_status;
 	t_cmd		*current_cmd;
 	t_token		*refined_tokens;
 	static char	**tokens;
-	char **ref_tokens;
+	// bool		*in_qoutes;
+	char		**ref_tokens = NULL;
 
 	(void)envp;
 	current_cmd = gc_malloc(sizeof(t_cmd));
@@ -62,7 +101,10 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	split_tokens(tokens, &refined_tokens);
 	ref_tokens = save_new_tokens(&refined_tokens);
 	main_parsing_loop(env_list, ref_tokens);
-	// main_parsing_loop(env_list, refined_tokens);
+	// for (int i = 0; ref_tokens[i] != NULL; i++)
+	// {
+	// 	printf("arg[%d]: %s\n", i, ref_tokens[i]);
+	// }
 	init_def_cmd(current_cmd, envp, env_list);
 	current_cmd->exit_status = exit_status;
 	init_cmd_stack(current_cmd, env_list, envp, ref_tokens);
@@ -81,6 +123,11 @@ static int check_for_empty_input(char *line)
 	else 
 		return(1);	
 }
+static void ctrl_d_handler(void)
+{
+	gc_free_all();
+   	exit(0);
+}
 
 void main_loop(char **envp, t_env	**env_lis)
 {
@@ -93,13 +140,7 @@ void main_loop(char **envp, t_env	**env_lis)
 	while (1)
 	{
 		if (isatty(fileno(stdin)))
-		line = readline("minishell> ");
-		// static int hehe = 1;
-		// line = malloc(8);
-		// if(hehe++ == 1)
-		// 	line = "ls | wc";
-		// else 
-		// 	line = NULL;
+			line = readline("minishell> ");
 		else
 		{
 			line = get_next_line(fileno(stdin));
@@ -108,7 +149,7 @@ void main_loop(char **envp, t_env	**env_lis)
 			line = trimmed_line;
 		}
 		if (line == NULL)
-			ft_run_exit(NULL);
+			ctrl_d_handler();
 		if(check_for_empty_input(line) == -1)
 			continue;
 		gc_track(line);

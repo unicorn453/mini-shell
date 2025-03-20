@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:49:03 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/16 18:03:14 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/19 22:12:04 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ char	*add_permission_free_path(t_path *path, char *cmd)
 		path->temp = ft_strjoin(path->paths[path->i], "/");
 		CHECK(path->temp == NULL, 1);
 		path->full_path = ft_strjoin(path->temp, cmd);
+		gc_track(path->full_path);
 		free(path->temp);
 		CHECK(path->full_path == NULL, 1);
 		if (access(path->full_path, X_OK) == 0)
@@ -71,8 +72,8 @@ char	*add_permission_free_path(t_path *path, char *cmd)
 			free_paths(path, 0);
 			return (path->full_path);
 		}
+		if (path->full_path)
 		unlink(path->full_path);
-		free(path->full_path);
 		path->full_path = NULL;
 		path->i++;
 	}

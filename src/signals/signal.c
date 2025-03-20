@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 18:06:15 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/16 14:41:07 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/19 22:34:35 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	handle_sigint(int sig)
 void	handle_sigquit(int sig)
 {
 	(void)sig;
+	rl_redisplay();
 	// printf("im hereeee\n");
 	// Do nothing (ignore Ctrl-\)
 }

@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:58:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/16 18:44:45 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/18 18:47:49 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,29 +37,27 @@ t_env	*create_env_node(char *key, char *value)
 	return (new_node);
 }
 
-void add_env_var(t_env **env_list, char *key, char *value)
+void	add_env_var(t_env **env_list, char *key, char *value)
 {
-    t_env *new_node;
+	t_env	*new_node;
 
 	new_node = create_env_node(key, value);
-    if (!new_node)
-        return;
-
-    if (*env_list) // If the list is not empty, set the previous pointer
-    {
-        (*env_list)->prev = new_node;
-        new_node->next = *env_list;
-    }
-
-    *env_list = new_node; // Update head pointer
+	if (!new_node)
+		return ;
+	if (*env_list)
+	{
+		(*env_list)->prev = new_node;
+		new_node->next = *env_list;
+	}
+	*env_list = new_node;
 }
 
-void	initialize_env_vars(t_env **env_list, char **envp) 
+void	initialize_env_vars(t_env **env_list, char **envp)
 {
-	char 	*pwd;
+	char	*pwd;
 	char	*shlvl;
 	int		shlvl_value;
-	int	i;
+	int		i;
 
 	i = -1;
 	while (envp[++i])
