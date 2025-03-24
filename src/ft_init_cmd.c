@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/20 16:55:15 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/20 21:23:55 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void process_special_tokens(t_cmd *cmd, t_init *init);
 
 void init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
 {
+    int i;
+    
 	cmd->env_list = *env_list;
 	cmd->delimiter = NULL;
 	cmd->envp = envp;
@@ -34,6 +36,10 @@ void init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
 	cmd->heredoc_exists = false;
 	cmd->heredoc_file = NULL;
 	cmd->index = 0;
+    i = -1;
+    while (++i < MAX_PIPES)
+        cmd->pid[i] = -2;
+    
 }
 
 void execute_builtins(t_cmd *cmd, t_env **env_list)
@@ -116,8 +122,8 @@ void init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp, char **parsed_str
         if (strcmp(init.parsed_string[init.i], "|") == 0 && in_quotes_or_not()->in_qoutes[init.i] == false)
         {
             handle_pipe_case(cmd, envp, &init);
-            if(cmd->pid[0] == -1)
-            return;
+            if(cmd->pid[0] == -1) // here
+                return;
             continue;
         }
         if (ft_strchr(parsed_string[init.i], '=') != NULL)

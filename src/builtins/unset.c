@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 15:00:37 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/15 13:58:30 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/03/20 21:34:43 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,13 @@ void remove_env_var(t_env **env_list, char *key)
         {
             if (curr == *env_list)
                 *env_list = curr->next;
-
             if (curr->next)
                 curr->next->prev = curr->prev;
-
             if (curr->prev)
                 curr->prev->next = curr->next;
-
             gc_untrack(curr->key);
             gc_untrack(curr->value);
             gc_untrack(curr);
-            
             return;
         }
         curr = curr->next;
