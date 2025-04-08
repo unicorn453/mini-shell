@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/08 12:19:08 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 20:49:06 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 
 void							check(int retval, int exit_code);
 
-# define CHECK(x, code) check((x), (code))
+// # define check(x, code) check((x), (code))
 
 //--------end_of_includes-------//
 
@@ -136,6 +136,7 @@ void							*gc_malloc(size_t size);
 void							gc_track(void *ptr);
 void							gc_free_all(void);
 void							gc_untrack(void *ptr);
+void							close_open_fds(void);
 //------------------------------//
 // int								main_loop(char **envp, t_env **env_lis);
 void							main_loop(char **envp, t_env **env_lis);

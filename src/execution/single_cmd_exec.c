@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   single_cmd_exec.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 09:11:20 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/20 19:21:12 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/08 20:36:15 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool	ft_heredoc_exist(char **parsed_string)
 	i = 0;
 	while (parsed_string[i] != NULL)
 	{
-		if (strcmp(parsed_string[i], "<<") == 0)
+		if (ft_strcmp(parsed_string[i], "<<") == 0)
 			return (1);
 		i++;
 	}
@@ -49,7 +49,7 @@ int	exec_cmd_redir(t_cmd *cmd, int *fd_in, bool last_child, int pipefd[2])
 		handle_output_redirection(cmd, last_child, &fd_in[0], pipefd);
 	else if (!last_child)
 	{
-		CHECK(dup2(pipefd[1], STDOUT_FILENO) == -1, 1);
+		check(dup2(pipefd[1], STDOUT_FILENO) == -1, 1);
 		close(pipefd[1]);
 	}
 	if (!cmd->redir_append && !cmd->redir_out && !last_child)
@@ -71,9 +71,9 @@ void	exec_cmd(t_cmd *cmd, int *fd_in, bool last_child)
 	pid_t	pid;
 	int		exec_cmd;
 
-	CHECK(pipe(pipefd) == -1, 1);
+	check(pipe(pipefd) == -1, 1);
 	pid = fork();
-	CHECK(pid < 0, 1);
+	check(pid < 0, 1);
 	exec_cmd = 0;
 	if (pid == 0)
 	{

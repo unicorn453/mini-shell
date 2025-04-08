@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 12:53:06 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/24 14:39:03 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 20:36:15 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	echo_call_check(t_cmd *cmd, t_env **env_list)
 	(void)env_list;
 	if (!cmd->cmd[1])
 		return (printf("\n"), (void)0);
-	if (cmd->cmd[1] && strcmp(cmd->cmd[1], "-n") == 0)
+	if (cmd->cmd[1] && ft_strcmp(cmd->cmd[1], "-n") == 0)
 	{
 		n_flag = 1;
 		i = 2;

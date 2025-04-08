@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 14:14:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/06 16:18:45 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 20:33:40 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,10 @@ char	*single_quote_handler(char *token, int *position)
 {
 	int		i;
 	int		y;
-	// int		count;
 	char	*new_token;
 
-	// count = 0;
 	new_token = gc_malloc(ft_strlen(token) - 2 + 1);
-	CHECK(new_token == NULL, 2);
+	check(new_token == NULL, 2);
 	i = 0;
 	y = -1;
 	while (token[i] && token[i] != '\'')
@@ -29,12 +27,10 @@ char	*single_quote_handler(char *token, int *position)
 	if (token[i] == '\'')
 	{
 		i++;
-		// count = 1;
 		while (token[i] && token[i] != '\'')
 			new_token[++y] = token[i++];
 		if (token[i] == '\'')
 		{
-			// count = 2;
 			*position = i;
 		}
 	}
@@ -50,7 +46,7 @@ char	*double_quotes_handler(t_env **env_list, char *token, int *position)
 
 	(void)position;
 	new_token = gc_malloc(ft_strlen(token) - 2 + 1);
-	CHECK(new_token == NULL, 2);
+	check(new_token == NULL, 2);
 	i = -1;
 	y = -1;
 	while (token[++i])

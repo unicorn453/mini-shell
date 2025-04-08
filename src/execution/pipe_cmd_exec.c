@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_cmd_exec.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:07:13 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/20 17:47:16 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/08 20:22:31 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	ft_exec_pipes_child_heredoc(t_cmd *cmd, int heredoc_fd[2], int *fd_in,
 	if (heredoc_exist && !cmd->heredoc && cmd->redir_out)
 	{
 		in = ft_in_out("file", 0);
-		CHECK(in < 0, 1);
+		check(in < 0, 1);
 		dup2(in, STDIN_FILENO);
 		close(in);
 	}
@@ -44,7 +44,7 @@ void	ft_exec_pipes_child_heredoc(t_cmd *cmd, int heredoc_fd[2], int *fd_in,
 		handle_input_redirection(cmd, &fd_in[0]);
 	else if (fd_in[0] != -1 && !cmd->heredoc && !heredoc_exist)
 	{
-		CHECK(dup2(fd_in[0], STDIN_FILENO) == -1, 1);
+		check(dup2(fd_in[0], STDIN_FILENO) == -1, 1);
 		if (fd_in[0] != -1)
 			close(fd_in[0]);
 	}
@@ -59,7 +59,7 @@ void	ft_exec_pipes_child(t_cmd *cmd, int *fd_in, int fd_pipe[2],
 	}
 	if (!cmd->end_of_cmd && !cmd->heredoc && !cmd->redir_out
 		&& !cmd->redir_append && !heredoc_exist)
-		CHECK(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
+		check(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
 	if (fd_pipe[0] != -1)
 		close(fd_pipe[0]);
 	if (fd_pipe[1] != -1)

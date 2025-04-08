@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_init_cmd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 16:09:57 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/08 20:36:15 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,32 +44,32 @@ void    init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
 
 void execute_builtins_special(t_cmd *cmd, t_env **env_list)
 {
-    if (strcmp(cmd->cmd[0], "export") == 0 && cmd->assigned_var)
+    if (ft_strcmp(cmd->cmd[0], "export") == 0 && cmd->assigned_var)
     {
         handle_export(env_list, cmd->assigned_var);
         cmd->pid[cmd->index++] = 0;
         return ;
     }
-    else if (strcmp(cmd->cmd[0], "export") == 0 && !cmd->assigned_var)
+    else if (ft_strcmp(cmd->cmd[0], "export") == 0 && !cmd->assigned_var)
     {
         print_env_reverse(env_list);
         cmd->pid[cmd->index++] = 0;
         return ;
     }
-    else if (strcmp(cmd->cmd[0], "cd") == 0)
+    else if (ft_strcmp(cmd->cmd[0], "cd") == 0)
     {
         cd_test_call(cmd, env_list);
         cmd->pid[cmd->index++] = 0;
         return ;
     }
-    else if (strcmp(cmd->cmd[0], "unset") == 0)
+    else if (ft_strcmp(cmd->cmd[0], "unset") == 0)
     {
         if (cmd->cmd[1])
             remove_env_var(env_list, cmd->cmd[1]);
         cmd->pid[cmd->index++] = 0;
         return ;
     }
-    else if (strcmp(cmd->cmd[0], "exit") == 0)
+    else if (ft_strcmp(cmd->cmd[0], "exit") == 0)
         ft_run_exit(cmd);
     
 cmd->pid[cmd->index++] = 0;
@@ -83,30 +83,30 @@ void    execute_builtins(t_cmd *cmd, t_env **env_list)
     fd_pipe[0] = -1;
     fd_pipe[1] = -1;
 
-    CHECK(!cmd->end_of_cmd && pipe(fd_pipe) == -1, 1);
+    check(!cmd->end_of_cmd && pipe(fd_pipe) == -1, 1);
     pid = fork();
-    CHECK(pid < 0, 1);
+    check(pid < 0, 1);
     if (pid == 0)
     {
         signal(SIGINT, SIG_DFL);
-        if ((strcmp(cmd->cmd[0], "echo") == 0 || strcmp(cmd->cmd[0],
+        if ((ft_strcmp(cmd->cmd[0], "echo") == 0 || ft_strcmp(cmd->cmd[0],
                     "/bin/echo") == 0) && cmd->cmd[1] != NULL)
         {
             echo_call_check(cmd, env_list);
             exit(0);
         }
-        else if ((strcmp(cmd->cmd[0], "echo") == 0 || strcmp(cmd->cmd[0],
+        else if ((ft_strcmp(cmd->cmd[0], "echo") == 0 || ft_strcmp(cmd->cmd[0],
                     "/bin/echo") == 0) && cmd->cmd[1] == NULL)
         {
             printf("\n");
             exit(0);
         }
-         if (strcmp(cmd->cmd[0], "pwd") == 0)
+         if (ft_strcmp(cmd->cmd[0], "pwd") == 0)
         {
             get_pwd();
             exit(0);
         }
-        else if (strcmp(cmd->cmd[0], "env") == 0)
+        else if (ft_strcmp(cmd->cmd[0], "env") == 0)
         {
             print_env_reverse(env_list);
             exit(0);
@@ -126,7 +126,7 @@ void    init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp,
     initialize_command_structure(cmd, envp, &init);
     while (init.parsed_string[init.i] != NULL)
     {
-        if (strcmp(init.parsed_string[init.i], "|") == 0
+        if (ft_strcmp(init.parsed_string[init.i], "|") == 0
             && in_quotes_or_not()->in_qoutes[init.i] == false)
         {
             handle_pipe_case(cmd, envp, &init);
@@ -152,7 +152,7 @@ void    initialize_command_structure(t_cmd *cmd, char **envp, t_init *init)
     while (init->parsed_string[init->parsed_size] != NULL)
         init->parsed_size++;
     cmd->cmd = gc_malloc(sizeof(char *) * (init->parsed_size + 1));
-    CHECK(cmd->cmd == NULL, 1);
+    check(cmd->cmd == NULL, 1);
     cmd->cmd[init->parsed_size] = NULL;
     for (int j = 0; j <= init->parsed_size; j++)
         cmd->cmd[j] = NULL;
@@ -165,9 +165,9 @@ int process_special_tokens(t_cmd *cmd, t_init *init)
     int     status;
 
     token = handle_token_search(init->i, init->parsed_string, cmd);
-    if (token && strcmp(init->parsed_string[init->i], token) == 0)
+    if (token && ft_strcmp(init->parsed_string[init->i], token) == 0)
     {
-        if (strcmp(token, "=") != 0)
+        if (ft_strcmp(token, "=") != 0)
         {
             status = check_error_status(init->parsed_string, init->i, 258);
             if (status != 0)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_find_cmd_path.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:49:03 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/20 22:02:40 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/08 20:36:15 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,11 @@ char	*add_permission_free_path(t_path *path, char *cmd)
 	while (path->paths[path->i])
 	{
 		path->temp = ft_strjoin(path->paths[path->i], "/");
-		CHECK(path->temp == NULL, 1);
+		check(path->temp == NULL, 1);
 		path->full_path = ft_strjoin(path->temp, cmd);
 		gc_track(path->full_path);
 		free(path->temp);
-		CHECK(path->full_path == NULL, 1);
+		check(path->full_path == NULL, 1);
 		if (access(path->full_path, X_OK) == 0)
 		{
 			free_paths(path, 0);
@@ -88,7 +88,7 @@ int check_speacial_builtins(t_env **env_list, t_cmd *cmd, char *command)
 	bool match = false;
 	while(builtins[i])
 	{
-		if(strcmp(builtins[i], command) == 0)
+		if(ft_strcmp(builtins[i], command) == 0)
 		{
 			match = true;
 			cmd->special_builtin = true;
@@ -128,7 +128,7 @@ int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
 	bool match = false;
 	while(builtins[i])
 	{
-		if(strcmp(builtins[i], command) == 0)
+		if(ft_strcmp(builtins[i], command) == 0)
 		{
 			match = true;
 			cmd->builtin = true;
@@ -164,7 +164,7 @@ char	*find_command_path(t_cmd *cmd_list, t_env **env_list, char *cmd, char **env
 	if(check_built == 1 || check_special_built == 1)
 		return (cmd);
 	path = initialize_path();
-	CHECK(path == NULL, 1);
+	check(path == NULL, 1);
 	path->i = 0;
 	while (envp[path->i])
 	{
@@ -175,9 +175,9 @@ char	*find_command_path(t_cmd *cmd_list, t_env **env_list, char *cmd, char **env
 		}
 		path->i++;
 	}
-	CHECK(path->path_env == NULL, 1);
+	check(path->path_env == NULL, 1);
 	path->paths = ft_split(path->path_env, ':');
-	CHECK(path->paths == NULL, 1);
+	check(path->paths == NULL, 1);
 	path->full_path = add_permission_free_path(path, cmd);
 	if (path->full_path)
 		return (path->full_path);

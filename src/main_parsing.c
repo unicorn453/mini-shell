@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 23:04:57 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 14:14:49 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 20:42:45 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	**save_new_tokens(t_token **refined_tokens)
 	size = size_of_list(*refined_tokens);
 	temp = *refined_tokens;
 	new_tokens = gc_malloc(sizeof(char *) * (size + 1));
-	CHECK(new_tokens == NULL, 1);
+	check(new_tokens == NULL, 1);
 	new_tokens[size] = NULL;
 	while (i < size)
 	{
@@ -62,7 +62,7 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	ref_tokens = NULL;
 	(void)envp;
 	current_cmd = gc_malloc(sizeof(t_cmd));
-	CHECK(current_cmd == NULL, 1);
+	check(current_cmd == NULL, 1);
 	refined_tokens = NULL;
 	tokens = ft_split_plus(line, " \t\n");
 	reset_quotes_array();
@@ -71,12 +71,6 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	split_tokens(tokens, &refined_tokens);
 	ref_tokens = save_new_tokens(&refined_tokens);
 	main_parsing_loop(env_list, ref_tokens);
-	// int i = 0;
-	// while (ref_tokens[i])
-	// {
-	// 	printf("here: %s\n", ref_tokens[i]);
-	// 	i++;
-	// }
 	init_def_cmd(current_cmd, envp, env_list);
 	current_cmd->exit_status = exit_status;
 	init_cmd_stack(current_cmd, env_list, envp, ref_tokens);

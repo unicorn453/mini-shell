@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_refiner.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 22:04:59 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/20 20:19:21 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/08 20:37:56 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ t_token	*new_token(char *value)
 	t_token	*new;
 
 	new = gc_malloc(sizeof(t_token));
-	CHECK(new == NULL, 1);
+	check(new == NULL, 1);
 	new->value = ft_strdup(value);
-	CHECK(new->value == NULL, 1);
+	check(new->value == NULL, 1);
 	gc_track(new->value);
 	new->next = NULL;
 	return (new);
@@ -65,15 +65,15 @@ int	check_for_operators(char *str, char **charset, t_process *process,
 	j = 0;
 	while (charset[j])
 	{
-		op_len = strlen(charset[j]);
-		if (strncmp(&str[process->start], charset[j], op_len) == 0)
+		op_len = ft_strlen(charset[j]);
+		if (ft_strncmp(&str[process->start], charset[j], op_len) == 0)
 		{
 			if (*(process->no_charse_str))
 			{
 				append_token(refined_tokens, process->no_charse_str);
 				free(process->no_charse_str);
 				process->no_charse_str = ft_strdup("");
-				CHECK(process->no_charse_str == NULL, 1);
+				check(process->no_charse_str == NULL, 1);
 			}
 			append_token(refined_tokens, charset[j]);
 			return (op_len);

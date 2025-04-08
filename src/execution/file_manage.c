@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file_manage.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:24:11 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/20 20:30:47 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/08 20:22:31 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	ft_in_out(char *file, int mode)
 	if (mode == 0)
 	{
 		fd = open(file, O_RDONLY);
-		CHECK(fd < 0, 1);
+		check(fd < 0, 1);
 		if (fd < 0)
 		{
 			perror("open failed");
@@ -29,7 +29,7 @@ int	ft_in_out(char *file, int mode)
 	else if (mode == 1)
 	{
 		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		CHECK(fd < 0, 1);
+		check(fd < 0, 1);
 		if (fd < 0)
 		{
 			perror("open failed");
@@ -78,13 +78,13 @@ void	handle_output_redirection(t_cmd *cmd, bool last_child, int *fd_out,
 		*fd_out = open(cmd->file_out, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (cmd->redir_append || cmd->redir_out)
 	{
-		CHECK(*fd_out < 0, 1);
-		CHECK(dup2(*fd_out, STDOUT_FILENO) == -1, 1);
+		check(*fd_out < 0, 1);
+		check(dup2(*fd_out, STDOUT_FILENO) == -1, 1);
 		close(*fd_out);
 	}
 	else if (!last_child)
 	{
-		CHECK(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
+		check(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
 		close(fd_pipe[1]);
 	}
 	if (!cmd->redir_append && !cmd->redir_out && !last_child)
