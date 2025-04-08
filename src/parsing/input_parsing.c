@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:12:54 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/07 17:58:36 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 14:15:39 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,9 @@ bool	check_var(char *token)
 
 void	quote_parsing(t_env **env_list, char **token)
 {
-	static int	i = 0;
+	int	i;
 
+	i = 0;
 	while ((*token)[i] != '\0')
 	{
 		if ((*token)[i] == '\'')

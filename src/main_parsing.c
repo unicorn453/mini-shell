@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 23:04:57 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/31 18:16:00 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 14:14:49 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	static int	exit_status;
 	t_cmd		*current_cmd;
 	t_token		*refined_tokens;
-	static char	**tokens;
+	char		**tokens;
 	char		**ref_tokens;
 
 	ref_tokens = NULL;
@@ -65,11 +65,18 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	CHECK(current_cmd == NULL, 1);
 	refined_tokens = NULL;
 	tokens = ft_split_plus(line, " \t\n");
+	reset_quotes_array();
 	if (tokens == NULL)
 		return (perror("Minishell: memory allocation error"), -1);
 	split_tokens(tokens, &refined_tokens);
 	ref_tokens = save_new_tokens(&refined_tokens);
 	main_parsing_loop(env_list, ref_tokens);
+	// int i = 0;
+	// while (ref_tokens[i])
+	// {
+	// 	printf("here: %s\n", ref_tokens[i]);
+	// 	i++;
+	// }
 	init_def_cmd(current_cmd, envp, env_list);
 	current_cmd->exit_status = exit_status;
 	init_cmd_stack(current_cmd, env_list, envp, ref_tokens);

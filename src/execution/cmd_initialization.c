@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 12:52:32 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/06 14:53:33 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 15:33:47 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,16 @@ void	handle_pipe_case(t_cmd *cmd, char **envp, t_init *init)
 bool	not_a_special_charset(char *str, int index)
 {
 	if (in_quotes_or_not()->in_qoutes[index] == true)
+	{
 		return (true);
+	}
 	if (str == NULL)
 		return (false);
 	if (strcmp(str, "<<") == 0)
+		return (false);
+	if (strcmp(str, "<") == 0)
+		return (false);
+	if (strcmp(str, ">") == 0)
 		return (false);
 	else if (strcmp(str, ">>") == 0)
 		return (false);
@@ -71,7 +77,7 @@ void	process_argument_in_cmd(t_cmd *cmd, char **envp, t_env **env_list,
 		cmd->cmd[init->arg_index] = init->parsed_string[init->i];
 	}
 	init->arg_index++;
-	if (strcmp(init->parsed_string[init->i], "|") != 0)
+	if (in_quotes_or_not()->in_qoutes[init->i] || strcmp(init->parsed_string[init->i], "|") != 0)
 		init->i++;
 }
 

@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/02 13:52:23 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 15:25:51 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,8 +126,6 @@ void	init_cmd_stack(t_cmd *cmd, t_env **env_list, char **envp,
 	initialize_command_structure(cmd, envp, &init);
 	while (init.parsed_string[init.i] != NULL)
 	{
-		if (init.parsed_string[init.i] == NULL)
-			break ;
 		if (strcmp(init.parsed_string[init.i], "|") == 0
 			&& in_quotes_or_not()->in_qoutes[init.i] == false)
 		{
