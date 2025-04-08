@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:58:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/24 14:37:14 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 17:49:05 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,7 @@ void	add_env_var(t_env **env_list, char *key, char *value)
 	}
 	*env_list = new_node;
 }
-
-void	initialize_env_vars(t_env **env_list, char **envp)
+typedef struct s_env_var
 {
 	char	*pwd;
 	char	*shlvl;
@@ -60,23 +59,42 @@ void	initialize_env_vars(t_env **env_list, char **envp)
 	int		shlvl_value;
 	int		i;
 
-	i = -1;
-	while (envp[++i])
-		handle_export(env_list, envp[i]);
-	pwd = getcwd(NULL, 0);
-	CHECK(pwd == NULL, 2);
-	shlvl = getenv("SHLVL");
-	if (shlvl == NULL)
-		shlvl_value = 1;
+}t_env_var;
+static int find_position(char *env_var,char **envp)
+{
+	int i = -1;
+	while(envp[++i])
+	{
+		if (ft_strncmp(envp[i], env_var, ft_strlen(env_var)))
+			return (i);
+	}
+	return (-1);
+}
+void	initialize_env_vars(t_env **env_list, char **envp)
+{
+	t_env_var stack;
+	char *tempor;
+	
+	stack.i = -1;
+	while (envp[++stack.i])
+		handle_export(env_list, envp[stack.i]);
+	stack.pwd = getcwd(NULL, 0);
+	CHECK(stack.pwd == NULL, 2);
+	stack.shlvl = getenv("SHLVL");
+	if (stack.shlvl == NULL)
+		stack.shlvl_value = 1;
 	else
-		shlvl_value = ft_atoi(shlvl) + 1;
-	shlvl = ft_strjoin("SHLVL=", temp = ft_itoa(shlvl_value));
-	gc_track(temp);
-	handle_export(env_list, shlvl);
-	free(shlvl);
-	shlvl = ft_strjoin("PWD=", pwd);
-	handle_export(env_list, shlvl);
+		stack.shlvl_value = ft_atoi(stack.shlvl) + 1;
+	stack.shlvl = ft_strjoin("SHLVL=", stack.temp = ft_itoa(stack.shlvl_value));
+	tempor = ft_strdup(stack.shlvl);
+	envp[find_position("SHLVL", envp)] = tempor;
+	gc_track(tempor);
+	gc_track(stack.temp);
+	handle_export(env_list, stack.shlvl);
+	free(stack.shlvl);
+	stack.shlvl = ft_strjoin("PWD=", stack.pwd);
+	handle_export(env_list, stack.shlvl);
 	handle_export(env_list, "OLDPWD=NULL");
-	free(shlvl);
-	free(pwd);
+	free(stack.shlvl);
+	free(stack.pwd);
 }

@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 21:10:48 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/24 14:38:42 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 17:53:43 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	gc_track(void *ptr)
 	while (current)
 	{
 		if (current->ptr == ptr)
-			return ; // Avoid duplicate tracking
+			return ;
 		current = current->next;
 	}
 	new_node = malloc(sizeof(t_garbage_collector));
@@ -127,8 +127,7 @@ void	gc_untrack(void *ptr)
 			free(current->ptr);
 			current->ptr = NULL;
 			free(current);
-			current = NULL;
-			return ;
+			return (current = NULL, (void)0);
 		}
 		prev = current;
 		current = current->next;
