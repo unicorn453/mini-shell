@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/20 18:34:42 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/24 14:37:45 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ int	handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
 	my_out = create_heredoc_file(cmd, last_heredoc);
 	read_heredoc_input(cmd, my_out, fd_out);
 	if (cmd->end_of_cmd || last_heredoc)
-	{	
-		if(my_out >= 0)
+	{
+		if (my_out >= 0)
 			close(my_out);
 		unlink("file");
 	}
@@ -109,14 +109,14 @@ int	ft_heredoc_check(t_cmd *cmd, int pipefd[2], bool last_child,
 		handle_heredoc(cmd, &file_fd, last_heredoc);
 	else
 		file_fd = handle_heredoc(cmd, &pipefd[1], last_heredoc);
-	if(pipefd[1] >= 0)
+	if (pipefd[1] >= 0)
 		close(pipefd[1]);
 	if (last_child && dup2(pipefd[0], STDIN_FILENO) == -1)
 	{
 		perror("dup2 failed for heredoc");
 		exit(EXIT_FAILURE);
 	}
-	if(pipefd[1] >= 0)
+	if (pipefd[0] >= 0)
 		close(pipefd[0]);
 	return (file_fd);
 }

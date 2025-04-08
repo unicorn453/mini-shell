@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 14:14:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/20 19:02:27 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/06 16:18:45 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@ char	*single_quote_handler(char *token, int *position)
 {
 	int		i;
 	int		y;
-	int		count;
+	// int		count;
 	char	*new_token;
 
-	count = 0;
+	// count = 0;
 	new_token = gc_malloc(ft_strlen(token) - 2 + 1);
 	CHECK(new_token == NULL, 2);
 	i = 0;
@@ -29,12 +29,12 @@ char	*single_quote_handler(char *token, int *position)
 	if (token[i] == '\'')
 	{
 		i++;
-		count = 1;
+		// count = 1;
 		while (token[i] && token[i] != '\'')
 			new_token[++y] = token[i++];
 		if (token[i] == '\'')
 		{
-			count = 2;
+			// count = 2;
 			*position = i;
 		}
 	}

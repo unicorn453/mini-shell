@@ -36,6 +36,8 @@
                 "${workspaceFolder}/src/parsing/token_refiner.c",
                 "${workspaceFolder}/src/parsing/token_refiner_two.c",
                 "${workspaceFolder}/src/signals/signal.c",
+                "${workspaceFolder}/src/handle_token_search.c",
+                "${workspaceFolder}/src/main_parsing.c",
                 "-o",
                 "${workspaceFolder}/minishell",
                 "-lreadline",
