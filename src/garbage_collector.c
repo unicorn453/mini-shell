@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 21:10:48 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/08 17:53:43 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 20:48:26 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,28 @@ t_garbage_collector	**get_mem_list(void)
 	static t_garbage_collector	*mem_list = NULL;
 
 	return (&mem_list);
+}
+
+void	gc_free_all(void)
+{
+	t_garbage_collector	**mem_list;
+	t_garbage_collector	*current;
+	t_garbage_collector	*temp;
+
+	close_open_fds();
+	mem_list = get_mem_list();
+	if (!mem_list || !*mem_list)
+		return ;
+	current = *mem_list;
+	while (current)
+	{
+		free(current->ptr);
+		current->ptr = NULL;
+		temp = current;
+		current = current->next;
+		free(temp);
+	}
+	*mem_list = NULL;
 }
 /**
  * @brief Allocates memory and tracks it in the garbage collection.
@@ -68,41 +90,6 @@ void	gc_track(void *ptr)
 	new_node->ptr = ptr;
 	new_node->next = *mem_list;
 	*mem_list = new_node;
-}
-
-static void	close_open_fds(void)
-{
-	int	fd;
-
-	fd = 3;
-	while (fd < 10240)
-	{
-		if (fd >= 0)
-			close(fd);
-		fd++;
-	}
-}
-
-void	gc_free_all(void)
-{
-	t_garbage_collector	**mem_list;
-	t_garbage_collector	*current;
-	t_garbage_collector	*temp;
-
-	close_open_fds();
-	mem_list = get_mem_list();
-	if (!mem_list || !*mem_list)
-		return ;
-	current = *mem_list;
-	while (current)
-	{
-		free(current->ptr);
-		current->ptr = NULL;
-		temp = current;
-		current = current->next;
-		free(temp);
-	}
-	*mem_list = NULL;
 }
 
 void	gc_untrack(void *ptr)

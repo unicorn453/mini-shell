@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   basic_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/20 20:27:27 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/08 20:22:31 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ int	find_right_exec(t_cmd *cmd, char **parsed_string)
 
 	original_stdin = dup(STDIN_FILENO);
 	original_stdout = dup(STDOUT_FILENO);
-	CHECK(original_stdin == -1, 1);
-	CHECK(original_stdout == -1, 1);
+	check(original_stdin == -1, 1);
+	check(original_stdout == -1, 1);
 	original_fds(original_stdin, original_stdout);
 	if (cmd->pipe)
 		return (exec_pipes(cmd, &fd_in, parsed_string), 0);
@@ -64,9 +64,9 @@ void	exec_pipes(t_cmd *cmd, int *fd_in, char **parsed_string)
 	int		heredoc_exist;
 
 	init_pipes();
-	CHECK(!cmd->end_of_cmd && pipe(pipes()->fd_pipe) == -1, 1);
+	check(!cmd->end_of_cmd && pipe(pipes()->fd_pipe) == -1, 1);
 	pid = fork();
-	CHECK(pid < 0, 1);
+	check(pid < 0, 1);
 	heredoc_exist = 0;
 	heredoc_exist = ft_heredoc_exist(parsed_string);
 	if (pid == 0)

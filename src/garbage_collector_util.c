@@ -1,32 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   garbage_collector_util.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 11:30:20 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/08 20:38:08 by dtrendaf         ###   ########.fr       */
+/*   Created: 2025/04/08 20:44:59 by dtrendaf          #+#    #+#             */
+/*   Updated: 2025/04/08 20:48:38 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <string.h>
+#include "mini_shell.h"
 
-size_t	ft_strlen(const char *s)
+void	close_open_fds(void)
 {
-	size_t	count;
+	int	fd;
 
-	count = 0;
-	while (s[count] != '\0')
+	fd = 3;
+	while (fd < 10240)
 	{
-		count++;
+		if (fd >= 0)
+			close(fd);
+		fd++;
 	}
-	return (count);
 }
-
-// int main(void)
-// {
-//     char *string = "Lorem ipsum dhdhhd ajsdás'dhlkda sHJADS ADSJ H DHW";
-//     printf(" expected: %zu got: %zu\n",ft_strlen(string),n(string));
-// }

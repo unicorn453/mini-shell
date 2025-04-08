@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/08 13:32:06 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 20:43:26 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,28 +43,30 @@ static void	ctrl_d_handler(void)
 	gc_free_all();
 	exit(0);
 }
+
 t_exit	*get_exit_code(void)
 {
 	static t_exit	exit_codes;
 
 	return (&exit_codes);
 }
+
 void	main_loop(char **envp, t_env **env_lis)
 {
 	char	*line;
 	int		exit_status;
+	char	*trimmed_line;
 
 	exit_status = 0;
 	get_exit_code()->exit_code = exit_status;
 	while (1)
 	{
-		// line = "echo '|'";
 		if (isatty(fileno(stdin)))
 			line = readline("minishell> ");
 		else
 		{
 			line = get_next_line(fileno(stdin));
-			char *trimmed_line = ft_strtrim(line, "\n");
+			trimmed_line = ft_strtrim(line, "\n");
 			free(line);
 			line = trimmed_line;
 		}

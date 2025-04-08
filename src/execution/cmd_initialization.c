@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 12:52:32 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 15:33:47 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 20:36:15 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	handle_pipe_case(t_cmd *cmd, char **envp, t_init *init)
 		init->parsed_size++;
 	gc_untrack(cmd->cmd);
 	cmd->cmd = gc_malloc(sizeof(char *) * (init->parsed_size + 1));
-	CHECK(cmd->cmd == NULL, 1);
+	check(cmd->cmd == NULL, 1);
 	i = -1;
 	while (++i < init->parsed_size)
 		cmd->cmd[i] = NULL;
@@ -49,15 +49,15 @@ bool	not_a_special_charset(char *str, int index)
 	}
 	if (str == NULL)
 		return (false);
-	if (strcmp(str, "<<") == 0)
+	if (ft_strcmp(str, "<<") == 0)
 		return (false);
-	if (strcmp(str, "<") == 0)
+	if (ft_strcmp(str, "<") == 0)
 		return (false);
-	if (strcmp(str, ">") == 0)
+	if (ft_strcmp(str, ">") == 0)
 		return (false);
-	else if (strcmp(str, ">>") == 0)
+	else if (ft_strcmp(str, ">>") == 0)
 		return (false);
-	else if (strcmp(str, "|") == 0)
+	else if (ft_strcmp(str, "|") == 0)
 		return (false);
 	return (true);
 }
@@ -77,7 +77,8 @@ void	process_argument_in_cmd(t_cmd *cmd, char **envp, t_env **env_list,
 		cmd->cmd[init->arg_index] = init->parsed_string[init->i];
 	}
 	init->arg_index++;
-	if (in_quotes_or_not()->in_qoutes[init->i] || strcmp(init->parsed_string[init->i], "|") != 0)
+	if (in_quotes_or_not()->in_qoutes[init->i]
+		|| ft_strcmp(init->parsed_string[init->i], "|") != 0)
 		init->i++;
 }
 

@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/24 14:37:45 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 20:39:08 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ int	create_heredoc_file(t_cmd *cmd, bool last_heredoc)
 			perror("Error creating heredoc file");
 			exit(EXIT_FAILURE);
 		}
-		cmd->heredoc_file = strdup(tmp_filename);
+		cmd->heredoc_file = ft_strdup(tmp_filename);
+		gc_track(cmd->heredoc_file);
 	}
 	return (my_out);
 }
@@ -39,7 +40,7 @@ void	read_heredoc_input(t_cmd *cmd, int my_out, int *fd_out)
 	while (1)
 	{
 		line = readline("> ");
-		if (!line || strcmp(line, cmd->delimiter) == 0)
+		if (!line || ft_strcmp(line, cmd->delimiter) == 0)
 		{
 			if (line)
 				free(line);
@@ -47,13 +48,13 @@ void	read_heredoc_input(t_cmd *cmd, int my_out, int *fd_out)
 		}
 		if (!cmd->end_of_cmd)
 		{
-			CHECK((write(my_out, line, strlen(line)) == -1), 1);
-			CHECK((write(my_out, "\n", 1) == -1), 1);
+			check((write(my_out, line, ft_strlen(line)) == -1), 1);
+			check((write(my_out, "\n", 1) == -1), 1);
 		}
 		else
 		{
-			CHECK((write(*fd_out, line, strlen(line)) == -1), 1);
-			CHECK((write(*fd_out, "\n", 1) == -1), 1);
+			check((write(*fd_out, line, ft_strlen(line)) == -1), 1);
+			check((write(*fd_out, "\n", 1) == -1), 1);
 		}
 		if (line)
 			free(line);
@@ -64,7 +65,7 @@ int	handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
 {
 	int	my_out;
 
-	CHECK(cmd->delimiter == NULL, 1);
+	check(cmd->delimiter == NULL, 1);
 	my_out = create_heredoc_file(cmd, last_heredoc);
 	read_heredoc_input(cmd, my_out, fd_out);
 	if (cmd->end_of_cmd || last_heredoc)

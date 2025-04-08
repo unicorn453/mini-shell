@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:26 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 14:12:46 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 20:34:00 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,14 @@ char	*b_a_env_var_handler(char *token, char *env_str, char *after_env, int i)
 	if (after_env != NULL)
 	{
 		after_plus_env = ft_strjoin(env_str, after_env);
-		// free(env_str);
 		free(after_env);
-		CHECK(after_plus_env == NULL, 2);
+		check(after_plus_env == NULL, 2);
 		env_str = after_plus_env;
 	}
 	if (i > 0)
 	{
 		res = str_before_env_var_handler(token, env_str, i);
-		CHECK(res == NULL, 2);
+		check(res == NULL, 2);
 		return (res);
 	}
 	return (env_str);
@@ -48,13 +47,13 @@ char	*handle_env_var(t_env **env_list, char *token)
 		{
 			env_str = ft_substr(token, i, cut_on_charset(&token[i + 1], " $'")
 					+ 1);
-			CHECK(env_str == NULL, 2);
+			check(env_str == NULL, 2);
 			gc_track(env_str);
 			if (ft_strlen(env_str) + i < ft_strlen(token))
 				after_env = ft_substr(token, ft_strlen(env_str) + i,
 						ft_strlen(token));
 			env_str = search_env_var(*env_list, env_str);
-			CHECK(env_str == NULL, 2);
+			check(env_str == NULL, 2);
 			env_str = b_a_env_var_handler(token, env_str, after_env, i);
 			return (env_str);
 		}
