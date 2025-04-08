@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_error.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:19:51 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/06 14:56:57 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 16:08:47 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int check_error_status(char **parsed_string, int i, int status)
         write(STDERR_FILENO, "syntax error near unexpected token 'newline'\n", 45);
         return status;
     }
-    else if (parsed_string[i + 1] != NULL && strcmp(parsed_string[i + 1], parsed_string[i]) == 0)
+    else if (parsed_string[i + 1] != NULL && !not_a_special_charset(parsed_string[i + 1], i + 1))
     {
         write(STDERR_FILENO, "syntax error near unexpected token '", 36);
         write(STDERR_FILENO, parsed_string[i + 1], strlen(parsed_string[i + 1]));
