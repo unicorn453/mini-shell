@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/08 20:49:06 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 21:04:56 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,16 +166,20 @@ int								check_builtins(t_env **env_list, t_cmd *cmd,
 char							*find_command_path(t_cmd *cmd_list,
 									t_env **env_list, char *cmd, char **envp);
 //---------ft_init_cmd.c---------//
+void							initialize_command_structure(t_cmd *cmd,
+									char **envp, t_init *init);
+int								process_special_tokens(t_cmd *cmd,
+									t_init *init);
 void							init_def_cmd(t_cmd *cmd, char **envp,
 									t_env **env_list);
-// void							init_cmd_stack(t_cmd *cmd, char **envp,
-// 									char **parsed_string);
-void							print_envlist(t_env **env_list);
 void							init_cmd_stack(t_cmd *cmd, t_env **env_list,
 									char **envp, char **parsed_string);
 void							execute_builtins(t_cmd *cmd, t_env **env_list);
+
+//---------ft_init_cmd_two.c---------//
 void							execute_builtins_special(t_cmd *cmd,
 									t_env **env_list);
+void							run_builtin_child(t_cmd *cmd, t_env **env_list);
 
 //---------ft_heredoc.c---------//
 int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
