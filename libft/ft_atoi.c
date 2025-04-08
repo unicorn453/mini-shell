@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 14:28:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2024/12/07 17:12:30 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/31 18:30:55 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,5 @@ int	ft_atoi(const char *str)
 // 	char string[] = "    -214748364abc89";
 // 	int result = ft_atoi(string);
 // 	int result2 = atoi(string); 
-// 	printf("got: %i expected: %i", result,result2);
+	// printf("got: %i expected: %i", result,result2);
 // }

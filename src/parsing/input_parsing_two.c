@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_parsing_two.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:26 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/20 19:04:05 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/07 17:52:41 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*b_a_env_var_handler(char *token, char *env_str, char *after_env, int i)
 	if (after_env != NULL)
 	{
 		after_plus_env = ft_strjoin(env_str, after_env);
-		free(env_str);
+		// free(env_str);
 		free(after_env);
 		CHECK(after_plus_env == NULL, 2);
 		env_str = after_plus_env;
@@ -39,10 +39,8 @@ char	*handle_env_var(t_env **env_list, char *token)
 	int		i;
 	char	*env_str;
 	char	*after_env;
-	char	*after_plus_env;
 
 	after_env = NULL;
-	after_plus_env = NULL;
 	i = -1;
 	while (token[++i] != '\0')
 	{
@@ -51,6 +49,7 @@ char	*handle_env_var(t_env **env_list, char *token)
 			env_str = ft_substr(token, i, cut_on_charset(&token[i + 1], " $'")
 					+ 1);
 			CHECK(env_str == NULL, 2);
+			gc_track(env_str);
 			if (ft_strlen(env_str) + i < ft_strlen(token))
 				after_env = ft_substr(token, ft_strlen(env_str) + i,
 						ft_strlen(token));
@@ -81,6 +80,8 @@ void	process_token_quotes(t_env **env_list, char **token, int index)
 
 char	*process_token_env_var(t_env **env_list, char *token, int index)
 {
+	if (in_quotes_or_not()->in_qoutes[index] == true)
+		return (NULL);
 	if (check_var(token))
 	{
 		in_quotes_or_not()->in_qoutes[index] = true;

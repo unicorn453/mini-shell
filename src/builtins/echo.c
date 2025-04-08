@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 12:53:06 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/20 16:53:34 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/24 14:39:03 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,23 +56,13 @@ void	print_single_quoted_text(char *arg, int *k)
 
 void	process_argument(char *arg, t_env **env_list)
 {
-	int		k;
-	// bool	found_var;
+	int	k;
+
 	(void)env_list;
 	k = 0;
-	// found_var = false;
 	while (arg[k] != '\0')
-	{ // && arg[k] != '\''
-		// if (arg[k] == '$')
-		// { // && !cmd->in_sing_quotes
-		// 	found_var = true;
-		// 	print_env_var(arg, env_list);
-		// 	k += (ft_strlen(search_env_var(*env_list, arg)));
-		// }
-		// els eif (!found_var)
-		// {
-			printf("%c", arg[k]);
-		// }
+	{
+		printf("%c", arg[k]);
 		k++;
 	}
 	if (arg[k] == '\'')
@@ -81,62 +71,29 @@ void	process_argument(char *arg, t_env **env_list)
 	}
 }
 
-// void	echo_call_check(t_cmd *cmd, t_env **env_list)
-// {
-// 	int	i;
-
-// 	(void)env_list;
-// 	if (strcmp(cmd->cmd[1], "-n") == 0)
-// 		i = 2;
-// 	else
-// 		i = 1;
-// 	while (cmd->cmd[i])
-// 	{
-// 		if(cmd->cmd[i + 1] != NULL)
-// 			printf("%s ",cmd->cmd[i]);
-// 		else
-// 			printf("%s",cmd->cmd[i]);
-// 		// process_argument(cmd->cmd[i], env_list);
-// 		i++;
-// 	}
-// 	if (strcmp(cmd->cmd[1], "-n") != 0)
-// 		printf("\n");
-// }
-
-void echo_call_check(t_cmd *cmd, t_env **env_list)
+void	echo_call_check(t_cmd *cmd, t_env **env_list)
 {
-    int i;
-    int n_flag = 0;
-    (void)env_list;
-    // Check if no arguments were provided
-    if (!cmd->cmd[1])
-    {
-        printf("\n");
-        return;
-    }
-    
-    // Check for -n flag (only if it's exactly "-n")
-    if (cmd->cmd[1] && strcmp(cmd->cmd[1], "-n") == 0)
-    {
-        n_flag = 1;
-        i = 2;
-    }
-    else
-        i = 1;
-    
-    // Print each argument
-    while (cmd->cmd[i])
-    {
-        printf("%s", cmd->cmd[i]);
-        
-        // Add space if not the last argument
-        if (cmd->cmd[i + 1])
-            printf(" ");
-        
-        i++;
-    }
-    
-    // Print newline if -n flag was not provided
-    if (!n_flag)
-        printf("\n");
+	int	i;
+	int	n_flag;
+
+	n_flag = 0;
+	(void)env_list;
+	if (!cmd->cmd[1])
+		return (printf("\n"), (void)0);
+	if (cmd->cmd[1] && strcmp(cmd->cmd[1], "-n") == 0)
+	{
+		n_flag = 1;
+		i = 2;
+	}
+	else
+		i = 1;
+	while (cmd->cmd[i])
+	{
+		printf("%s", cmd->cmd[i]);
+		if (cmd->cmd[i + 1])
+			printf(" ");
+		i++;
+	}
+	if (!n_flag)
+		printf("\n");
 }

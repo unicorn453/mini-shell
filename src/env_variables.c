@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:58:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/18 18:47:49 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/24 14:37:14 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	initialize_env_vars(t_env **env_list, char **envp)
 {
 	char	*pwd;
 	char	*shlvl;
+	char	*temp;
 	int		shlvl_value;
 	int		i;
 
@@ -63,19 +64,19 @@ void	initialize_env_vars(t_env **env_list, char **envp)
 	while (envp[++i])
 		handle_export(env_list, envp[i]);
 	pwd = getcwd(NULL, 0);
-	if (pwd == NULL)
-		return (perror("Minishell: getcwd error"), (void)0);
+	CHECK(pwd == NULL, 2);
 	shlvl = getenv("SHLVL");
 	if (shlvl == NULL)
 		shlvl_value = 1;
 	else
 		shlvl_value = ft_atoi(shlvl) + 1;
-	shlvl = ft_strjoin("SHLVL=", ft_itoa(shlvl_value));
+	shlvl = ft_strjoin("SHLVL=", temp = ft_itoa(shlvl_value));
+	gc_track(temp);
 	handle_export(env_list, shlvl);
 	free(shlvl);
 	shlvl = ft_strjoin("PWD=", pwd);
 	handle_export(env_list, shlvl);
 	handle_export(env_list, "OLDPWD=NULL");
-	free (shlvl);
+	free(shlvl);
 	free(pwd);
 }

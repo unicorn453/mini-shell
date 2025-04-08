@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_parsing.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:12:54 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/20 19:02:02 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/07 17:58:36 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,30 +49,30 @@ int	cut_on_charset(char *str, char *charset)
 char	*search_env_var(t_env *env_list, char *token)
 {
 	t_env	*temp;
-	char	*placeholder;
+	char	*plc;
 	char	*new_token;
 
+	temp = env_list;
+	while (temp->next)
+		temp = temp->next;
 	if (ft_strcmp(token, "$?") == 0)
 		return (gc_track(new_token = ft_itoa(get_exit_code()->exit_code)),
 			new_token);
 	new_token = ft_substr(token, 1, ft_strlen(token));
 	CHECK(new_token == NULL, 2);
-	temp = env_list;
 	while (temp)
 	{
-		if (ft_strncmp(temp->key, new_token, ft_strlen(temp->key)) == 0)
+		if (ft_strcmp(temp->key, new_token) == 0)
 		{
 			if (temp->value)
-			{
-				return (free(new_token), placeholder = ft_strdup(temp->value),
-					gc_track(placeholder), placeholder);
-			}
-			return (placeholder = ft_strdup(""), gc_track(placeholder),
-				placeholder);
+				return (free(new_token), plc = ft_strdup(temp->value),
+					gc_track(plc), plc);
+			return (free(new_token),plc = ft_strdup(""), gc_track(plc), plc);
 		}
-		temp = temp->next;
+		temp = temp->prev;
 	}
-	return (placeholder = ft_strdup(""), gc_track(placeholder), placeholder);
+	free(new_token);
+	return (plc = ft_strdup(""), gc_track(plc), plc);
 }
 
 bool	check_var(char *token)

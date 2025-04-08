@@ -6,26 +6,22 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:19:51 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/19 20:30:53 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/06 14:56:57 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-int find_last_heredoc(char **parsed_string, int i);
-
 int check_error_status(char **parsed_string, int i, int status)
 {
     if (parsed_string[i + 1] == NULL)
     {
-        const char *error_msg = "syntax error near unexpected token 'newline'\n";
-        write(STDERR_FILENO, error_msg, strlen(error_msg));
+        write(STDERR_FILENO, "syntax error near unexpected token 'newline'\n", 45);
         return status;
     }
     else if (parsed_string[i + 1] != NULL && strcmp(parsed_string[i + 1], parsed_string[i]) == 0)
     {
-        const char *error_msg = "syntax error near unexpected token '";
-        write(STDERR_FILENO, error_msg, strlen(error_msg));
+        write(STDERR_FILENO, "syntax error near unexpected token '", 36);
         write(STDERR_FILENO, parsed_string[i + 1], strlen(parsed_string[i + 1]));
         write(STDERR_FILENO, "'\n", 2);
         return status;
@@ -33,62 +29,57 @@ int check_error_status(char **parsed_string, int i, int status)
     return 0;
 }
 
+// char *handle_redir_in(int i, char **parsed_string, t_cmd *cmd) {
+//     if (parsed_string[i + 1] != NULL) {
+//         cmd->redir_in = true;
+//         cmd->file_in = parsed_string[i + 1];
+//         return "<";
+//     }
+//     return NULL;
+// }
 
-char *handle_token_search(int i, char **parsed_string, t_cmd *cmd)
-{
+// char *handle_redir_out(int i, char **parsed_string, t_cmd *cmd) {
+//     if (parsed_string[i + 1] != NULL) {
+//         cmd->redir_out = true;
+//         cmd->file_out = parsed_string[i + 1];
+//         return ">";
+//     }
+//     return NULL;
+// }
+
+// char *handle_redir_append(int i, char **parsed_string, t_cmd *cmd) {
+//     if (parsed_string[i + 1] != NULL) {
+//         cmd->redir_append = true;
+//         cmd->file_out = parsed_string[i + 1];
+//         return ">>";
+//     }
+//     return NULL;
+// }
+
+// char *handle_heredoc_searching(int i, char **parsed_string, t_cmd *cmd) {
+//     if (parsed_string[i + 1] != NULL) {
+//         int index = find_last_heredoc(parsed_string, i);
+//         cmd->heredoc = true;
+//         cmd->delimiter = parsed_string[i + 1];
+//         cmd->last_heredoc = (index == i);
+//         return "<<";
+//     }
+//     return NULL;
+// }
+
+char *handle_token_search(int i, char **parsed_string, t_cmd *cmd) {
     if (strcmp(parsed_string[i], "<") == 0)
-    {
-        if (parsed_string[i + 1] != NULL)
-        {
-            cmd->redir_in = true;
-            cmd->file_in = parsed_string[i + 1];
-            return "<";
-        }
-    }
+        return handle_redir_in(i, parsed_string, cmd);
     else if (strcmp(parsed_string[i], ">") == 0)
-    {
-        if (parsed_string[i + 1] != NULL)
-        {
-            cmd->redir_out = true;
-            cmd->file_out = parsed_string[i + 1];
-            return ">";
-        }
-    }
+        return handle_redir_out(i, parsed_string, cmd);
     else if (strcmp(parsed_string[i], ">>") == 0)
-    {
-        if (parsed_string[i + 1] != NULL)
-        {
-            cmd->redir_append = true;
-            cmd->file_out = parsed_string[i + 1];
-            return ">>";
-        }
-    }
+        return handle_redir_append(i, parsed_string, cmd);
     else if (strcmp(parsed_string[i], "<<") == 0)
-    {
-        if (parsed_string[i + 1] != NULL)
-        {
-            int index = find_last_heredoc(parsed_string, i);
-            if(index > i)
-            {
-            cmd->heredoc = true;
-            cmd->delimiter = parsed_string[i + 1];
-            cmd->last_heredoc = false;
-            return "<<";
-            } else if (index == i)
-            {
-                cmd->heredoc = true;
-                cmd->delimiter = parsed_string[i + 1];
-                cmd->last_heredoc = true;
-                return "<<";
-            }
-        }
-    }
-    else 
-    {
-        return NULL;
-    }
+        return handle_heredoc_searching(i, parsed_string, cmd);
+    
     return NULL;
 }
+
 
 int find_last_heredoc(char **parsed_string, int i)
 {

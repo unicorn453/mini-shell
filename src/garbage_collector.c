@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 21:10:48 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/19 22:06:44 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/24 14:38:42 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,15 @@ void	gc_track(void *ptr)
 	*mem_list = new_node;
 }
 
-static void close_open_fds(void)
+static void	close_open_fds(void)
 {
-    int fd;
+	int	fd;
+
 	fd = 3;
 	while (fd < 10240)
 	{
-		close(fd);
+		if (fd >= 0)
+			close(fd);
 		fd++;
 	}
 }
@@ -89,7 +91,7 @@ void	gc_free_all(void)
 
 	close_open_fds();
 	mem_list = get_mem_list();
-	if (!mem_list || !*mem_list) // Check if the list itself is NULL
+	if (!mem_list || !*mem_list)
 		return ;
 	current = *mem_list;
 	while (current)
@@ -132,6 +134,3 @@ void	gc_untrack(void *ptr)
 		current = current->next;
 	}
 }
-
-
-

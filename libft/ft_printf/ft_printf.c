@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 13:31:24 by dtrendaf          #+#    #+#             */
-/*   Updated: 2024/11/01 17:47:02 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/03/31 18:28:51 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,5 +105,5 @@ int	ft_printf(const char *string, ...)
 // 				%s", string));
 // // 	printf("exp:%d",printf("exp: %p\n",string));
 // // 	printf("got:%d",ft_printf("got: %p\n",string));
-// // // 	// printf("this is %x", -2147483648 );
+// printf("this is %x", -2147483648 );
 // // // }
