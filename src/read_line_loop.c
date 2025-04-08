@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/07 17:18:34 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 13:32:06 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	main_loop(char **envp, t_env **env_lis)
 	get_exit_code()->exit_code = exit_status;
 	while (1)
 	{
-		// line = "echo '$USER'";
+		// line = "echo '|'";
 		if (isatty(fileno(stdin)))
 			line = readline("minishell> ");
 		else

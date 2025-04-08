@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:26 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/07 17:52:41 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/08 14:12:46 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ void	main_parsing_loop(t_env **env_list, char **tokens)
 
 	i = -1;
 	temp = NULL;
-	reset_quotes_array();
 	while (tokens[++i])
 	{
 		process_token_quotes(env_list, &tokens[i], i);
