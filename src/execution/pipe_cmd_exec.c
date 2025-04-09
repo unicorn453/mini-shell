@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:07:13 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 18:59:54 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/09 22:52:08 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,12 @@ void	ft_exec_pipes_child(t_cmd *cmd, int *fd_in, int fd_pipe[2],
 		close(fd_pipe[0]);
 	if (fd_pipe[1] != -1)
 		close(fd_pipe[1]);
+	if (!cmd->heredoc && heredoc_exist)
+	{
+		if (fd_in[0] != -1)
+			fd_in[0] = ft_in_out("file", 0);
+			dup2(fd_in[0], STDIN_FILENO);
+	}
 	if (!cmd->heredoc)
 	{
 		if (cmd->builtin && !heredoc_exist)

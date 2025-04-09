@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 19:36:09 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 21:07:12 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/09 23:16:38 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,15 +56,18 @@ void	execute_builtins(t_cmd *cmd, t_env **env_list)
 void	execute_builtins_special(t_cmd *cmd, t_env **env_list)
 {
 	if (ft_strcmp(cmd->cmd[0], "export") == 0 && cmd->assigned_var)
-	{
-		handle_export(env_list, cmd->assigned_var);
-		cmd->pid[cmd->index++] = 0;
-		return ;
-	}
-	else if (ft_strcmp(cmd->cmd[0], "export") == 0 && !cmd->assigned_var)
+		return (handle_export(env_list, cmd->assigned_var),
+			cmd->pid[cmd->index++] = 0, (void)0);
+	else if (ft_strcmp(cmd->cmd[0], "export") == 0 && !cmd->assigned_var
+		&& !cmd->cmd[1])
 		return (print_env_reverse(env_list), cmd->pid[cmd->index++] = 0,
 			(void)0);
-	else if (ft_strcmp(cmd->cmd[0], "cd") == 0)
+	else
+	{
+		if (cmd->cmd[1])
+			handle_export(env_list, cmd->cmd[1]);
+	}
+	if (ft_strcmp(cmd->cmd[0], "cd") == 0)
 		return (cd_test_call(cmd, env_list), cmd->pid[cmd->index++] = 0,
 			(void)0);
 	else if (ft_strcmp(cmd->cmd[0], "unset") == 0)
