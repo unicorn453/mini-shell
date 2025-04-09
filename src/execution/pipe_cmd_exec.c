@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_cmd_exec.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:07:13 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 20:22:31 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 18:59:54 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,8 @@ void	ft_exec_pipes_child(t_cmd *cmd, int *fd_in, int fd_pipe[2],
 		close(fd_pipe[1]);
 	if (!cmd->heredoc)
 	{
-		if (cmd->builtin)
-			execute_builtins(cmd, &cmd->env_list);
+		if (cmd->builtin && !heredoc_exist)
+			execute_builtins(cmd, cmd->env_list);
 		if (heredoc_exist && cmd->redir_out)
 			execute_command(cmd);
 		else if (!heredoc_exist && !cmd->builtin)

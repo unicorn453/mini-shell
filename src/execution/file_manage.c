@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file_manage.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:24:11 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 20:22:31 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 19:00:04 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,10 +103,47 @@ int	*original_fds(int fd_in, int fd_out)
 	return (stdio);
 }
 
-void	execution(t_cmd *cmd)
+void	ft_only_last_heredoc_exec(t_cmd *cmd, int pipefd[2], bool last_heredoc,
+		char **parsed_string)
 {
+	int	i;
+	int	index_of_last_heredoc;
+
+	i = 0;
+	index_of_last_heredoc = find_last_heredoc(parsed_string, 0);
+	while (parsed_string[i])
+	{
+		if (ft_strcmp(parsed_string[i], "<<") == 0
+			&& i == index_of_last_heredoc)
+		{
+			if (parsed_string[i + 1] == NULL)
+			{
+				check_error_status(parsed_string, i, 258);
+				return ;
+			}
+			cmd->heredoc = true;
+			cmd->last_heredoc = true;
+			cmd->delimiter = parsed_string[i + 1];
+			ft_heredoc_check(cmd, pipefd, cmd->end_of_cmd, last_heredoc);
+			execute_command(cmd);
+			return ;
+		}
+		i++;
+	}
+}
+
+void	execution(t_cmd *cmd, int pipefd[2],
+		char **parsed_string)
+{
+	// (void)parsed_string;
+	// (void)pipefd;
+	if (cmd->heredoc)
+	{
+		ft_only_last_heredoc_exec(cmd, pipefd, cmd->last_heredoc,
+			parsed_string);
+	}
 	if (!cmd->builtin)
 		execute_command(cmd);
 	else
-		execute_builtins(cmd, &cmd->env_list);
+		execute_builtins(cmd, cmd->env_list);
 }
