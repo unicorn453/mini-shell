@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   basic_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 20:22:31 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 16:34:47 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	find_right_exec(t_cmd *cmd, char **parsed_string)
 		if (fd_in >= 0)
 			close(fd_in);
 	}
-	exec_cmd(cmd, &fd_in, cmd->end_of_cmd);
+	exec_cmd(cmd, &fd_in, cmd->end_of_cmd, parsed_string);
 	fd_in = -1;
 	dup2(original_fds(-1, -1)[0], STDIN_FILENO);
 	close(original_fds(-1, -1)[0]);

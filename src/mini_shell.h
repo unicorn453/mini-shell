@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/08 21:04:56 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/09 18:59:05 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ typedef struct s_pipe
 
 typedef struct s_cmd
 {
-	struct s_env				*env_list;
+	struct s_env				**env_list;
 	char						*delimiter;
 	char						**cmd;
 	char						**envp;
@@ -159,12 +159,15 @@ void							free_paths(t_path *path, int error_bool);
 char							*add_permission_free_path(t_path *path,
 									char *cmd);
 
-int								check_builtins(t_env **env_list, t_cmd *cmd,
-									char *command);
-
-// char							*find_command_path(char *cmd, char **envp);
 char							*find_command_path(t_cmd *cmd_list,
 									t_env **env_list, char *cmd, char **envp);
+//---------ft_builtin_check.c---------//
+void							check_cases_builtins(char *builtins,
+									t_cmd *cmd);
+int								check_speacial_builtins(t_cmd *cmd,
+									char *command);
+int								check_builtins(t_cmd *cmd, char *command);
+void							error(void);
 //---------ft_init_cmd.c---------//
 void							initialize_command_structure(t_cmd *cmd,
 									char **envp, t_init *init);
@@ -258,7 +261,7 @@ int								env_len(t_env **env_list);
 void							setup_interactive_signals(void);
 //------execution/single_com_exec.c------//
 void							exec_cmd(t_cmd *cmd, int *fd_in,
-									bool last_child);
+									bool last_child, char **parsed_string);
 int								exec_cmd_redir(t_cmd *cmd, int *fd_in,
 									bool last_child, int pipefd[2]);
 int								exec_cmd_child(t_cmd *cmd, int *fd_in,
@@ -285,7 +288,7 @@ void							handle_output_redirection(t_cmd *cmd,
 									bool last_child, int *fd_out,
 									int fd_pipe[2]);
 int								ft_in_out(char *file, int mode);
-void							execution(t_cmd *cmd);
+void							execution(t_cmd *cmd, int pipefd[2], char **parsed_string);
 
 // bool							not_a_special_charset(char *str);
 

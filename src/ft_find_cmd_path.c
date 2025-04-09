@@ -3,20 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_find_cmd_path.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:49:03 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 20:36:15 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 18:59:29 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
-
-void	error(void)
-{
-	perror("\033[31mError");
-	exit(EXIT_FAILURE);
-}
 
 t_path	*initialize_path(void)
 {
@@ -72,96 +66,31 @@ char	*add_permission_free_path(t_path *path, char *cmd)
 			return (path->full_path);
 		}
 		if (path->full_path)
-		unlink(path->full_path);
+			unlink(path->full_path);
 		path->full_path = NULL;
 		path->i++;
 	}
 	return (NULL);
 }
 
-int check_speacial_builtins(t_env **env_list, t_cmd *cmd, char *command)
+static int	is_builtin_or_special(t_cmd *cmd_list, t_env **env_list, char *cmd)
 {
-	(void)env_list;
-	char *builtins[] = {"export", "cd", "unset", "exit", NULL};
-	int i;
-	i = 0;
-	bool match = false;
-	while(builtins[i])
-	{
-		if(ft_strcmp(builtins[i], command) == 0)
-		{
-			match = true;
-			cmd->special_builtin = true;
-			break;
-		}
-		i++;
-	}
-	if (match)
-	{
-		if((ft_strncmp(builtins[i], "export", 6) == 0))
-		{
-			cmd->cmd[0] = "export";
-		}
-		else if ((ft_strncmp(builtins[i], "cd", 2) == 0))
-		{
-			cmd->cmd[0] = "cd";
-		}
-		else if ((ft_strncmp(builtins[i], "unset", 5) == 0))
-		{
-			cmd->cmd[0] = "unset";
-		}
-		else if ((ft_strncmp(builtins[i], "exit", 4) == 0))
-		{
-			cmd->cmd[0] = "exit";
-		}
-	}
-	return (match);
+	int	check_built;
+	int	check_special_built;
+
+	cmd_list->env_list = env_list;
+	check_built = check_builtins(cmd_list, cmd);
+	check_special_built = check_speacial_builtins(cmd_list, cmd);
+	return (check_built == 1 || check_special_built == 1);
 }
 
-int check_builtins(t_env **env_list, t_cmd *cmd, char *command)
-{
-	(void)env_list;
-	// char *builtins[] = {"export", "pwd", "echo", "/bin/echo", "cd", "unset", "exit", "env", NULL};
-	char *builtins[] = {"echo", "/bin/echo", "pwd", "env", NULL};
-	int i;
-	i = 0;
-	bool match = false;
-	while(builtins[i])
-	{
-		if(ft_strcmp(builtins[i], command) == 0)
-		{
-			match = true;
-			cmd->builtin = true;
-			break;
-		}
-		i++;
-	}
-	if (match)
-	{
-		if ((ft_strncmp(builtins[i], "pwd", 3) == 0))
-		{
-			cmd->cmd[0] = "pwd";
-		}
-		else if ((ft_strncmp(builtins[i], "echo", 4) == 0) || (ft_strncmp(builtins[i], "/bin/echo", 9) == 0))
-		{
-			cmd->cmd[0] = "echo";
-		}
-		else if ((ft_strncmp(builtins[i], "env", 3) == 0))
-		{
-			cmd->cmd[0] = "env";
-		}
-	}
-	return (match);
-}
-
-char	*find_command_path(t_cmd *cmd_list, t_env **env_list, char *cmd, char **envp)
+char	*find_command_path(t_cmd *cmd_list, t_env **env_list, char *cmd,
+		char **envp)
 {
 	t_path	*path;
 	char	*ret_str;
-	cmd_list->env_list = *env_list;
-	int check_built = check_builtins(env_list, cmd_list, cmd);
-	int check_special_built = check_speacial_builtins(env_list, cmd_list, cmd);
-	if(check_built == 1 || check_special_built == 1)
+
+	if (is_builtin_or_special(cmd_list, env_list, cmd))
 		return (cmd);
 	path = initialize_path();
 	check(path == NULL, 1);

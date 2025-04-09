@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_initialization.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 12:52:32 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 20:36:15 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 19:00:10 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	ft_ending_of_init(t_cmd *cmd, char **parsed_string, int i)
 		if (cmd->special_builtin)
 		{
 			if (cmd->cmd[0])
-				execute_builtins_special(cmd, &cmd->env_list);
+				execute_builtins_special(cmd, cmd->env_list);
 			return ;
 		}
 		cmd->end_of_cmd = true;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   single_cmd_exec.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 09:11:20 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 20:36:15 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 17:22:40 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,11 @@ bool	ft_heredoc_exist(char **parsed_string)
 
 int	exec_cmd_heredoc(t_cmd *cmd, int pipefd[2], int *fd_in, bool last_child)
 {
-	ft_heredoc_check(cmd, pipefd, last_child, cmd->last_heredoc);
+	// ft_heredoc_check(cmd, pipefd, last_child, cmd->last_heredoc);
+	if (cmd->heredoc && !cmd->last_heredoc)
+		return 1;
+	else if (cmd->heredoc && cmd->last_heredoc)
+		ft_heredoc_check(cmd, pipefd, last_child, cmd->last_heredoc);
 	execute_command(cmd);
 	close(pipefd[0]);
 	if (!cmd->pipe)
@@ -65,7 +69,7 @@ int	exec_cmd_child(t_cmd *cmd, int *fd_in, bool last_child, int pipefd[2])
 		return (exec_cmd_redir(cmd, fd_in, last_child, pipefd));
 }
 
-void	exec_cmd(t_cmd *cmd, int *fd_in, bool last_child)
+void	exec_cmd(t_cmd *cmd, int *fd_in, bool last_child, char **parsed_string)
 {
 	int		pipefd[2];
 	pid_t	pid;
@@ -83,7 +87,7 @@ void	exec_cmd(t_cmd *cmd, int *fd_in, bool last_child)
 			exit(EXIT_SUCCESS);
 		else if (exec_cmd == 1)
 		{
-			execution(cmd);
+			execution(cmd, pipefd, parsed_string);
 			exit(EXIT_SUCCESS);
 		}
 	}

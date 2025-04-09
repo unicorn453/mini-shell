@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:32:50 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 21:06:20 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/09 18:59:34 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	init_def_cmd(t_cmd *cmd, char **envp, t_env **env_list)
 {
 	int	i;
 
-	cmd->env_list = *env_list;
+	cmd->env_list = env_list;
 	cmd->delimiter = NULL;
 	cmd->envp = envp;
 	cmd->redir_in = false;
