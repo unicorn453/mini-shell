@@ -6,11 +6,11 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 20:44:59 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/08 20:48:38 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 10:42:47 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 void	close_open_fds(void)
 {

@@ -6,11 +6,11 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 21:10:48 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/08 20:48:26 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 14:03:38 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 t_garbage_collector	**get_mem_list(void)
 {
@@ -40,6 +40,7 @@ void	gc_free_all(void)
 	}
 	*mem_list = NULL;
 }
+
 /**
  * @brief Allocates memory and tracks it in the garbage collection.
  * This function allocates memory and adds the pointer to a linked list

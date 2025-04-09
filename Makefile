@@ -1,18 +1,18 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
-
+CFLAGS =  -g ##-Wall -Wextra -Werror
 LIBFT_DIR = ./libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 MINI_SHELL_SRC = src/main.c src/parsing/input_parsing.c src/read_line_loop.c src/ft_split_plus.c \
-                 src/ft_find_cmd_path.c src/ft_init_cmd.c src/garbage_collector.c src/env_variables.c \
-				 src/ft_heredoc.c src/ft_error.c src/builtins/export.c src/builtins/pwd.c \
+                 src/ft_find_cmd_path.c src/ft_init_cmd.c src/garbage_collector/garbage_collector.c \
+				 src/env_variables.c src/ft_heredoc.c src/ft_error.c src/builtins/export.c src/builtins/pwd.c \
 				 src/check.c src/builtins/echo.c src/parsing/token_refiner.c src/builtins/cd.c \
 				 src/builtins/unset.c  src/builtins/exit.c src/builtins/env.c src/signals/signal.c \
 				 src/execution/basic_exec.c src/execution/pipe_cmd_exec.c src/execution/single_cmd_exec.c \
 				 src/execution/file_manage.c src/execution/cmd_initialization.c src/parsing/quotes.c \
 				 src/parsing/input_parsing_two.c src/parsing/token_refiner_two.c src/handle_token_search.c \
-				 src/main_parsing.c src/garbage_collector_util.c src/ft_init_cmd_two.c
+				 src/main_parsing.c src/garbage_collector/garbage_collector_util.c src/ft_init_cmd_two.c \
+				 src/ft_builtin_check.c
 
 MINI_SHELL_EXE = minishell
 

@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:58:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/08 20:22:31 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 18:48:39 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ void	initialize_env_vars(t_env **env_list, char **envp)
 	while (envp[++stack.i])
 		handle_export(env_list, envp[stack.i]);
 	stack.pwd = getcwd(NULL, 0);
-	check(stack.pwd == NULL, 2);
 	stack.shlvl = getenv("SHLVL");
 	if (stack.shlvl == NULL)
 		stack.shlvl_value = 1;
