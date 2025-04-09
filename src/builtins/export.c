@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 15:00:22 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/07 17:55:45 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 21:47:24 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,27 @@ void	handle_plus_equal(t_env **env_list, char *key, char *plus_eq,
 	free(new_key);
 }
 
+bool	check_duplicate_args(t_env **env_list, char *arg)
+{
+	t_env	*temp;
+
+	temp = *env_list;
+	while (temp)
+	{
+		if (ft_strcmp(temp->key, arg) == 0)
+			return (true);
+		temp = temp->next;
+	}
+	return (false);
+}
+
 int	parse_export_argument(char *arg, char **key, char **value, t_env **env_list)
 {
 	char	*equal_sign;
 	char	*plus_eq;
 
+	if (!arg || !*arg && !check_duplicate_args(env_list, arg))
+		return (*key = ft_strdup(arg), *value = NULL, gc_track(*key), 1);
 	equal_sign = ft_strchr(arg, '=');
 	plus_eq = ft_strnstr(arg, "+=", ft_strlen(arg));
 	if (plus_eq && plus_eq == equal_sign - 1)
@@ -58,8 +74,6 @@ void	handle_export(t_env **env_list, char *arg)
 
 	key = NULL;
 	value = NULL;
-	if (!arg || !*arg)
-		return ;
 	if (!parse_export_argument(arg, &key, &value, env_list))
 		return (perror("Minishell: memory allocation error"));
 	export_env_var(env_list, key, value);

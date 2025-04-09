@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_heredoc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 20:39:08 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 23:16:51 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ int	handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
 	{
 		if (my_out >= 0)
 			close(my_out);
-		unlink("file");
 	}
 	return (my_out);
 }

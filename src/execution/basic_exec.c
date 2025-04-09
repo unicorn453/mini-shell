@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 16:34:47 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/09 22:53:28 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,17 @@ int	find_right_exec(t_cmd *cmd, char **parsed_string)
 	dup2(original_fds(-1, -1)[1], STDOUT_FILENO);
 	close(original_fds(-1, -1)[1]);
 	return (1);
+}
+
+void command_not_found(char *cmd)
+{
+	char	*error_msg;
+
+	error_msg = ": command not found";
+	write(STDERR_FILENO, "minishell: ", 11);
+	write(STDERR_FILENO, cmd, ft_strlen(cmd));
+	write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
+	write(STDERR_FILENO, "\n", 1);
 }
 
 void	execute_command(t_cmd *cmd)
