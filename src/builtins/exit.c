@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 11:10:23 by kruseva           #+#    #+#             */
-/*   Updated: 2025/03/20 20:48:47 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/09 19:35:13 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,15 @@ void	ft_run_exit(t_cmd *cmd)
 	exit_status = 0;
 	if (cmd->pipe == true)
 		return ;
-	if (i > 2)
+	else if (i > 2)
 	{
 		write(STDERR_FILENO, "minishell: exit: too many arguments\n", 37);
 		cmd->pid[0] = -1;
 		cmd->pid[1] = 1;
-		return ;
+		exit_status = 255;
+		// return ;
 	}
-	if (i == 2)
+	else if (i == 2)
 	{
 		if (cmd->cmd[1] != NULL)
 			exit_status = ft_atoi(cmd->cmd[1]);

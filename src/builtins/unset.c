@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 15:00:37 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/24 14:39:10 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 18:53:32 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,29 @@
 
 void	remove_env_var(t_env **env_list, char *key)
 {
-	t_env	*curr;
+	t_env	*curr = *env_list;
 
-	curr = *env_list;
 	while (curr)
 	{
 		if (ft_strncmp(curr->key, key, ft_strlen(key) + 1) == 0)
 		{
 			if (curr == *env_list)
+			{
 				*env_list = curr->next;
-			if (curr->next)
-				curr->next->prev = curr->prev;
-			if (curr->prev)
-				curr->prev->next = curr->next;
+				if (*env_list)
+					(*env_list)->prev = NULL;
+			}
+			else
+			{
+				if (curr->next)
+					curr->next->prev = curr->prev;
+				if (curr->prev)
+					curr->prev->next = curr->next;
+			}
 			gc_untrack(curr->key);
 			gc_untrack(curr->value);
 			gc_untrack(curr);
-			return ;
+			return;
 		}
 		curr = curr->next;
 	}

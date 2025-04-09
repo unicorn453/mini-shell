@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 23:04:57 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 20:42:45 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 15:08:26 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	char		**ref_tokens;
 
 	ref_tokens = NULL;
-	(void)envp;
+	// (void)envp;
 	current_cmd = gc_malloc(sizeof(t_cmd));
 	check(current_cmd == NULL, 1);
 	refined_tokens = NULL;

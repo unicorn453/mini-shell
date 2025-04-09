@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/08 20:43:26 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/09 21:01:17 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ static int	check_for_empty_input(char *line)
 static void	ctrl_d_handler(void)
 {
 	gc_free_all();
+	// printf("Exiting minishell...\n");
 	exit(0);
 }
 
@@ -50,17 +51,64 @@ t_exit	*get_exit_code(void)
 
 	return (&exit_codes);
 }
+// static int	env_list_size(t_env *env)
+// {
+// 	int count = 0;
+// 	while (env)
+// 	{
+// 		count++;
+// 		env = env->next;
+// 	}
+// 	return count;
+// }
 
-void	main_loop(char **envp, t_env **env_lis)
+char	**ll_to_2d(t_env **env_list)
+{
+	int		size = env_len(env_list);
+	char	**array = gc_malloc(sizeof(char *) * (size + 1));
+	
+	t_env	*cur = *env_list;
+	int		i = 0;
+	check(!array, 2);
+	
+	//  while (cur)
+	//  	cur = cur->next;
+	while (cur)
+	{
+		int key_len = strlen(cur->key);
+		int value_len = strlen(cur->value);
+		char *entry = malloc(key_len + value_len + 2); // '=' + '\0'
+		if (!entry)
+		{
+			perror("malloc failed");
+			while (i > 0)
+				free(array[--i]);
+			free(array);
+			return NULL;
+		}
+		strcpy(entry, cur->key);
+		entry[key_len] = '=';
+		strcpy(entry + key_len + 1, cur->value);
+		array[i++] = entry;
+		cur = cur->next;
+	}
+	array[i] = NULL;
+	return array;
+}
+void	main_loop(char **envp, t_env **env_list)
 {
 	char	*line;
 	int		exit_status;
 	char	*trimmed_line;
-
+	char 	**new_envp;
+	
+	// (void)envp;
+	
 	exit_status = 0;
 	get_exit_code()->exit_code = exit_status;
 	while (1)
 	{
+		// new_envp = ll_to_2d(env_list);
 		if (isatty(fileno(stdin)))
 			line = readline("minishell> ");
 		else
@@ -77,7 +125,7 @@ void	main_loop(char **envp, t_env **env_lis)
 		gc_track(line);
 		if (*line != '\0' && isatty(fileno(stdin)))
 			add_history(line);
-		exit_status = main_parsing(line, envp, env_lis);
+		exit_status = main_parsing(line, envp, env_list);
 		get_exit_code()->exit_code = exit_status;
 	}
 }

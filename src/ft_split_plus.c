@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_plus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:57:42 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/03/11 15:29:12 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/09 11:26:10 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int		is_charset(char c, char *charset);
 int		ft_count_char(char *str, char *charechter);
 char	*ft_strndup(char *str, int n);
 
-char	**ft_split_plus(char *str, char *charset)
+typedef struct s_split
 {
 	char	quote_char;
 	char	**return_val;
@@ -24,40 +24,48 @@ char	**ft_split_plus(char *str, char *charset)
 	int		j;
 	int		k;
 	int		in_quotes;
+}t_split;
 
-	i = 0;
-	j = 0;
-	k = 0;
-	in_quotes = 0;
-	quote_char = '\0';
-	return_val = gc_malloc(sizeof(char *) * (ft_count_char(str, charset) + 1));
-	if (!return_val)
-		return (NULL);
-	while (str[i] != '\0')
+static void init_split_struct(t_split *vars, char *str, char *charset)
+{
+	vars->i = 0;
+	vars->j = 0;
+	vars->k = 0;
+	vars->in_quotes = 0;
+	vars->quote_char = '\0';
+	vars->return_val = gc_malloc(sizeof(char *) * (ft_count_char(str, charset) + 1));
+	check(!vars->return_val, 2);
+}
+
+char	**ft_split_plus(char *str, char *charset)
+{
+	t_split vars;
+	
+	init_split_struct(&vars, str, charset);
+	while (str[vars.i] != '\0')
 	{
-		while (str[i] != '\0' && is_charset(str[i], charset) && !in_quotes)
-			i++;
-		j = i;
-		while (str[i] != '\0' && (in_quotes || !is_charset(str[i], charset)))
+		while (str[vars.i] != '\0' && is_charset(str[vars.i], charset) && !vars.in_quotes)
+			vars.i++;
+		vars.j = vars.i--;
+		while (str[++vars.i] != '\0' && (vars.in_quotes || !is_charset(str[vars.i], charset)))
 		{
-			if ((str[i] == '"' || str[i] == '\'') && (!in_quotes
-					|| quote_char == str[i]))
+			if ((str[vars.i] == '"' || str[vars.i] == '\'') && (!vars.in_quotes
+					|| vars.quote_char == str[vars.i]))
 			{
-				if (in_quotes)
-					in_quotes = 0;
+				if (vars.in_quotes)
+					vars.in_quotes = 0;
 				else
 				{
-					in_quotes = 1;
-					quote_char = str[i];
+					vars.in_quotes = 1;
+					vars.quote_char = str[vars.i];
 				}
 			}
-			i++;
+			// vars.i++;
 		}
-		if (i > j)
-			return_val[k++] = ft_strndup(str + j, i - j);
+		if (vars.i > vars.j)
+			vars.return_val[vars.k++] = ft_strndup(str + vars.j, vars.i - vars.j);
 	}
-	return_val[k] = NULL;
-	return (return_val);
+	return (vars.return_val[vars.k] = NULL, vars.return_val);
 }
 
 int	ft_count_char(char *str, char *charechter)
