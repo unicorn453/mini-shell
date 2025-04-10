@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_cmd_exec.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:07:13 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 22:52:08 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/09 23:53:50 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,25 +50,28 @@ void	ft_exec_pipes_child_heredoc(t_cmd *cmd, int heredoc_fd[2], int *fd_in,
 	}
 }
 
-void	ft_exec_pipes_child(t_cmd *cmd, int *fd_in, int fd_pipe[2],
-		int heredoc_exist)
+static void	check_and_close(int fd_pipe[2])
 {
-	if (cmd->redir_out || cmd->redir_append)
-	{
-		handle_output_redirection(cmd, cmd->end_of_cmd, &fd_in[0], fd_pipe);
-	}
-	if (!cmd->end_of_cmd && !cmd->heredoc && !cmd->redir_out
-		&& !cmd->redir_append && !heredoc_exist)
-		check(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
 	if (fd_pipe[0] != -1)
 		close(fd_pipe[0]);
 	if (fd_pipe[1] != -1)
 		close(fd_pipe[1]);
+}
+
+void	ft_exec_pipes_child(t_cmd *cmd, int *fd_in, int fd_pipe[2],
+		int heredoc_exist)
+{
+	if (cmd->redir_out || cmd->redir_append)
+		handle_output_redirection(cmd, cmd->end_of_cmd, &fd_in[0], fd_pipe);
+	if (!cmd->end_of_cmd && !cmd->heredoc && !cmd->redir_out
+		&& !cmd->redir_append && !heredoc_exist)
+		check(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
+	check_and_close(fd_pipe);
 	if (!cmd->heredoc && heredoc_exist)
 	{
 		if (fd_in[0] != -1)
 			fd_in[0] = ft_in_out("file", 0);
-			dup2(fd_in[0], STDIN_FILENO);
+		dup2(fd_in[0], STDIN_FILENO);
 	}
 	if (!cmd->heredoc)
 	{
@@ -88,31 +91,4 @@ t_pipe	*pipes(void)
 	static t_pipe	pipe_info;
 
 	return (&pipe_info);
-}
-
-void	ft_exec_pipes_parent(t_cmd *cmd, int fd_pipe[2], int *fd_in, pid_t pid)
-{
-	int	status;
-
-	if (fd_pipe[1] != -1)
-		close(fd_pipe[1]);
-	if (!cmd->end_of_cmd)
-	{
-		if (fd_in[0] != -1)
-			close(fd_in[0]);
-		fd_in[0] = fd_pipe[0];
-	}
-	else
-	{
-		if (fd_pipe[0] != -1)
-			close(fd_pipe[0]);
-	}
-	if (!cmd->heredoc)
-		cmd->pid[cmd->index++] = pid;
-	else
-	{
-		waitpid(pid, &status, 0);
-		if (pipes()->heredoc_fd[0] != -1)
-			close(pipes()->heredoc_fd[0]);
-	}
 }

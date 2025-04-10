@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/09 18:59:05 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 00:31:00 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,7 @@ void							remove_env_var(t_env **env_list, char *key);
 void							ft_run_exit(t_cmd *cmd);
 //------builtins/env.c------//
 void							print_env_reverse(t_env **env_list);
-int								env_len(t_env **env_list);
+int								env_len(t_env *env_list, int i);
 //______signals.c__________//
 void							setup_interactive_signals(void);
 //------execution/single_com_exec.c------//
