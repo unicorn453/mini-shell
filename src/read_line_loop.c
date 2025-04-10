@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/09 21:01:17 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 16:56:07 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,6 @@ t_exit	*get_exit_code(void)
 
 	return (&exit_codes);
 }
-// static int	env_list_size(t_env *env)
-// {
-// 	int count = 0;
-// 	while (env)
-// 	{
-// 		count++;
-// 		env = env->next;
-// 	}
-// 	return count;
-// }
 
 char	**ll_to_2d(t_env **env_list)
 {
@@ -71,20 +61,17 @@ char	**ll_to_2d(t_env **env_list)
 	int		i = 0;
 	check(!array, 2);
 	
-	//  while (cur)
-	//  	cur = cur->next;
 	while (cur)
 	{
 		int key_len = strlen(cur->key);
 		int value_len = strlen(cur->value);
-		char *entry = malloc(key_len + value_len + 2); // '=' + '\0'
+		char *entry = malloc(key_len + value_len + 2);
 		if (!entry)
 		{
 			perror("malloc failed");
 			while (i > 0)
 				free(array[--i]);
-			free(array);
-			return NULL;
+			return (free(array), NULL);
 		}
 		strcpy(entry, cur->key);
 		entry[key_len] = '=';
@@ -92,8 +79,7 @@ char	**ll_to_2d(t_env **env_list)
 		array[i++] = entry;
 		cur = cur->next;
 	}
-	array[i] = NULL;
-	return array;
+	return (array[i] = NULL, array);
 }
 void	main_loop(char **envp, t_env **env_list)
 {

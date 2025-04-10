@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 19:36:09 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 23:16:38 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 16:11:34 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	execute_builtins_special(t_cmd *cmd, t_env **env_list)
 			cmd->pid[cmd->index++] = 0, (void)0);
 	else if (ft_strcmp(cmd->cmd[0], "export") == 0 && !cmd->assigned_var
 		&& !cmd->cmd[1])
-		return (print_env_reverse(env_list), cmd->pid[cmd->index++] = 0,
+		return (print_export_reverse(env_list), cmd->pid[cmd->index++] = 0,
 			(void)0);
 	else
 	{

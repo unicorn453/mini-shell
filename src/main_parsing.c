@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_parsing.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 23:04:57 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 15:08:26 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 16:56:27 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	**save_new_tokens(t_token **refined_tokens)
 bool	check_for_builtin(char *line)
 {
 	static char	*all_builtin[] = {"echo", "cd", "pwd", "export", "unset", "env",
-		"exit", "/bin/echo", NULL};
+			"exit", "/bin/echo", NULL};
 	int			i;
 
 	i = 0;
@@ -60,7 +60,6 @@ int	main_parsing(char *line, char **envp, t_env **env_list)
 	char		**ref_tokens;
 
 	ref_tokens = NULL;
-	// (void)envp;
 	current_cmd = gc_malloc(sizeof(t_cmd));
 	check(current_cmd == NULL, 1);
 	refined_tokens = NULL;

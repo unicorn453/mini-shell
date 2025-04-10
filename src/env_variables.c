@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_variables.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:58:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/09 18:48:39 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 16:16:52 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	initialize_env_vars(t_env **env_list, char **envp)
 	free(stack.shlvl);
 	stack.shlvl = ft_strjoin("PWD=", stack.pwd);
 	handle_export(env_list, stack.shlvl);
-	handle_export(env_list, "OLDPWD=NULL");
+	handle_export(env_list, "OLDPWD");
 	free(stack.shlvl);
 	free(stack.pwd);
 }

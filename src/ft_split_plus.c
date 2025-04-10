@@ -3,95 +3,87 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_plus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:57:42 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/09 11:26:10 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 17:20:15 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-int		is_charset(char c, char *charset);
-int		ft_count_char(char *str, char *charechter);
-char	*ft_strndup(char *str, int n);
-
-typedef struct s_split
+static void	init_split_struct(t_split *v, char *str, char *cset)
 {
-	char	quote_char;
-	char	**return_val;
-	int		i;
-	int		j;
-	int		k;
-	int		in_quotes;
-}t_split;
-
-static void init_split_struct(t_split *vars, char *str, char *charset)
-{
-	vars->i = 0;
-	vars->j = 0;
-	vars->k = 0;
-	vars->in_quotes = 0;
-	vars->quote_char = '\0';
-	vars->return_val = gc_malloc(sizeof(char *) * (ft_count_char(str, charset) + 1));
-	check(!vars->return_val, 2);
+	v->i = 0;
+	v->j = 0;
+	v->k = 0;
+	v->in_q = 0;
+	v->q_char = '\0';
+	v->ret_val = gc_malloc(sizeof(char *) * (ft_count_char(str, cset) + 1));
+	check(!v->ret_val, 2);
 }
 
-char	**ft_split_plus(char *str, char *charset)
+char	**ft_split_plus(char *str, char *cset)
 {
-	t_split vars;
-	
-	init_split_struct(&vars, str, charset);
-	while (str[vars.i] != '\0')
+	t_split	v;
+
+	init_split_struct(&v, str, cset);
+	while (str[v.i] != '\0')
 	{
-		while (str[vars.i] != '\0' && is_charset(str[vars.i], charset) && !vars.in_quotes)
-			vars.i++;
-		vars.j = vars.i--;
-		while (str[++vars.i] != '\0' && (vars.in_quotes || !is_charset(str[vars.i], charset)))
+		while (str[v.i] != '\0' && is_charset(str[v.i], cset) && !v.in_q)
+			v.i++;
+		v.j = v.i--;
+		while (str[++v.i] != '\0' && (v.in_q || !is_charset(str[v.i], cset)))
 		{
-			if ((str[vars.i] == '"' || str[vars.i] == '\'') && (!vars.in_quotes
-					|| vars.quote_char == str[vars.i]))
+			if ((str[v.i] == '"' || str[v.i] == '\'') && (!v.in_q
+					|| v.q_char == str[v.i]))
 			{
-				if (vars.in_quotes)
-					vars.in_quotes = 0;
+				if (v.in_q)
+					v.in_q = 0;
 				else
 				{
-					vars.in_quotes = 1;
-					vars.quote_char = str[vars.i];
+					v.in_q = 1;
+					v.q_char = str[v.i];
 				}
 			}
-			// vars.i++;
 		}
-		if (vars.i > vars.j)
-			vars.return_val[vars.k++] = ft_strndup(str + vars.j, vars.i - vars.j);
+		if (v.i > v.j)
+			v.ret_val[v.k++] = ft_strndup(str + v.j, v.i - v.j);
 	}
-	return (vars.return_val[vars.k] = NULL, vars.return_val);
+	return (v.ret_val[v.k] = NULL, v.ret_val);
 }
+
+typedef struct s_counter {
+	int		i;
+	int		count;
+	int		in_word;
+	int		in_q;
+	char	q_char;
+}	t_counter;
 
 int	ft_count_char(char *str, char *charechter)
 {
 	int		i;
 	int		count;
 	int		in_word;
-	int		in_quotes;
-	char	quote_char;
+	int		in_q;
+	char	q_char;
 
-	quote_char = '\0';
-	in_quotes = 0;
+	q_char = '\0';
+	in_q = 0;
 	i = -1;
 	count = 0;
 	in_word = 0;
 	while (str[++i] != '\0')
 	{
-		if ((str[i] == '"' || str[i] == '\'') && (!in_quotes
-				|| quote_char == str[i]))
+		if ((str[i] == '"' || str[i] == '\'') && (!in_q || q_char == str[i]))
 		{
-			if (in_quotes)
-				in_quotes = 0;
+			if (in_q)
+				in_q = 0;
 			else
 			{
-				in_quotes = 1;
-				quote_char = str[i];
+				in_q = 1;
+				q_char = str[i];
 			}
 		}
 		if (!is_charset(str[i], charechter) && !in_word)
@@ -123,14 +115,14 @@ char	*ft_strndup(char *str, int n)
 	return (dup);
 }
 
-int	is_charset(char c, char *charset)
+int	is_charset(char c, char *cset)
 {
 	int	i;
 
 	i = 0;
-	while (charset[i] != '\0')
+	while (cset[i] != '\0')
 	{
-		if (c == charset[i])
+		if (c == cset[i])
 			return (1);
 		i++;
 	}

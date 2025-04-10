@@ -6,40 +6,11 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:24:11 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 19:00:04 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 16:46:25 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../mini_shell.h"
-
-int	ft_in_out(char *file, int mode)
-{
-	int	fd;
-
-	if (mode == 0)
-	{
-		fd = open(file, O_RDONLY);
-		check(fd < 0, 1);
-		if (fd < 0)
-		{
-			perror("open failed");
-			exit(EXIT_FAILURE);
-		}
-	}
-	else if (mode == 1)
-	{
-		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		check(fd < 0, 1);
-		if (fd < 0)
-		{
-			perror("open failed");
-			exit(EXIT_FAILURE);
-		}
-	}
-	else
-		fd = -1;
-	return (fd);
-}
 
 void	handle_input_redirection(t_cmd *cmd, int *fd_in)
 {
@@ -132,11 +103,8 @@ void	ft_only_last_heredoc_exec(t_cmd *cmd, int pipefd[2], bool last_heredoc,
 	}
 }
 
-void	execution(t_cmd *cmd, int pipefd[2],
-		char **parsed_string)
+void	execution(t_cmd *cmd, int pipefd[2], char **parsed_string)
 {
-	// (void)parsed_string;
-	// (void)pipefd;
 	if (cmd->heredoc)
 	{
 		ft_only_last_heredoc_exec(cmd, pipefd, cmd->last_heredoc,

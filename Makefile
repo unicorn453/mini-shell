@@ -12,7 +12,7 @@ MINI_SHELL_SRC = src/main.c src/parsing/input_parsing.c src/read_line_loop.c src
 				 src/execution/file_manage.c src/execution/cmd_initialization.c src/parsing/quotes.c \
 				 src/parsing/input_parsing_two.c src/parsing/token_refiner_two.c src/handle_token_search.c \
 				 src/main_parsing.c src/garbage_collector/garbage_collector_util.c src/ft_init_cmd_two.c \
-				 src/ft_builtin_check.c
+				 src/ft_builtin_check.c src/execution/file_manage_two.c
 
 MINI_SHELL_EXE = minishell
 

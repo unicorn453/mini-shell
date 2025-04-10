@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 22:53:28 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 16:48:12 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	find_right_exec(t_cmd *cmd, char **parsed_string)
 	return (1);
 }
 
-void command_not_found(char *cmd)
+void	command_not_found(char *cmd)
 {
 	char	*error_msg;
 
