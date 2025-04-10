@@ -1,0 +1,129 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_heredoc.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
+/*   Updated: 2025/04/10 19:52:44 by kruseva          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "mini_shell.h"
+
+int	create_heredoc_file(t_cmd *cmd, bool last_heredoc)
+{
+	int		my_out;
+	char	tmp_filename[5];
+
+	ft_strlcpy(tmp_filename, "file", sizeof(tmp_filename));
+	my_out = -1;
+	if ((!last_heredoc && !cmd->end_of_cmd) || (last_heredoc
+			&& !cmd->end_of_cmd))
+	{
+		my_out = open(tmp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (my_out == -1)
+		{
+			perror("Error creating heredoc file");
+			gc_free_all();
+			exit(EXIT_FAILURE);
+		}
+		cmd->heredoc_file = ft_strdup(tmp_filename);
+		gc_track(cmd->heredoc_file);
+	}
+	return (my_out);
+}
+
+void	read_heredoc_input(t_cmd *cmd, int my_out, int *fd_out)
+{
+	char	*line;
+
+	while (1)
+	{
+		line = readline("> ");
+		if (!line || ft_strcmp(line, cmd->delimiter) == 0)
+		{
+			if (line)
+				free(line);
+			break ;
+		}
+		if (!cmd->end_of_cmd)
+		{
+			check((write(my_out, line, ft_strlen(line)) == -1), 1);
+			check((write(my_out, "\n", 1) == -1), 1);
+		}
+		else
+		{
+			check((write(*fd_out, line, ft_strlen(line)) == -1), 1);
+			check((write(*fd_out, "\n", 1) == -1), 1);
+		}
+		if (line)
+			free(line);
+	}
+}
+
+int	handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
+{
+	int	my_out;
+
+	check(cmd->delimiter == NULL, 1);
+	my_out = create_heredoc_file(cmd, last_heredoc);
+	read_heredoc_input(cmd, my_out, fd_out);
+	if (cmd->end_of_cmd || last_heredoc)
+	{
+		if (my_out >= 0)
+			close(my_out);
+	}
+	return (my_out);
+}
+
+int	check_for_redir(t_cmd *cmd, int file_fd)
+{
+	int	flags;
+
+	if ((cmd->redir_out || cmd->redir_append) && cmd->file_out)
+	{
+		if (cmd->redir_append)
+			flags = O_WRONLY | O_CREAT | O_APPEND;
+		else
+			flags = O_WRONLY | O_CREAT | O_TRUNC;
+		file_fd = open(cmd->file_out, flags, 0644);
+		if (file_fd < 0)
+		{
+			perror("Error opening output file");
+			gc_free_all();
+			exit(EXIT_FAILURE);
+		}
+	}
+	return (file_fd);
+}
+
+int	ft_heredoc_check(t_cmd *cmd, int pipefd[2], bool last_child,
+		bool last_heredoc)
+{
+	int	file_fd;
+
+	(void)last_child;
+	file_fd = -1;
+	file_fd = check_for_redir(cmd, file_fd);
+	if (pipe(pipefd) == -1)
+	{
+		perror("pipe");
+		gc_exit(EXIT_FAILURE);
+	}
+	if (file_fd != -1)
+		handle_heredoc(cmd, &file_fd, last_heredoc);
+	else
+		file_fd = handle_heredoc(cmd, &pipefd[1], last_heredoc);
+	if (pipefd[1] >= 0)
+		close(pipefd[1]);
+	if (last_child && dup2(pipefd[0], STDIN_FILENO) == -1)
+	{
+		perror("dup2 failed for heredoc");
+		gc_exit(EXIT_FAILURE);
+	}
+	if (pipefd[0] >= 0)
+		close(pipefd[0]);
+	return (file_fd);
+}

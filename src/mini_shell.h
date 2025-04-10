@@ -1,0 +1,358 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mini_shell.h                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
+/*   Updated: 2025/04/10 19:48:22 by kruseva          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef MINI_SHELL_H
+# define MINI_SHELL_H
+# define MAX_PIPES 512
+//-----------includes-----------//
+
+# include "../libft/libft.h"
+# include <errno.h>
+# include <fcntl.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <signal.h>
+# include <stdbool.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <sys/wait.h>
+# include <termios.h>
+# include <unistd.h>
+
+//---------ft_error_handling.c---------//
+
+void							check(int retval, int exit_code);
+
+// # define check(x, code) check((x), (code))
+
+//--------end_of_includes-------//
+
+//-----------structs------------//
+typedef struct s_garbage_collector
+{
+	void						*ptr;
+	struct s_garbage_collector	*next;
+}								t_garbage_collector;
+
+typedef struct s_pipe
+{
+	int							fd_pipe[2];
+	int							heredoc_fd[2];
+}								t_pipe;
+
+typedef struct s_cmd
+{
+	struct s_env				**env_list;
+	char						*delimiter;
+	char						**cmd;
+	char						**envp;
+	bool						pipe;
+	bool						redir_in;
+	bool						redir_out;
+	bool						redir_append;
+	char						*file_in;
+	char						*file_out;
+	bool						end_of_cmd;
+	bool						heredoc;
+	int							pid[MAX_PIPES];
+	int							index;
+	bool						last_heredoc;
+	char						*assigned_var;
+	// char						**assigned_var;
+	bool						builtin;
+	bool						special_builtin;
+	// to do
+	bool						heredoc_exists;
+	char						*heredoc_file;
+	int							exit_status;
+}								t_cmd;
+
+typedef struct s_path
+{
+	char						*path_env;
+	char						**paths;
+	char						*full_path;
+	int							i;
+	char						*temp;
+}								t_path;
+
+typedef struct s_env
+{
+	char						*key;
+	char						*value;
+	struct s_env				*next;
+	struct s_env				*prev;
+}								t_env;
+
+typedef struct s_token
+{
+	char						*value;
+	struct s_token				*next;
+}								t_token;
+typedef struct s_bool
+{
+	bool						in_qoutes[1024];
+}								t_bool;
+
+typedef struct s_init
+{
+	int							i;
+	int							arg_index;
+	int							parsed_size;
+	char						*token;
+	t_env						**env_list;
+	char						**parsed_string;
+}								t_init;
+
+typedef struct s_exit
+{
+	int							exit_code;
+}								t_exit;
+
+typedef struct s_process
+{
+	int							start;
+	int							len;
+	char						*no_charse_str;
+	bool						in_single;
+	bool						in_double;
+	int							op_len;
+}								t_process;
+
+typedef struct s_split
+{
+	char						q_char;
+	char						**ret_val;
+	int							i;
+	int							j;
+	int							k;
+	int							in_q;
+}								t_split;
+
+typedef struct s_env_var
+{
+	char						*pwd;
+	char						*shlvl;
+	char						*temp;
+	int							shlvl_value;
+	int							i;
+
+}								t_env_var;
+
+typedef struct s_counter
+{
+	int							i;
+	int							count;
+	int							in_word;
+	int							in_q;
+	char						q_char;
+}								t_counter;
+
+//------------------------------//
+
+//---------GC_functions---------//
+void							*gc_malloc(size_t size);
+void							gc_track(void *ptr);
+void							gc_free_all(void);
+void							gc_untrack(void *ptr);
+void							close_open_fds(void);
+void							gc_exit(int status);
+//-------src/ft_split_plus.c-------//
+int								is_charset(char c, char *charset);
+int								ft_count_char(char *str, char *charechter);
+char							*ft_strndup(char *str, int n);
+char							**ft_split_plus(char *str, char *charset);
+void							main_loop(char **envp, t_env **env_lis);
+char							**ft_split_plus(char *str, char *charset);
+//-------builtins/------//
+void							get_pwd(void);
+//-------src/ft_split_plus_two.c-------//
+void							init_counter(t_counter *c);
+/*
+** basic_exec.c
+** This file contains the functions for executing the commands
+*/
+void							execute_command(t_cmd *cmd);
+int								wait_for_all_children(t_cmd *cmd);
+void							exec_pipes(t_cmd *cmd, int *fd_in,
+									char **parsed_string);
+int								find_right_exec(t_cmd *cmd,
+									char **parsed_string);
+//---------ft_find_cmd_path.c---------//
+t_path							*initialize_path(void);
+void							free_paths(t_path *path, int error_bool);
+char							*add_permission_free_path(t_path *path,
+									char *cmd);
+
+char							*find_command_path(t_cmd *cmd_list,
+									t_env **env_list, char *cmd, char **envp);
+//---------ft_builtin_check.c---------//
+void							check_cases_builtins(char *builtins,
+									t_cmd *cmd);
+int								check_speacial_builtins(t_cmd *cmd,
+									char *command);
+int								check_builtins(t_cmd *cmd, char *command);
+void							error(void);
+//---------ft_init_cmd.c---------//
+void							initialize_command_structure(t_cmd *cmd,
+									char **envp, t_init *init);
+int								process_special_tokens(t_cmd *cmd,
+									t_init *init);
+void							init_def_cmd(t_cmd *cmd, char **envp,
+									t_env **env_list);
+void							init_cmd_stack(t_cmd *cmd, t_env **env_list,
+									char **envp, char **parsed_string);
+void							execute_builtins(t_cmd *cmd, t_env **env_list);
+
+//---------ft_init_cmd_two.c---------//
+void							execute_builtins_special(t_cmd *cmd,
+									t_env **env_list);
+void							run_builtin_child(t_cmd *cmd, t_env **env_list);
+
+//---------ft_heredoc.c---------//
+int								ft_heredoc_check(t_cmd *cmd, int pipefd[2],
+									bool last_child, bool last_heredoc);
+//---------ft_error.c---------//
+int								check_error_status(char **parsed_string, int i,
+									int status);
+char							*handle_token_search(int i,
+									char **parsed_string, t_cmd *cmd);
+int								find_last_heredoc(char **parsed_string, int i);
+
+//---------handle_token_search.c---------//
+
+char							*handle_redir_in(int i, char **parsed_string,
+									t_cmd *cmd);
+char							*handle_redir_out(int i, char **parsed_string,
+									t_cmd *cmd);
+char							*handle_redir_append(int i,
+									char **parsed_string, t_cmd *cmd);
+char							*handle_heredoc_searching(int i,
+									char **parsed_string, t_cmd *cmd);
+
+//-------input_parsing.c------//
+char							*str_before_env_var_handler(char *token,
+									char *env_str, int len);
+char							*search_env_var(t_env *env_list, char *token);
+int								cut_on_charset(char *str, char *charset);
+bool							check_var(char *token);
+void							quote_parsing(t_env **env_list, char **tokens);
+
+//-------input_parsing_two.c------//
+char							*b_a_env_var_handler(char *token, char *env_str,
+									char *after_env, int i);
+char							*handle_env_var(t_env **env_list, char *token);
+void							main_parsing_loop(t_env **env_list,
+									char **tokens);
+
+//-------env_variables.c-----//
+t_env							*create_env_node(char *key, char *value);
+void							initialize_env_vars(t_env **env_list,
+									char **envp);
+void							add_env_var(t_env **env_list, char *key,
+									char *value);
+void							handle_export(t_env **env_list, char *arg);
+void							export_env_var(t_env **env_list, char *key,
+									char *value);
+//-------echo.c------//
+void							echo_call_check(t_cmd *cmd, t_env **env_list);
+
+//------token_refiner.c------//
+void							handle_quotes(char current_char,
+									bool *in_single, bool *in_double);
+void							split_tokens(char **tokens,
+									t_token **refined_tokens);
+void							append_token(t_token **head, char *value);
+t_token							*new_token(char *value);
+int								check_for_operators(char *str, char **charset,
+									t_process *process,
+									t_token **refined_tokens);
+
+//------token_refiner_two.c------//
+void							append_char(char **no_charse_str, char c);
+void							process_token(char *token, char **charset,
+									t_token **refined_tokens);
+
+//------builtins/cd.c------//
+void							cd_test_call(t_cmd *cmd, t_env **env_list);
+//------builtins/unset.c------//
+void							remove_env_var(t_env **env_list, char *key);
+
+void							ft_run_exit(t_cmd *cmd);
+//------builtins/env.c------//
+void							print_export_reverse(t_env **env_list);
+void							print_env_reverse(t_env **env_list);
+int								env_len(t_env *env_list, int i);
+//______signals.c__________//
+void							setup_interactive_signals(void);
+//------execution/single_com_exec.c------//
+void							exec_cmd(t_cmd *cmd, int *fd_in,
+									bool last_child, char **parsed_string);
+int								exec_cmd_redir(t_cmd *cmd, int *fd_in,
+									bool last_child, int pipefd[2]);
+int								exec_cmd_child(t_cmd *cmd, int *fd_in,
+									bool last_child, int pipefd[2]);
+int								exec_cmd_heredoc(t_cmd *cmd, int pipefd[2],
+									int *fd_in, bool last_child);
+bool							ft_heredoc_exist(char **parsed_string);
+//------execution/pipe_cmd_exec.c------//
+void							ft_exec_pipes_child_heredoc(t_cmd *cmd,
+									int heredoc_fd[2], int *fd_in,
+									int heredoc_exist);
+void							ft_exec_pipes_child(t_cmd *cmd, int *fd_in,
+									int fd_pipe[2], int heredoc_exist);
+t_pipe							*pipes(void);
+void							ft_exec_pipes_parent(t_cmd *cmd, int fd_pipe[2],
+									int *fd_in, pid_t pid);
+void							init_pipes(void);
+//------execution/file_manage.c------//
+int								*original_fds(int fd_in, int fd_out);
+void							handle_input_redirection(t_cmd *cmd,
+									int *fd_in);
+
+void							handle_output_redirection(t_cmd *cmd,
+									bool last_child, int *fd_out,
+									int fd_pipe[2]);
+void							execution(t_cmd *cmd, int pipefd[2],
+									char **parsed_string);
+
+//------execution/file_manage_two.c------//
+int								ft_in_out(char *file, int mode);
+void							dup_open_file(int *fd_in);
+
+//------execution/cmd_initialization.c------//
+
+void							handle_pipe_case(t_cmd *cmd, char **envp,
+									t_init *init);
+bool							not_a_special_charset(char *str, int index);
+void							ft_ending_of_init(t_cmd *cmd,
+									char **parsed_string, int i);
+void							process_argument_in_cmd(t_cmd *cmd, char **envp,
+									t_env **env_list, t_init *init);
+
+//-----------qoutes.c--------------//
+t_bool							*in_quotes_or_not(void);
+void							reset_quotes_array(void);
+t_exit							*get_exit_code(void);
+char							*single_quote_handler(char *token, int *i);
+char							*double_quotes_handler(t_env **env_list,
+									char *token, int *position);
+
+//----------main_parsing.c----------//
+char							**save_new_tokens(t_token **refined_tokens);
+bool							check_for_builtin(char *line);
+int								main_parsing(char *line, char **envp,
+									t_env **env_list);
+//----------read_line_loop.c----------//
+int								size_of_list(t_token *list);
+#endif
