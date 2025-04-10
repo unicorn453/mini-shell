@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 12:17:08 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 20:40:43 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 19:57:17 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ char	*remove_path(char *old_pwd)
 		i++;
 	}
 	ret_str = ft_substr(old_pwd, 0, last);
+	gc_track(ret_str);
 	return (ret_str);
 }
 
@@ -61,12 +62,15 @@ static void	update_env_pwd(t_env **env_list, char *old_pwd)
 {
 	char	*test;
 	char	*test2;
+	char	*temp;
 
 	test = ft_strjoin("OLDPWD=", old_pwd);
 	handle_export(env_list, test);
 	free(test);
-	test2 = ft_strjoin("PWD=", getcwd(NULL, 0));
+	temp = getcwd(NULL, 0);
+	test2 = ft_strjoin("PWD=", temp);
 	handle_export(env_list, test2);
+	free(temp);
 	free(test2);
 }
 

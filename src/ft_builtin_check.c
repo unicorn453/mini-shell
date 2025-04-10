@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 10:35:49 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 13:32:58 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 19:51:20 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	error(void)
 {
 	perror("\033[31mError");
+	gc_free_all();
 	exit(EXIT_FAILURE);
 }
 

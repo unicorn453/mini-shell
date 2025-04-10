@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/10 13:05:45 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 20:00:37 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,53 +41,37 @@ static int	check_for_empty_input(char *line)
 static void	ctrl_d_handler(void)
 {
 	gc_free_all();
-	// printf("Exiting minishell...\n");
+	printf("Exiting minishell...\n");
 	exit(0);
-}
-
-t_exit	*get_exit_code(void)
-{
-	static t_exit	exit_codes;
-
-	return (&exit_codes);
 }
 
 char	**ll_to_2d(t_env **env_list)
 {
 	char	**array;
+	char	*entry;
 	t_env	*cur;
 	int		i;
-	array = gc_malloc(sizeof(char *) * (env_len(*env_list, 0) + 1));
+
 	cur = *env_list;
-	
 	i = 0;
+	array = gc_malloc(sizeof(char *) * (env_len(*env_list, 0) + 1));
 	check(!array, 2);
 	while (cur)
 	{
-		if(cur->key && !cur->value )
-		{			
-			array[i++] = strdup("");
-			cur = cur->next;
-			continue;
-		}
-		int key_len = strlen(cur->key);
-		int value_len = strlen(cur->value);
-		char *entry = malloc(key_len + value_len + 2);
-		if (!entry)
+		if (cur->key && !cur->value)
 		{
-			perror("malloc failed");
-			while (i > 0)
-				free(array[--i]);
-			free(array);
-			return NULL;
+			gc_track(array[i++] = strdup(""));
+			cur = cur->next;
+			continue ;
 		}
-		strcpy(entry, cur->key);
-		entry[key_len] = '=';
-		strcpy(entry + key_len + 1, cur->value);
+		entry = gc_malloc(strlen(cur->key) + strlen(cur->value) + 2);
+		ft_strlcpy(entry, cur->key, strlen(cur->key) + strlen(cur->value) + 2);
+		entry[strlen(cur->key)] = '=';
+		ft_strlcpy(entry + strlen(cur->key) + 1, cur->value, 100000);
 		array[i++] = entry;
 		cur = cur->next;
 	}
-	return (array[i]= NULL, array);
+	return (array[i] = NULL, array);
 }
 
 void	main_loop(char **envp, t_env **env_list)
@@ -101,16 +85,9 @@ void	main_loop(char **envp, t_env **env_list)
 	get_exit_code()->exit_code = exit_status;
 	while (1)
 	{
-	    new_envp = ll_to_2d(env_list);
+		new_envp = ll_to_2d(env_list);
 		if (isatty(fileno(stdin)))
 			line = readline("minishell> ");
-		else
-		{
-			line = get_next_line(fileno(stdin));
-			trimmed_line = ft_strtrim(line, "\n");
-			free(line);
-			line = trimmed_line;
-		}
 		if (line == NULL)
 			ctrl_d_handler();
 		if (check_for_empty_input(line) == -1)

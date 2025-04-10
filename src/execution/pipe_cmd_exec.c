@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_cmd_exec.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:07:13 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 23:53:50 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 19:57:01 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	ft_exec_pipes_child_heredoc(t_cmd *cmd, int heredoc_fd[2], int *fd_in,
 		if (cmd->end_of_cmd)
 			execute_command(cmd);
 		if (cmd->end_of_cmd)
-			exit(EXIT_SUCCESS);
+			gc_exit(EXIT_SUCCESS);
 	}
 	if (heredoc_exist && !cmd->heredoc && cmd->redir_out)
 	{
@@ -68,11 +68,7 @@ void	ft_exec_pipes_child(t_cmd *cmd, int *fd_in, int fd_pipe[2],
 		check(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
 	check_and_close(fd_pipe);
 	if (!cmd->heredoc && heredoc_exist)
-	{
-		if (fd_in[0] != -1)
-			fd_in[0] = ft_in_out("file", 0);
-		dup2(fd_in[0], STDIN_FILENO);
-	}
+		dup_open_file(fd_in);
 	if (!cmd->heredoc)
 	{
 		if (cmd->builtin && !heredoc_exist)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   single_cmd_exec.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 09:11:20 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 23:40:55 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 19:49:41 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,11 @@ void	exec_cmd(t_cmd *cmd, int *fd_in, bool last_child, char **parsed_string)
 		signal(SIGINT, SIG_DFL);
 		exec_cmd = exec_cmd_child(cmd, fd_in, last_child, pipefd);
 		if (exec_cmd == 0)
-			exit(EXIT_SUCCESS);
+			gc_exit(EXIT_SUCCESS);
 		else if (exec_cmd == 1)
 		{
 			execution(cmd, pipefd, parsed_string);
-			exit(EXIT_SUCCESS);
+			gc_exit(EXIT_SUCCESS);
 		}
 	}
 	cmd->pid[cmd->index++] = pid;

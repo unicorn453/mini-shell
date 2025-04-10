@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 15:00:22 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/10 14:01:24 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 17:40:54 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ int	parse_export_argument(char *arg, char **key, char **value, t_env **env_list)
 		*key = ft_strdup(arg);
 		*value = NULL;
 	}
-	// if()
 	if (!*key || (equal_sign && !*value))
 		return (free(*key), free(*value), 0);
 	return (1);

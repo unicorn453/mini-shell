@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/10 00:31:00 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 19:48:22 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,35 @@ typedef struct s_process
 	int							op_len;
 }								t_process;
 
+typedef struct s_split
+{
+	char						q_char;
+	char						**ret_val;
+	int							i;
+	int							j;
+	int							k;
+	int							in_q;
+}								t_split;
+
+typedef struct s_env_var
+{
+	char						*pwd;
+	char						*shlvl;
+	char						*temp;
+	int							shlvl_value;
+	int							i;
+
+}								t_env_var;
+
+typedef struct s_counter
+{
+	int							i;
+	int							count;
+	int							in_word;
+	int							in_q;
+	char						q_char;
+}								t_counter;
+
 //------------------------------//
 
 //---------GC_functions---------//
@@ -137,12 +166,18 @@ void							gc_track(void *ptr);
 void							gc_free_all(void);
 void							gc_untrack(void *ptr);
 void							close_open_fds(void);
-//------------------------------//
-// int								main_loop(char **envp, t_env **env_lis);
+void							gc_exit(int status);
+//-------src/ft_split_plus.c-------//
+int								is_charset(char c, char *charset);
+int								ft_count_char(char *str, char *charechter);
+char							*ft_strndup(char *str, int n);
+char							**ft_split_plus(char *str, char *charset);
 void							main_loop(char **envp, t_env **env_lis);
 char							**ft_split_plus(char *str, char *charset);
 //-------builtins/------//
 void							get_pwd(void);
+//-------src/ft_split_plus_two.c-------//
+void							init_counter(t_counter *c);
 /*
 ** basic_exec.c
 ** This file contains the functions for executing the commands
@@ -255,6 +290,7 @@ void							remove_env_var(t_env **env_list, char *key);
 
 void							ft_run_exit(t_cmd *cmd);
 //------builtins/env.c------//
+void							print_export_reverse(t_env **env_list);
 void							print_env_reverse(t_env **env_list);
 int								env_len(t_env *env_list, int i);
 //______signals.c__________//
@@ -287,10 +323,12 @@ void							handle_input_redirection(t_cmd *cmd,
 void							handle_output_redirection(t_cmd *cmd,
 									bool last_child, int *fd_out,
 									int fd_pipe[2]);
-int								ft_in_out(char *file, int mode);
-void							execution(t_cmd *cmd, int pipefd[2], char **parsed_string);
+void							execution(t_cmd *cmd, int pipefd[2],
+									char **parsed_string);
 
-// bool							not_a_special_charset(char *str);
+//------execution/file_manage_two.c------//
+int								ft_in_out(char *file, int mode);
+void							dup_open_file(int *fd_in);
 
 //------execution/cmd_initialization.c------//
 

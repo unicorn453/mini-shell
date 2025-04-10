@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_parsing.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:12:54 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/10 13:15:07 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 19:50:49 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,8 @@ void	quote_parsing(t_env **env_list, char **token)
 		if ((*token)[i] == '\'')
 		{
 			*token = single_quote_handler(*token, &i);
-			if ((*token)[i] == '\0')
-				continue ;
+			if ((*token)[i - 1] == '\0')
+				break ;
 		}
 		else if ((*token)[i] == '"')
 		{
