@@ -6,7 +6,7 @@
 /*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:12:54 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/08 20:34:35 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 13:15:07 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ char	*search_env_var(t_env *env_list, char *token)
 	temp = env_list;
 	while (temp->next)
 		temp = temp->next;
-	if (ft_strcmp(token, "$?") == 0)
+	if (ft_strncmp(token, "$?", 2) == 0)
 		return (gc_track(new_token = ft_itoa(get_exit_code()->exit_code)),
 			new_token);
 	new_token = ft_substr(token, 1, ft_strlen(token));

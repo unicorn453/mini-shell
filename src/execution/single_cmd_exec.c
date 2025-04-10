@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   single_cmd_exec.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 09:11:20 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 17:22:40 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/09 23:40:55 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,8 @@ bool	ft_heredoc_exist(char **parsed_string)
 
 int	exec_cmd_heredoc(t_cmd *cmd, int pipefd[2], int *fd_in, bool last_child)
 {
-	// ft_heredoc_check(cmd, pipefd, last_child, cmd->last_heredoc);
 	if (cmd->heredoc && !cmd->last_heredoc)
-		return 1;
+		return (1);
 	else if (cmd->heredoc && cmd->last_heredoc)
 		ft_heredoc_check(cmd, pipefd, last_child, cmd->last_heredoc);
 	execute_command(cmd);

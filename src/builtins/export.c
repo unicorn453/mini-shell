@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 15:00:22 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/09 21:47:24 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 14:01:24 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,11 @@ bool	check_duplicate_args(t_env **env_list, char *arg)
 	temp = *env_list;
 	while (temp)
 	{
-		if (ft_strcmp(temp->key, arg) == 0)
+		if (ft_strncmp(temp->key, arg, ft_strlen(arg)) == 0)
+		{
+			printf("You were right i am sorry\n");
 			return (true);
+		}
 		temp = temp->next;
 	}
 	return (false);
@@ -43,8 +46,6 @@ int	parse_export_argument(char *arg, char **key, char **value, t_env **env_list)
 	char	*equal_sign;
 	char	*plus_eq;
 
-	if (!arg || !*arg && !check_duplicate_args(env_list, arg))
-		return (*key = ft_strdup(arg), *value = NULL, gc_track(*key), 1);
 	equal_sign = ft_strchr(arg, '=');
 	plus_eq = ft_strnstr(arg, "+=", ft_strlen(arg));
 	if (plus_eq && plus_eq == equal_sign - 1)
@@ -62,6 +63,7 @@ int	parse_export_argument(char *arg, char **key, char **value, t_env **env_list)
 		*key = ft_strdup(arg);
 		*value = NULL;
 	}
+	// if()
 	if (!*key || (equal_sign && !*value))
 		return (free(*key), free(*value), 0);
 	return (1);
