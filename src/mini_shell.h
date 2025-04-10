@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:27:13 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/10 17:06:06 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 19:48:22 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,25 @@ typedef struct s_split
 	int							in_q;
 }								t_split;
 
+typedef struct s_env_var
+{
+	char						*pwd;
+	char						*shlvl;
+	char						*temp;
+	int							shlvl_value;
+	int							i;
+
+}								t_env_var;
+
+typedef struct s_counter
+{
+	int							i;
+	int							count;
+	int							in_word;
+	int							in_q;
+	char						q_char;
+}								t_counter;
+
 //------------------------------//
 
 //---------GC_functions---------//
@@ -147,6 +166,7 @@ void							gc_track(void *ptr);
 void							gc_free_all(void);
 void							gc_untrack(void *ptr);
 void							close_open_fds(void);
+void							gc_exit(int status);
 //-------src/ft_split_plus.c-------//
 int								is_charset(char c, char *charset);
 int								ft_count_char(char *str, char *charechter);
@@ -156,6 +176,8 @@ void							main_loop(char **envp, t_env **env_lis);
 char							**ft_split_plus(char *str, char *charset);
 //-------builtins/------//
 void							get_pwd(void);
+//-------src/ft_split_plus_two.c-------//
+void							init_counter(t_counter *c);
 /*
 ** basic_exec.c
 ** This file contains the functions for executing the commands
@@ -270,7 +292,7 @@ void							ft_run_exit(t_cmd *cmd);
 //------builtins/env.c------//
 void							print_export_reverse(t_env **env_list);
 void							print_env_reverse(t_env **env_list);
-int								env_len(t_env **env_list);
+int								env_len(t_env *env_list, int i);
 //______signals.c__________//
 void							setup_interactive_signals(void);
 //------execution/single_com_exec.c------//

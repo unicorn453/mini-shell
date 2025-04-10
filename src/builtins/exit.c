@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 11:10:23 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/10 16:53:31 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 19:58:40 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,6 @@ void	ft_run_exit(t_cmd *cmd)
 			exit_status = ft_atoi(cmd->cmd[1]);
 	}
 	gc_free_all();
+	printf("Exiting minishell...\n");
 	exit(exit_status);
 }

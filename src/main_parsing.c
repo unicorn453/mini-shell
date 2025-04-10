@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 23:04:57 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/10 16:56:27 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 17:41:11 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	**save_new_tokens(t_token **refined_tokens)
 bool	check_for_builtin(char *line)
 {
 	static char	*all_builtin[] = {"echo", "cd", "pwd", "export", "unset", "env",
-			"exit", "/bin/echo", NULL};
+		"exit", "/bin/echo", NULL};
 	int			i;
 
 	i = 0;

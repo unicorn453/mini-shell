@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 10:07:13 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/10 16:34:49 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 19:57:01 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	ft_exec_pipes_child_heredoc(t_cmd *cmd, int heredoc_fd[2], int *fd_in,
 		if (cmd->end_of_cmd)
 			execute_command(cmd);
 		if (cmd->end_of_cmd)
-			exit(EXIT_SUCCESS);
+			gc_exit(EXIT_SUCCESS);
 	}
 	if (heredoc_exist && !cmd->heredoc && cmd->redir_out)
 	{
@@ -50,6 +50,14 @@ void	ft_exec_pipes_child_heredoc(t_cmd *cmd, int heredoc_fd[2], int *fd_in,
 	}
 }
 
+static void	check_and_close(int fd_pipe[2])
+{
+	if (fd_pipe[0] != -1)
+		close(fd_pipe[0]);
+	if (fd_pipe[1] != -1)
+		close(fd_pipe[1]);
+}
+
 void	ft_exec_pipes_child(t_cmd *cmd, int *fd_in, int fd_pipe[2],
 		int heredoc_exist)
 {
@@ -58,10 +66,7 @@ void	ft_exec_pipes_child(t_cmd *cmd, int *fd_in, int fd_pipe[2],
 	if (!cmd->end_of_cmd && !cmd->heredoc && !cmd->redir_out
 		&& !cmd->redir_append && !heredoc_exist)
 		check(dup2(fd_pipe[1], STDOUT_FILENO) == -1, 1);
-	if (fd_pipe[0] != -1)
-		close(fd_pipe[0]);
-	if (fd_pipe[1] != -1)
-		close(fd_pipe[1]);
+	check_and_close(fd_pipe);
 	if (!cmd->heredoc && heredoc_exist)
 		dup_open_file(fd_in);
 	if (!cmd->heredoc)
@@ -82,31 +87,4 @@ t_pipe	*pipes(void)
 	static t_pipe	pipe_info;
 
 	return (&pipe_info);
-}
-
-void	ft_exec_pipes_parent(t_cmd *cmd, int fd_pipe[2], int *fd_in, pid_t pid)
-{
-	int	status;
-
-	if (fd_pipe[1] != -1)
-		close(fd_pipe[1]);
-	if (!cmd->end_of_cmd)
-	{
-		if (fd_in[0] != -1)
-			close(fd_in[0]);
-		fd_in[0] = fd_pipe[0];
-	}
-	else
-	{
-		if (fd_pipe[0] != -1)
-			close(fd_pipe[0]);
-	}
-	if (!cmd->heredoc)
-		cmd->pid[cmd->index++] = pid;
-	else
-	{
-		waitpid(pid, &status, 0);
-		if (pipes()->heredoc_fd[0] != -1)
-			close(pipes()->heredoc_fd[0]);
-	}
 }

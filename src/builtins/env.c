@@ -6,29 +6,17 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 13:05:54 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/10 16:54:11 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 17:35:12 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../mini_shell.h"
 
-int	env_len(t_env **env_list)
+int	env_len(t_env *env_list, int i)
 {
-	t_env	*temp;
-	int		i;
-
-	i = 0;
-	if (!env_list || !*env_list)
-		return (0);
-	temp = *env_list;
-	while (temp && temp->prev)
-		temp = temp->prev;
-	while (temp)
-	{
-		i++;
-		temp = temp->next;
-	}
-	return (i);
+	if (!env_list)
+		return (i);
+	return (env_len(env_list->next, i + 1));
 }
 
 void	print_export_reverse(t_env **env_list)

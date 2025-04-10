@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:57:42 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/10 17:20:15 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 18:13:02 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,9 @@ char	**ft_split_plus(char *str, char *cset)
 			if ((str[v.i] == '"' || str[v.i] == '\'') && (!v.in_q
 					|| v.q_char == str[v.i]))
 			{
+				v.in_q = !v.in_q;
 				if (v.in_q)
-					v.in_q = 0;
-				else
-				{
-					v.in_q = 1;
 					v.q_char = str[v.i];
-				}
 			}
 		}
 		if (v.i > v.j)
@@ -53,48 +49,33 @@ char	**ft_split_plus(char *str, char *cset)
 	return (v.ret_val[v.k] = NULL, v.ret_val);
 }
 
-typedef struct s_counter {
-	int		i;
-	int		count;
-	int		in_word;
-	int		in_q;
-	char	q_char;
-}	t_counter;
-
 int	ft_count_char(char *str, char *charechter)
 {
-	int		i;
-	int		count;
-	int		in_word;
-	int		in_q;
-	char	q_char;
+	t_counter	c;
 
-	q_char = '\0';
-	in_q = 0;
-	i = -1;
-	count = 0;
-	in_word = 0;
-	while (str[++i] != '\0')
+	init_counter(&c);
+	while (str[++c.i] != '\0')
 	{
-		if ((str[i] == '"' || str[i] == '\'') && (!in_q || q_char == str[i]))
+		if ((str[c.i] == '"' || str[c.i] == '\'') && (!c.in_q
+				|| c.q_char == str[c.i]))
 		{
-			if (in_q)
-				in_q = 0;
+			if (c.in_q)
+				c.in_q = 0;
 			else
 			{
-				in_q = 1;
-				q_char = str[i];
+				c.in_q = 1;
+				c.q_char = str[c.i];
 			}
 		}
-		if (!is_charset(str[i], charechter) && !in_word)
+		if (!is_charset(str[c.i], charechter) && !c.in_word)
 		{
-			in_word = 1;
-			count++;
+			c.in_word = 1;
+			c.count++;
 		}
-		else if (is_charset(str[i], charechter))
-			in_word = 0;
+		else if (is_charset(str[c.i], charechter))
+			c.in_word = 0;
 	}
-	return (count);
+	return (c.count);
 }
 
 char	*ft_strndup(char *str, int n)

@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:58:14 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/10 16:16:52 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 17:43:16 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,30 +51,25 @@ void	add_env_var(t_env **env_list, char *key, char *value)
 	}
 	*env_list = new_node;
 }
-typedef struct s_env_var
-{
-	char	*pwd;
-	char	*shlvl;
-	char	*temp;
-	int		shlvl_value;
-	int		i;
 
-}t_env_var;
-static int find_position(char *env_var,char **envp)
+static int	find_position(char *env_var, char **envp)
 {
-	int i = -1;
-	while(envp[++i])
+	int	i;
+
+	i = -1;
+	while (envp[++i])
 	{
 		if (ft_strncmp(envp[i], env_var, ft_strlen(env_var)))
 			return (i);
 	}
 	return (-1);
 }
+
 void	initialize_env_vars(t_env **env_list, char **envp)
 {
-	t_env_var stack;
-	char *tempor;
-	
+	t_env_var	stack;
+	char		*tempor;
+
 	stack.i = -1;
 	while (envp[++stack.i])
 		handle_export(env_list, envp[stack.i]);

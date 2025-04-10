@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:13:46 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/10 16:48:12 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 19:45:40 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ void	execute_command(t_cmd *cmd)
 			write(STDERR_FILENO, cmd->cmd[0], ft_strlen(cmd->cmd[0]));
 			write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
 			write(STDERR_FILENO, "\n", 1);
+			gc_free_all();
 			exit(127);
 		}
 	}
@@ -86,6 +87,7 @@ void	exec_pipes(t_cmd *cmd, int *fd_in, char **parsed_string)
 		ft_exec_pipes_child_heredoc(cmd, pipes()->heredoc_fd, fd_in,
 			heredoc_exist);
 		ft_exec_pipes_child(cmd, fd_in, pipes()->fd_pipe, heredoc_exist);
+		gc_free_all();
 		exit(EXIT_SUCCESS);
 	}
 	else

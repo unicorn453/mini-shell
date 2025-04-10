@@ -1,32 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   garbage_collector_util.c                           :+:      :+:    :+:   */
+/*   ft_split_plus_two.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/08 20:44:59 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/10 19:48:35 by kruseva          ###   ########.fr       */
+/*   Created: 2025/04/10 18:09:53 by kruseva           #+#    #+#             */
+/*   Updated: 2025/04/10 20:00:44 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../mini_shell.h"
+#include "mini_shell.h"
 
-void	close_open_fds(void)
+void	init_counter(t_counter *c)
 {
-	int	fd;
-
-	fd = 3;
-	while (fd < 10240)
-	{
-		if (fd >= 0)
-			close(fd);
-		fd++;
-	}
+	c->q_char = '\0';
+	c->in_q = 0;
+	c->i = -1;
+	c->count = 0;
+	c->in_word = 0;
 }
 
-void	gc_exit(int status)
+t_exit	*get_exit_code(void)
 {
-	gc_free_all();
-	exit(status);
+	static t_exit	exit_codes;
+
+	return (&exit_codes);
 }

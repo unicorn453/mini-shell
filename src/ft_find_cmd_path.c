@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 12:49:03 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 23:16:58 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 17:45:01 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,15 +94,14 @@ char	*find_command_path(t_cmd *cmd_list, t_env **env_list, char *cmd,
 		return (cmd);
 	path = initialize_path();
 	check(path == NULL, 1);
-	path->i = 0;
-	while (envp[path->i])
+	path->i = -1;
+	while (envp[++path->i])
 	{
 		if (ft_strncmp(envp[path->i], "PATH=", 5) == 0)
 		{
 			path->path_env = envp[path->i] + 5;
 			break ;
 		}
-		path->i++;
 	}
 	if (path->path_env == NULL)
 		return (cmd);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_parsing_two.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:26 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/08 20:34:00 by dtrendaf         ###   ########.fr       */
+/*   Updated: 2025/04/10 19:50:10 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ char	*b_a_env_var_handler(char *token, char *env_str, char *after_env, int i)
 	if (after_env != NULL)
 	{
 		after_plus_env = ft_strjoin(env_str, after_env);
+		gc_track(after_plus_env);
 		free(after_env);
 		check(after_plus_env == NULL, 2);
 		env_str = after_plus_env;

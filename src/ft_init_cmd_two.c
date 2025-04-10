@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 19:36:09 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/10 16:11:34 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 19:54:07 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,19 @@ void	run_builtin_child(t_cmd *cmd, t_env **env_list)
 			echo_call_check(cmd, env_list);
 		else
 			printf("\n");
-		exit(0);
+		gc_exit(0);
 	}
 	else if (ft_strcmp(cmd->cmd[0], "pwd") == 0)
 	{
 		get_pwd();
-		exit(0);
+		gc_exit(0);
 	}
 	else if (ft_strcmp(cmd->cmd[0], "env") == 0)
 	{
 		print_env_reverse(env_list);
-		exit(0);
+		gc_exit(0);
 	}
-	exit(1);
+	gc_exit(1);
 }
 
 void	execute_builtins(t_cmd *cmd, t_env **env_list)
@@ -62,7 +62,7 @@ void	execute_builtins_special(t_cmd *cmd, t_env **env_list)
 		&& !cmd->cmd[1])
 		return (print_export_reverse(env_list), cmd->pid[cmd->index++] = 0,
 			(void)0);
-	else
+	else if (ft_strcmp(cmd->cmd[0], "export") == 0)
 	{
 		if (cmd->cmd[1])
 			handle_export(env_list, cmd->cmd[1]);

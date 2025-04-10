@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 16:44:05 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 23:16:51 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 19:52:44 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,9 @@
 int	create_heredoc_file(t_cmd *cmd, bool last_heredoc)
 {
 	int		my_out;
-	char	tmp_filename[] = "file";
+	char	tmp_filename[5];
 
+	ft_strlcpy(tmp_filename, "file", sizeof(tmp_filename));
 	my_out = -1;
 	if ((!last_heredoc && !cmd->end_of_cmd) || (last_heredoc
 			&& !cmd->end_of_cmd))
@@ -25,6 +26,7 @@ int	create_heredoc_file(t_cmd *cmd, bool last_heredoc)
 		if (my_out == -1)
 		{
 			perror("Error creating heredoc file");
+			gc_free_all();
 			exit(EXIT_FAILURE);
 		}
 		cmd->heredoc_file = ft_strdup(tmp_filename);
@@ -78,14 +80,19 @@ int	handle_heredoc(t_cmd *cmd, int *fd_out, bool last_heredoc)
 
 int	check_for_redir(t_cmd *cmd, int file_fd)
 {
+	int	flags;
+
 	if ((cmd->redir_out || cmd->redir_append) && cmd->file_out)
 	{
-		file_fd = open(cmd->file_out,
-				O_WRONLY | O_CREAT | (cmd->redir_append ? O_APPEND : O_TRUNC),
-				0644);
+		if (cmd->redir_append)
+			flags = O_WRONLY | O_CREAT | O_APPEND;
+		else
+			flags = O_WRONLY | O_CREAT | O_TRUNC;
+		file_fd = open(cmd->file_out, flags, 0644);
 		if (file_fd < 0)
 		{
 			perror("Error opening output file");
+			gc_free_all();
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -103,7 +110,7 @@ int	ft_heredoc_check(t_cmd *cmd, int pipefd[2], bool last_child,
 	if (pipe(pipefd) == -1)
 	{
 		perror("pipe");
-		exit(EXIT_FAILURE);
+		gc_exit(EXIT_FAILURE);
 	}
 	if (file_fd != -1)
 		handle_heredoc(cmd, &file_fd, last_heredoc);
@@ -114,7 +121,7 @@ int	ft_heredoc_check(t_cmd *cmd, int pipefd[2], bool last_child,
 	if (last_child && dup2(pipefd[0], STDIN_FILENO) == -1)
 	{
 		perror("dup2 failed for heredoc");
-		exit(EXIT_FAILURE);
+		gc_exit(EXIT_FAILURE);
 	}
 	if (pipefd[0] >= 0)
 		close(pipefd[0]);

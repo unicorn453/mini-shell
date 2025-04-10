@@ -3,43 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_initialization.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dtrendaf <dtrendaf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 12:52:32 by kruseva           #+#    #+#             */
-/*   Updated: 2025/04/09 19:00:10 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/09 23:46:55 by dtrendaf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../mini_shell.h"
-
-void	handle_pipe_case(t_cmd *cmd, char **envp, t_init *init)
-{
-	int	status;
-	int	i;
-
-	status = check_error_status(init->parsed_string, init->i, 258);
-	if (status != 0)
-	{
-		cmd->pid[0] = -1;
-		return (cmd->pid[1] = status, (void)0);
-	}
-	cmd->pipe = true;
-	cmd->cmd[init->arg_index] = NULL;
-	find_right_exec(cmd, init->parsed_string);
-	init_def_cmd(cmd, envp, init->env_list);
-	init->parsed_size = init->i;
-	while (init->parsed_string[init->parsed_size] != NULL)
-		init->parsed_size++;
-	gc_untrack(cmd->cmd);
-	cmd->cmd = gc_malloc(sizeof(char *) * (init->parsed_size + 1));
-	check(cmd->cmd == NULL, 1);
-	i = -1;
-	while (++i < init->parsed_size)
-		cmd->cmd[i] = NULL;
-	cmd->pipe = true;
-	init->arg_index = 0;
-	init->i++;
-}
 
 bool	not_a_special_charset(char *str, int index)
 {
