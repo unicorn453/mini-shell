@@ -58,9 +58,6 @@ A minimal Unix shell implementation in C, replicating core features of bash. Thi
 # Build the project
 make
 
-# Build with debug information
-make clean && make all
-
 # Clean build artifacts
 make clean
 
