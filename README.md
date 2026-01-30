@@ -36,8 +36,9 @@ A minimal Unix shell implementation in C, replicating core features of bash. Thi
 - **`export`**: Set and manage environment variables
 - **`unset`**: Remove environment variables
 - **`env`**: Display current environment
-- **`exit`**: Terminate the shell with optional exit code
-
+- **`exit`**: Terminate the shell with an optional exit code
+- ** Every other command has been handled with execve
+  
 ### Advanced Features
 - **Heredoc Support**: Multi-line input with custom delimiters
 - **Variable Expansion**: `$VAR` and `$?` (exit status) support
@@ -213,14 +214,14 @@ minishell/
 - Quote handling preserves embedded variables and escape sequences
 
 ### Pipe Implementation
-- Each pipe creates pair of file descriptors
+- Each pipe creates a pair of file descriptors
 - Parent process manages all child processes
 - Proper stdin/stdout redirection for each command
 
 ### Environment Variable Expansion
 - `$VAR` syntax for variable expansion
-- `$?` expands to exit status of last command
-- Unset variables expand to empty string
+- `$?` expands to the exit status of the last command
+- Unset variables expand to an empty string
 
 ### Heredoc Processing
 - Temporary file created for each heredoc
@@ -258,7 +259,7 @@ The shell has been tested with:
 
 ## Known Errors
 
-- When using Ctrl-C in a shlvl greater than or equal to 3, printing may become duplicated.
+- When using Ctrl-C in a ```SHLVL``` >= 3, the readline prompt ```minishell> ```  may become duplicated.
 - Heredoc doesn't behave exactly like bash when piped into multiple cat commands. 
 Example: ``` cat | cat | cat << eof ```
 
@@ -270,9 +271,9 @@ This project follows 42 School coding standards (Norm):
 - Comprehensive error handling
 - Clear, modular code organization
 
-## Author
-unicorcn453
-Dimitar-T
+## Authors
+- unicorcn453
+- Dimitar-T
 
 ---
 
