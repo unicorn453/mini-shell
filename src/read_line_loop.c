@@ -6,7 +6,7 @@
 /*   By: kruseva <kruseva@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:16:23 by dtrendaf          #+#    #+#             */
-/*   Updated: 2025/04/10 20:00:37 by kruseva          ###   ########.fr       */
+/*   Updated: 2025/04/10 21:25:07 by kruseva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,9 @@ void	main_loop(char **envp, t_env **env_list)
 {
 	char	*line;
 	int		exit_status;
-	char	*trimmed_line;
 	char	**new_envp;
 
+	(void)envp;
 	exit_status = 0;
 	get_exit_code()->exit_code = exit_status;
 	while (1)
